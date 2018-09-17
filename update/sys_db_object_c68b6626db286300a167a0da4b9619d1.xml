@@ -17,7 +17,7 @@
         <number_ref/>
         <provider_class/>
         <read_access>true</read_access>
-        <super_class display_value="Credentials" name="discovery_credentials">51f50ab811031300bf6ed5eae6a7898b</super_class>
+        <super_class display_value="Credentials" name="discovery_credentials">2cfd35aab92013006517ce7df7ee4600</super_class>
         <sys_class_code/>
         <sys_class_name>sys_db_object</sys_class_name>
         <sys_class_path/>
