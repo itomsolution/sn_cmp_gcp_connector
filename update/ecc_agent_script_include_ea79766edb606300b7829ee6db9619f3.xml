@@ -4,14 +4,52 @@
         <active>true</active>
         <description>Script for CAPI - Google Block Storage API.CreateVolume</description>
         <name>google-disk-1.0-CreateVolume</name>
-        <script/>
+        <script><![CDATA[createVolume();
+
+function createVolume() {
+
+	var jsonObj = new JSON();
+	var location = this.parameters.get('Location');
+	var diskName = this.parameters.get('VolumeName');
+	var diskSizeGB = this.parameters.get('Size');
+	var diskType = this.parameters.get('VolumeType');
+ms.log('createVolume: location: ' + location);
+ms.log('createVolume: diskName: ' + diskName);
+ms.log('createVolume: diskSizeGB: ' + diskSizeGB);
+ms.log('createVolume: diskType: ' + diskType);
+	
+	if(diskType.toUpperCase().equals('SSD PERSISTENT'))
+	{
+		diskType = 'pd-ssd';
+	}
+	else if(diskType.toUpperCase().equals('STANDARD PERSISTENT'))
+	{
+		diskType = 'pd-standard';
+	}
+	
+	var volumeProfile = this.parameters.get('VolumeProfile');
+	var mappedVolumeProfile = jsonObj.decode(volumeProfile);
+	var imageId = mappedVolumeProfile.ImageId;
+	
+	var diskRequest = { 
+		"name" : diskName,
+		"sizeGb" : diskSizeGB,
+		"type": "zones/" + location + "/diskTypes/" + diskType,
+		"sourceImage" : ( imageId != '' ? imageId : undefined)
+	};
+	
+	var gsmd = new GoogleStorageManagedDisk(this.parameters, this.headers);
+	var d = gsmd.createVolume(diskRequest);
+	
+	return d;
+}]]></script>
         <sys_class_name>ecc_agent_script_include</sys_class_name>
         <sys_created_by>hardik.benani</sys_created_by>
         <sys_created_on>2018-09-17 23:02:44</sys_created_on>
         <sys_domain>global</sys_domain>
         <sys_domain_path>/</sys_domain_path>
         <sys_id>ea79766edb606300b7829ee6db9619f3</sys_id>
-        <sys_mod_count>0</sys_mod_count>
+        <sys_mod_count>1</sys_mod_count>
         <sys_name>google-disk-1.0-CreateVolume</sys_name>
         <sys_overrides/>
         <sys_package display_value="Google Cloud Management" source="sn_cmp_gcp">40ff1aee0b2023003246ad4363673ac5</sys_package>
@@ -19,6 +57,6 @@
         <sys_scope display_value="Google Cloud Management">40ff1aee0b2023003246ad4363673ac5</sys_scope>
         <sys_update_name>ecc_agent_script_include_ea79766edb606300b7829ee6db9619f3</sys_update_name>
         <sys_updated_by>hardik.benani</sys_updated_by>
-        <sys_updated_on>2018-09-17 23:02:44</sys_updated_on>
+        <sys_updated_on>2018-09-17 23:14:20</sys_updated_on>
     </ecc_agent_script_include>
 </record_update>
