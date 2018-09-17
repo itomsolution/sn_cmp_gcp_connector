@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<database>
+    <element extends="cmdb_ci_logical_datacenter" label="Google Datacenter" max_length="40" name="sn_cmp_gcp_google_datacenter" type="collection"/>
+</database>

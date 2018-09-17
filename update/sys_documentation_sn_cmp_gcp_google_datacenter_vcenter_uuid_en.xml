@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update>
+    <sys_documentation element="vcenter_uuid" label="vCenter Instance UUID" language="en" table="sn_cmp_gcp_google_datacenter">
+        <sys_documentation action="INSERT_OR_UPDATE">
+            <element>vcenter_uuid</element>
+            <help/>
+            <hint/>
+            <label>vCenter Instance UUID</label>
+            <language>en</language>
+            <name>sn_cmp_gcp_google_datacenter</name>
+            <plural>vCenter Instance UUIDs</plural>
+            <sys_class_name>sys_documentation</sys_class_name>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2018-09-17 21:18:27</sys_created_on>
+            <sys_id>cb912aaadbe46300a167a0da4b961991</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_name>vCenter Instance UUID</sys_name>
+            <sys_package display_value="Google Cloud Management" source="sn_cmp_gcp">40ff1aee0b2023003246ad4363673ac5</sys_package>
+            <sys_policy/>
+            <sys_scope display_value="Google Cloud Management">40ff1aee0b2023003246ad4363673ac5</sys_scope>
+            <sys_update_name>sys_documentation_sn_cmp_gcp_google_datacenter_vcenter_uuid_en</sys_update_name>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2018-09-17 21:18:27</sys_updated_on>
+            <url/>
+            <url_target/>
+        </sys_documentation>
+    </sys_documentation>
+</record_update>
