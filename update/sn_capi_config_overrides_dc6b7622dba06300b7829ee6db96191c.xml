@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update table="sn_capi_config_overrides">
+    <sn_capi_config_overrides action="INSERT_OR_UPDATE">
+        <cloud_api display_value="Google Blob Storage API">bdfabaeedb606300b7829ee6db9619c6</cloud_api>
+        <config_parameter display_value="PrivateKey">9988762edb606300b7829ee6db9619d5</config_parameter>
+        <override_value>$(CloudCredential.ssh_private_key)</override_value>
+        <sys_class_name>sn_capi_config_overrides</sys_class_name>
+        <sys_created_by>hardik.benani</sys_created_by>
+        <sys_created_on>2018-09-17 23:11:13</sys_created_on>
+        <sys_id>dc6b7622dba06300b7829ee6db96191c</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>$(CloudCredential.ssh_private_key)</sys_name>
+        <sys_package display_value="Google Cloud Management" source="sn_cmp_gcp">40ff1aee0b2023003246ad4363673ac5</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Google Cloud Management">40ff1aee0b2023003246ad4363673ac5</sys_scope>
+        <sys_update_name>sn_capi_config_overrides_dc6b7622dba06300b7829ee6db96191c</sys_update_name>
+        <sys_updated_by>hardik.benani</sys_updated_by>
+        <sys_updated_on>2018-09-17 23:11:13</sys_updated_on>
+    </sn_capi_config_overrides>
+</record_update>

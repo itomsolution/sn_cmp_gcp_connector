@@ -1,0 +1,437 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update sys_domain="global" table="ecc_agent_script_include">
+    <ecc_agent_script_include action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <description>Google Disk Storage API</description>
+        <name>GoogleStorageManagedDisk</name>
+        <script><![CDATA[/*
+Class to implement Google Disk API
+Block storage interface methods implemented:
+1. AssociateVolume
+2. CreateVolume
+3. DeleteVolume
+4. DisassociateVolume
+5. ExtendVolume
+6. ListVolumes
+*/
+
+var GoogleStorageManagedDisk = Class.create();
+
+GoogleStorageManagedDisk.prototype = Object.extendsObject(CloudAPIBase, {
+	
+	VolumeDTO: Packages.com.snc.cmp.connector.dto.Volume,
+	VolumeAttachmentDTO: Packages.com.snc.cmp.connector.dto.VolumeAttachment,
+	SnapshotDTO: Packages.com.snc.cmp.connector.dto.Snapshot,
+	scope: "https://www.googleapis.com/auth/cloud-platform",
+	TIMEOUT_MINUTES: 2,
+	THREAD_SLEEP_MILLISECONDS: 5000,
+	
+	initialize: function(parameters, headers) {
+	
+		CloudAPIBase.prototype.initialize.call(this);
+		this.parameters = parameters;
+		this.headers = headers;
+		this.clientEmail = parameters.get('ClientEmail');
+		this.privateKey  = parameters.get('PrivateKey');
+	},
+///////////////////////////////////////////////////////////////	
+//CAPI Interface Operation: AssociateVolume
+/*
+	Description: Associate an unattached volume to an instance
+	Documentation: https://cloud.google.com/compute/docs/reference/latest/instances/attachDisk
+	Mandatory parameters: Project, NodeID (name of instance), Location, VolumeID (name of disk) and VolumeRequest (JSON to pass in request body)
+	Return Type: VolumeAttachmentDTO
+	Response: { "attachmentid": "", "volumeattachmentstate": "", "attachtime": "", "volumeid": "", "instanceid": "", "volumestate": "" }
+*/	
+	associateVolume : function(volumeRequest) {
+	
+		var project = parameters.get('Project');
+		var nodeId = parameters.get('NodeID');
+		var location = parameters.get('Location');
+		var volumeId = parameters.get('VolumeID');
+		this.debug("Class-GoogleStorageManagedDisk: Function-associateVolume: project: " + project);
+		this.debug("Class-GoogleStorageManagedDisk: Function-associateVolume: nodeId: " + nodeId);
+		this.debug("Class-GoogleStorageManagedDisk: Function-associateVolume: location: " + location);
+		this.debug("Class-GoogleStorageManagedDisk: Function-associateVolume: volumeId: " + volumeId);
+
+		//Invoke attach disk endpoint
+		var gcpEndpoint = "https://www.googleapis.com/compute/v1/projects/" + project + "/zones/" + location + "/instances/" + nodeId + "/attachDisk";
+		var apiInvoker = new GoogleAPIInvoker(gcpEndpoint, this.scope, this.clientEmail, this.privateKey);
+		var responseObj = new JSON().decode(apiInvoker.invokePost(new JSON().encode(volumeRequest)));
+		
+		var isAttached = false;
+		var endTime = Packages.java.lang.System.nanoTime() + Packages.java.util.concurrent.TimeUnit.NANOSECONDS.convert(this.TIMEOUT_MINUTES, Packages.java.util.concurrent.TimeUnit.MINUTES);		
+		//Wait-until block		
+		while (!isAttached) {
+			Packages.java.lang.Thread.sleep(this.THREAD_SLEEP_MILLISECONDS);
+			//Exit if operation fails and exceeds timeout duration
+			if (Packages.java.lang.System.nanoTime() > endTime) {
+				this.error("Class-GoogleStorageManagedDisk: Function-associateVolume: Wait-until block executed, operation timed-out.");
+				throw new GoogleAPIException();
+			}
+			//Invoke get disk to check whether it has been attached to instance
+			var responseEndpoint = "https://www.googleapis.com/compute/v1/projects/" + project + "/zones/" + location + "/disks/" + volumeId;
+			var responseInvoker = new GoogleAPIInvoker(responseEndpoint, this.scope, this.clientEmail, this.privateKey);
+			responseObj = new JSON().decode(responseInvoker.invokeGet());
+			var usersArray = responseObj.users;
+			if(usersArray != null && usersArray.length > 0)	{
+				for(var i=0; i < usersArray.length; i++) {
+					//Extract name of instance as API returns self-link of instance
+					var attachedInstanceName = (usersArray[i].substring(usersArray[i].lastIndexOf("/")+1,usersArray[i].length())).toUpperCase();
+					if(attachedInstanceName.equals(nodeId.toUpperCase())) {
+						isAttached = true;
+						break;
+					}
+				}
+			}
+		}
+		
+		var dateFormat = new Packages.java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
+		//Populate method response DTO
+		var volumeAttachment = null;
+		if(isAttached) {
+			volumeAttachment = new this.VolumeAttachmentDTO();
+			volumeAttachment.setAttachmentId(responseObj.id);
+			volumeAttachment.setVolumeId(volumeId);
+			volumeAttachment.setInstanceId(nodeId);
+			volumeAttachment.setVolumeAttachmentState("ATTACHED");
+			volumeAttachment.setVolumeState(responseObj.status);
+			volumeAttachment.setAttachTime(dateFormat.parse(responseObj.lastAttachTimestamp));
+		}
+		
+		return volumeAttachment;
+	},
+///////////////////////////////////////////////////////////////	
+//CAPI Interface Operation: CreateVolume
+/*
+	Description: Create a new disk
+	Documentation: https://cloud.google.com/compute/docs/reference/latest/disks/insert
+	Mandatory parameters: Project, Location and VolumeRequest (JSON to pass in request body)
+	Return Type: VolumeDTO
+	Response: { "volumename": "", "size": "", "path": "", "location": "", "state": "", "volumetype": "", "volumeid": "" }
+*/	
+		createVolume : function(volumeRequest) {
+
+		var project = parameters.get('Project');
+		var location =  parameters.get('Location');
+		var volumeTypeURL = volumeRequest.type;
+		var volumeType = volumeTypeURL.substring(volumeTypeURL.lastIndexOf("/")+1, volumeTypeURL.length());
+
+		var mandatoryFields = [];
+		if(JSUtil.nil(project))
+		    mandatoryFields.push('Project');
+		
+		if(JSUtil.nil(location))
+		    mandatoryFields.push('Location');
+
+		if(JSUtil.nil(volumeType))
+		    mandatoryFields.push('VolumeRequest-Type');
+			
+		if(mandatoryFields.length > 0) {
+			this.debug("Class-GoogleStorageManagedDisk: Function-createVolume: project: " + project);
+			this.debug("Class-GoogleStorageManagedDisk: Function-createVolume: location: " + location);
+			this.debug("Class-GoogleStorageManagedDisk: Function-createVolume: volumeType: " + volumeType);
+			this.debug("Class-GoogleStorageManagedDisk: Function-createVolume: volumeRequest: " + volumeRequest);
+		
+            throw new GoogleAPIException('Value for mandatory field(s) is not specified. Please input value for field(s) -' + mandatoryFields.join(', ')+'.');
+		}
+		
+		var volumeTypeName = "";
+		if(volumeType.toUpperCase().equals("PD-STANDARD")) {
+			volumeTypeName = "STANDARD PERSISTENT";
+		}
+		else if(volumeType.toUpperCase().equals("PD-SSD")) {
+			volumeTypeName = "SSD PERSISTENT";
+		}
+
+		var responseObj = "";
+		var responseStatus = "";
+		//Invoke insert disk endpoint		
+		try {
+			var gcpEndpoint = "https://www.googleapis.com/compute/v1/projects/" + project + "/zones/" + location + "/disks";
+			var apiInvoker = new GoogleAPIInvoker(gcpEndpoint, this.scope, this.clientEmail, this.privateKey);
+			responseObj = new JSON().decode(apiInvoker.invokePost(new JSON().encode(volumeRequest)));
+			responseStatus = responseObj.status;
+		} catch(restAPIException) {
+            throw new GoogleAPIException('Class-GoogleStorageManagedDisk: Function-createVolume: Exception while inserting new disk: ' + restAPIException);
+		}		
+		
+		var endTime = Packages.java.lang.System.nanoTime() + Packages.java.util.concurrent.TimeUnit.NANOSECONDS.convert(this.TIMEOUT_MINUTES, Packages.java.util.concurrent.TimeUnit.MINUTES);		
+		//Wait-until block		
+		while (!responseStatus.toUpperCase().equals("READY")) {
+			Packages.java.lang.Thread.sleep(this.THREAD_SLEEP_MILLISECONDS);
+			//Exit if operation fails and exceeds timeout duration
+			if (Packages.java.lang.System.nanoTime() > endTime) {
+				this.error("Class-GoogleStorageManagedDisk: Function-createVolume: Wait-until block executed, operation timed-out.");
+				throw new GoogleAPIException();
+			}
+			//Invoke get disk to check whether it has been created and is in ready state
+			var responseEndpoint = "https://www.googleapis.com/compute/v1/projects/" + project + "/zones/" + location + "/disks/" + volumeRequest.name;
+			var responseInvoker = new GoogleAPIInvoker(responseEndpoint, this.scope, this.clientEmail, this.privateKey);
+			responseObj = new JSON().decode(responseInvoker.invokeGet());
+			responseStatus = responseObj.status;
+		}
+
+		//Populate method response DTO
+		var volume = new this.VolumeDTO();
+		volume.setVolumeId(responseObj.id);
+		volume.setVolumeName(volumeRequest.name);
+		volume.setLocation(location);
+		volume.setSize(volumeRequest.sizeGb);
+		volume.setPath(responseObj.selfLink);
+		volume.setVolumeType(volumeTypeName);
+		volume.setState(responseObj.status);
+		
+		return volume;
+	},
+///////////////////////////////////////////////////////////////	
+//CAPI Interface Operation: DeleteVolume
+/*
+	Description: Delete a disk
+	Documentation: https://cloud.google.com/compute/docs/reference/latest/disks/delete
+	Mandatory parameters: Project, VolumeID (name of volume) and Location
+	Return Type: VolumeDTO
+	Response: { "state": "", "volumeid": "" }
+*/
+	deleteVolume : function() {
+	
+		var project = parameters.get('Project');
+		var volumeId = parameters.get('VolumeID');
+		var location =  parameters.get('Location');
+		this.debug("Class-GoogleStorageManagedDisk: Function-deleteVolume: project: " + project);
+		this.debug("Class-GoogleStorageManagedDisk: Function-deleteVolume: volumeId: " + volumeId);
+		this.debug("Class-GoogleStorageManagedDisk: Function-deleteVolume: location: " + location);
+
+		//Invoke delete disk endpoint
+		var gcpEndpoint = "https://www.googleapis.com/compute/v1/projects/" + project + "/zones/" + location + "/disks/" + volumeId;
+		var apiInvoker = new GoogleAPIInvoker(gcpEndpoint, this.scope, this.clientEmail, this.privateKey);
+		var responseObj = new JSON().decode(apiInvoker.invokeDelete());
+		
+		var responseStatus = '';
+		var endTime = Packages.java.lang.System.nanoTime() + Packages.java.util.concurrent.TimeUnit.NANOSECONDS.convert(this.TIMEOUT_MINUTES, Packages.java.util.concurrent.TimeUnit.MINUTES);		
+		//Wait-until block		
+		while (!responseStatus.equals("404")) {
+			Packages.java.lang.Thread.sleep(this.THREAD_SLEEP_MILLISECONDS);
+			//Exit if operation fails and exceeds timeout duration
+			if (Packages.java.lang.System.nanoTime() > endTime) {
+				this.error("Class-GoogleStorageManagedDisk: Function-deleteVolume: Wait-until block executed, operation timed-out.");
+				throw new GoogleAPIException();
+			}
+			//Invoke get disk to check whether it has been deleted. Once deleted, 404 response status will be returned by endpoint
+			try	{
+				var responseEndpoint = "https://www.googleapis.com/compute/v1/projects/" + project + "/zones/" + location + "/disks/" + volumeId;
+				var responseInvoker = new GoogleAPIInvoker(responseEndpoint, this.scope, this.clientEmail, this.privateKey);
+				responseObj = new JSON().decode(responseInvoker.invokeGet());
+			} catch(restAPIException) {
+				responseStatus = '404';				
+			}
+		}
+		
+		//Populate method response DTO
+		var volume = new this.VolumeDTO();
+		volume.setVolumeId(responseObj.id);
+		volume.setState("DELETED");
+		
+		return volume;
+	},
+///////////////////////////////////////////////////////////////	
+//CAPI Interface Operation: DisassociateVolume
+/*
+	Description: Disassociate an attached volume from an instance
+	Documentation: https://cloud.google.com/compute/docs/reference/latest/instances/detachDisk
+	Mandatory parameters: Project, NodeID (name of instance), Location and VolumeID (name of disk)
+	Return Type: VolumeAttachmentDTO
+	Response: { "attachmentid": "", "volumeattachmentstate": "", "volumeid": "", "instanceid": "", "volumestate": "" }
+*/	
+	disassociateVolume : function() {
+		
+		var project = parameters.get('Project');
+		var nodeId = parameters.get('NodeID');
+		var location = parameters.get('Location');
+		var volumeId = parameters.get('VolumeID');
+		this.debug("Class-GoogleStorageManagedDisk: Function-disassociateVolume: project: " + project);
+		this.debug("Class-GoogleStorageManagedDisk: Function-disassociateVolume: nodeId: " + nodeId);
+		this.debug("Class-GoogleStorageManagedDisk: Function-disassociateVolume: location: " + location);
+		this.debug("Class-GoogleStorageManagedDisk: Function-disassociateVolume: volumeId: " + volumeId);
+
+		//Invoke detach disk endpoint
+		var gcpEndpoint = "https://www.googleapis.com/compute/v1/projects/" + project + "/zones/" + location + "/instances/" + nodeId + "/detachDisk?deviceName=" + volumeId;
+		var apiInvoker = new GoogleAPIInvoker(gcpEndpoint, this.scope, this.clientEmail, this.privateKey);
+		var responseObj = new JSON().decode(apiInvoker.invokePost());
+		
+		var isProcessed = false;
+		var isAttached = true;
+		var endTime = Packages.java.lang.System.nanoTime() + Packages.java.util.concurrent.TimeUnit.NANOSECONDS.convert(this.TIMEOUT_MINUTES, Packages.java.util.concurrent.TimeUnit.MINUTES);		
+		//Wait-until block		
+		while (!isProcessed) {
+			Packages.java.lang.Thread.sleep(this.THREAD_SLEEP_MILLISECONDS);
+			//Exit if operation fails and exceeds timeout duration
+			if (Packages.java.lang.System.nanoTime() > endTime) {
+				this.error("Class-GoogleStorageManagedDisk: Function-disassociateVolume: Wait-until block executed, operation timed-out.");
+				throw new GoogleAPIException();
+			}
+			//Invoke get disk to check whether it has been detached from instance
+			var responseEndpoint = "https://www.googleapis.com/compute/v1/projects/" + project + "/zones/" + location + "/disks/" + volumeId;
+			var responseInvoker = new GoogleAPIInvoker(responseEndpoint, this.scope, this.clientEmail, this.privateKey);
+			responseObj = new JSON().decode(responseInvoker.invokeGet());
+			var usersArray = responseObj.users;
+			
+			if(usersArray != null && usersArray.length > 0)	{
+				for(var i=0; i < usersArray.length; i++) {
+					//Extract name of instance as API returns self-link of instance
+					var attachedInstanceName = (usersArray[i].substring(usersArray[i].lastIndexOf("/")+1,usersArray[i].length())).toUpperCase();
+					//Check whether disk is still attached to instance					
+					if(attachedInstanceName.equals(nodeId.toUpperCase())) {
+						isAttached = true;
+						break;
+					}
+					else {
+						isAttached = false;
+					}
+				}
+				//If disk has been detached from instance, set operation as processed
+				if(!isAttached) {
+					isProcessed = true;
+				}
+			}
+			else {
+				//Disk was never attached to instance
+				isAttached = false;
+				isProcessed = true;
+			}
+		}
+		
+		//Populate method response DTO
+		var volumeAttachment = null;
+		if(!isAttached) {
+			volumeAttachment = new this.VolumeAttachmentDTO();
+			volumeAttachment.setAttachmentId(responseObj.id);
+			volumeAttachment.setVolumeId(volumeId);
+			volumeAttachment.setInstanceId(nodeId);
+			volumeAttachment.setVolumeAttachmentState("DETACHED");
+			volumeAttachment.setVolumeState(responseObj.status);
+		}
+		
+		return volumeAttachment;
+	},
+///////////////////////////////////////////////////////////////	
+//CAPI Interface Operation: ExtendVolume
+/*
+	Description: Resize a disk
+	Documentation: https://cloud.google.com/compute/docs/reference/latest/disks/resize
+	Mandatory parameters: Project, VolumeID (name of disk), Location and VolumeRequest (JSON to pass in request body)
+	Return Type: VolumeDTO
+	Response: { "volumename": "", "size": "", "volumeid": "" }
+*/	
+	extendVolume : function(volumeRequest) {
+	
+		var project = parameters.get('Project');
+		var volumeId = parameters.get('VolumeID');
+		var location =  parameters.get('Location');
+		this.debug("Class-GoogleStorageManagedDisk: Function-extendVolume: project: " + project);
+		this.debug("Class-GoogleStorageManagedDisk: Function-extendVolume: volumeId: " + volumeId);
+		this.debug("Class-GoogleStorageManagedDisk: Function-extendVolume: location: " + location);
+
+		//Invoke resize disk endpoint
+		var gcpEndpoint = "https://www.googleapis.com/compute/v1/projects/" + project + "/zones/" + location + "/disks/" + volumeId + "/resize";
+		var apiInvoker = new GoogleAPIInvoker(gcpEndpoint, this.scope, this.clientEmail, this.privateKey);
+		var responseObj = new JSON().decode(apiInvoker.invokePost(new JSON().encode(volumeRequest)));
+		var responseStatus = responseObj.status;
+		
+		var endTime = Packages.java.lang.System.nanoTime() + Packages.java.util.concurrent.TimeUnit.NANOSECONDS.convert(this.TIMEOUT_MINUTES, Packages.java.util.concurrent.TimeUnit.MINUTES);	
+		//Wait-until block		
+		while (!responseStatus.toUpperCase().equals("READY")) {
+			Packages.java.lang.Thread.sleep(this.THREAD_SLEEP_MILLISECONDS);
+			//Exit if operation fails and exceeds timeout duration
+			if (Packages.java.lang.System.nanoTime() > endTime) {
+				this.error("Class-GoogleStorageManagedDisk: Function-extendVolume: Wait-until block executed, operation timed-out.");
+				throw new GoogleAPIException();
+			}
+			//Invoke get disk to check whether it has been resized
+			var responseEndpoint = "https://www.googleapis.com/compute/v1/projects/" + project + "/zones/" + location + "/disks/" + volumeId;
+			var responseInvoker = new GoogleAPIInvoker(responseEndpoint, this.scope, this.clientEmail, this.privateKey);
+			responseObj = new JSON().decode(responseInvoker.invokeGet());
+			responseStatus = responseObj.status;
+		}
+		
+		//Populate method response DTO
+		var volume = new this.VolumeDTO();
+		volume.setVolumeId(responseObj.id);
+		volume.setVolumeName(volumeId);
+		volume.setSize(volumeRequest.sizeGb);
+		
+		return volume;
+	},
+///////////////////////////////////////////////////////////////	
+//CAPI Interface Operation: ListVolumes
+/*
+	Description: List all volumes
+	Documentation: https://cloud.google.com/compute/docs/reference/latest/disks/list
+	Mandatory parameters: Project
+	Return Type: List<VolumeDTO>
+	Response: [{ "volumeId": "", "volumeName": "", "location": "", "size": "", "path": "", "volumeType": "" }]
+*/	
+	listVolumes : function() {
+	
+		var project = parameters.get('Project');
+		this.debug("Class-GoogleStorageManagedDisk: Function-listVolumes: project: " + project);
+		
+		//Invoke aggregated disks endpoint
+		var gcpEndpoint = "https://www.googleapis.com/compute/v1/projects/" + project + "/aggregated/disks";
+		var apiInvoker = new GoogleAPIInvoker(gcpEndpoint, this.scope, this.clientEmail, this.privateKey);
+		var responseObj = new JSON().decode(apiInvoker.invokeGet());
+		var zones = responseObj.items;
+		
+		//Populate method response DTO
+		var volumeList = new Packages.java.util.ArrayList();
+		for(var zone in zones) {
+			for(var disk in zones[zone]) {
+				if(disk == 'disks') {
+					for(var i=0;i<zones[zone][disk].length;i++)	{
+						var volume = new this.VolumeDTO();
+						volume.setVolumeId(zones[zone][disk][i].id);
+						volume.setVolumeName(zones[zone][disk][i].name);
+						//Extract zone name of disk as API returns self-link of zone
+						volume.setLocation(zones[zone][disk][i].zone.substring(zones[zone][disk][i].zone.lastIndexOf("/")+1, zones[zone][disk][i].zone.length()));
+						volume.setSize(zones[zone][disk][i].sizeGb);
+						volume.setPath(zones[zone][disk][i].selfLink);
+						//Extract type of disk as API returns self-link of disk type
+						
+						if(zones[zone][disk][i].type.substring(zones[zone][disk][i].type.lastIndexOf("/")+1, zones[zone][disk][i].type.length()) == 'pd-standard')
+						{
+							volume.setVolumeType('STANDARD PERSISTENT');
+						}
+						if(zones[zone][disk][i].type.substring(zones[zone][disk][i].type.lastIndexOf("/")+1, zones[zone][disk][i].type.length()) == 'pd-ssd')
+						{
+							volume.setVolumeType('SSD PERSISTENT');
+						}
+						
+						volumeList.add(volume);
+					}
+				}
+			}
+		}
+		
+		return volumeList;
+	},
+///////////////////////////////////////////////////////////////	
+	
+	type: "GoogleStorageManagedDisk"
+});]]></script>
+        <sys_class_name>ecc_agent_script_include</sys_class_name>
+        <sys_created_by>hardik.benani</sys_created_by>
+        <sys_created_on>2018-09-17 23:03:33</sys_created_on>
+        <sys_domain>global</sys_domain>
+        <sys_domain_path>/</sys_domain_path>
+        <sys_id>eaa93a6edb606300b7829ee6db96195b</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>GoogleStorageManagedDisk</sys_name>
+        <sys_overrides/>
+        <sys_package display_value="Google Cloud Management" source="sn_cmp_gcp">40ff1aee0b2023003246ad4363673ac5</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Google Cloud Management">40ff1aee0b2023003246ad4363673ac5</sys_scope>
+        <sys_update_name>ecc_agent_script_include_eaa93a6edb606300b7829ee6db96195b</sys_update_name>
+        <sys_updated_by>hardik.benani</sys_updated_by>
+        <sys_updated_on>2018-09-17 23:03:33</sys_updated_on>
+    </ecc_agent_script_include>
+</record_update>

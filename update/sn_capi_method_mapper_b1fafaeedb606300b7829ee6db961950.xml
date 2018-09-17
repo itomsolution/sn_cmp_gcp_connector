@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update table="sn_capi_method_mapper">
+    <sn_capi_method_mapper action="INSERT_OR_UPDATE">
+        <capi_interface_operation display_value="PutObject">9479915e0b3222004b1b812f15673aec</capi_interface_operation>
+        <cloud_api display_value="Google Blob Storage API">bdfabaeedb606300b7829ee6db9619c6</cloud_api>
+        <endpoint_operation display_value="ExecuteScript">48ceec0f0b1322003969a387b6673a87</endpoint_operation>
+        <is_execute_script_on_instance>false</is_execute_script_on_instance>
+        <request_script>35fafaeedb606300b7829ee6db96194e</request_script>
+        <script_table>ecc_agent_script_include</script_table>
+        <script_type>JS</script_type>
+        <supported_in_version>1.0</supported_in_version>
+        <sys_class_name>sn_capi_method_mapper</sys_class_name>
+        <sys_created_by>hardik.benani</sys_created_by>
+        <sys_created_on>2018-09-17 23:09:14</sys_created_on>
+        <sys_id>b1fafaeedb606300b7829ee6db961950</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>9479915e0b3222004b1b812f15673aec</sys_name>
+        <sys_package display_value="Google Cloud Management" source="sn_cmp_gcp">40ff1aee0b2023003246ad4363673ac5</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Google Cloud Management">40ff1aee0b2023003246ad4363673ac5</sys_scope>
+        <sys_update_name>sn_capi_method_mapper_b1fafaeedb606300b7829ee6db961950</sys_update_name>
+        <sys_updated_by>hardik.benani</sys_updated_by>
+        <sys_updated_on>2018-09-17 23:09:14</sys_updated_on>
+    </sn_capi_method_mapper>
+</record_update>

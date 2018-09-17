@@ -1,0 +1,788 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update sys_domain="global" table="ecc_agent_script_include">
+    <ecc_agent_script_include action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <description>Contains methods to communicate with Google Cloud's Networking API</description>
+        <name>GoogleNetworkVirtualNetwork</name>
+        <script><![CDATA[/*
+Class to implement Google Network API
+Network interface methods implemented:
+1. CreateNetwork
+2. DeleteNetwork
+3. CreateSubnet
+4. DeleteSubnet
+5. ListNetworks
+6. ListSubnets
+7. ListRoutes
+8. ListVPNGateways
+9. CreateSecurityGroup
+10. DeleteSecurityGroup
+11. CreateRoute
+12. DeleteRoute
+13. ListRouters
+14. CreateRouter
+15. DeleteRouter
+*/
+
+var GoogleNetworkVirtualNetwork = Class.create();
+
+GoogleNetworkVirtualNetwork.prototype = Object.extendsObject(CloudAPIBase, {
+	
+	NetworkInterfaceDTO: Packages.com.snc.cmp.connector.dto.NetworkInterface,
+	NetworkDTO: Packages.com.snc.cmp.connector.dto.Network,
+	FirewallDTO: Packages.com.snc.cmp.connector.dto.Firewall,
+	AddressDTO: Packages.com.snc.cmp.connector.dto.Address,
+	SubnetDTO: Packages.com.snc.cmp.connector.dto.Subnet,
+	RouteDTO: Packages.com.snc.cmp.connector.dto.Route,
+	RouterDTO: Packages.com.snc.cmp.connector.dto.Router,
+	VPNGatewayDTO: Packages.com.snc.cmp.connector.dto.VPNGateway,
+	scope: "https://www.googleapis.com/auth/cloud-platform",
+	TIMEOUT_MINUTES: 5,
+	THREAD_SLEEP_MILLISECONDS: 5000,
+	
+	initialize: function(parameters, headers) {
+	
+		CloudAPIBase.prototype.initialize.call(this);
+		this.parameters = parameters;
+		this.headers = headers;
+		this.clientEmail = parameters.get('ClientEmail');
+		this.privateKey  = parameters.get('PrivateKey');
+	},
+	///////////////////////////////////////////////////////////////	
+	//CAPI Interface Operation: CreateNetwork	
+	/*
+		Description: Create a network
+		Documentation: https://cloud.google.com/compute/docs/reference/latest/networks/insert
+		Mandatory parameters: Project, NetworkRequest (JSON to pass in request body)
+		Return Type: NetworkDTO
+		Response: { "networkid": "", "networkname": "" }
+	*/	
+	createNetwork:function(networkRequest) {
+	
+		var json = new JSON();
+		var project = parameters.get('Project');
+		this.debug("Class-GoogleNetworkVirtualNetwork: Function-createNetwork: project: " + project);
+
+		//Invoke insert network endpoint
+		var gcpEndpoint = "https://www.googleapis.com/compute/v1/projects/" + project + "/global/networks";
+		var apiInvoker = new GoogleAPIInvoker(gcpEndpoint, this.scope, this.clientEmail, this.privateKey);
+		var responseObj = json.decode(apiInvoker.invokePost(json.encode(networkRequest)));
+		
+		var responseStatus = '';
+		var endTime = Packages.java.lang.System.nanoTime() + Packages.java.util.concurrent.TimeUnit.NANOSECONDS.convert(this.TIMEOUT_MINUTES, Packages.java.util.concurrent.TimeUnit.MINUTES);	
+		//Wait-until block		
+		while (!(responseStatus.equals("404") || responseStatus.equals("200"))) {
+			Packages.java.lang.Thread.sleep(this.THREAD_SLEEP_MILLISECONDS);
+			//Exit if operation fails and exceeds timeout duration
+			if (Packages.java.lang.System.nanoTime() > endTime) {
+				this.error("Class-GoogleNetworkVirtualNetwork: Function-createNetwork: Wait-until block executed, operation timed-out.");
+				throw new GoogleAPIException();
+			}
+			//Invoke get network to check whether it has been created
+			try	{
+				var responseInvoker = new GoogleAPIInvoker(responseObj.targetLink, this.scope, this.clientEmail, this.privateKey);
+				responseObj = json.decode(responseInvoker.invokeGet());
+				//Extract name of network as API returns self-link of network
+				if(networkRequest.name.toUpperCase().equals(responseObj.targetLink.substring(responseObj.targetLink.lastIndexOf("/")+1, responseObj.targetLink.length()).toUpperCase())) {
+					responseStatus = '200';
+				}
+			} catch(restAPIException) {
+				responseStatus = '404';				
+			}
+		}		
+
+		//Populate method response DTO
+		var networkNode = new this.NetworkDTO();
+		networkNode.setNetworkName(responseObj.name);
+		networkNode.setNetworkId(responseObj.id);
+		
+		return networkNode;
+	},
+	///////////////////////////////////////////////////////////////	
+	//CAPI Interface Operation: DeleteNetwork	
+	/*
+		Description: Delete a network
+		Documentation: https://cloud.google.com/compute/docs/reference/latest/networks/delete
+		Mandatory parameters: Project and NetworkID (name of network)
+		Return Type: NetworkDTO
+		Response: { "networkId" : "", "networkName : "", "state : "" }
+	*/	
+	deleteNetwork:function() {
+	
+		var project = parameters.get('Project');
+		var networkId = parameters.get('NetworkID');
+		this.debug("Class-GoogleNetworkVirtualNetwork: Function-deleteNetwork: project: " + project);
+		this.debug("Class-GoogleNetworkVirtualNetwork: Function-deleteNetwork: networkId: " + networkId);
+		
+		//Invoke delete network endpoint
+		var gcpEndpoint = "https://www.googleapis.com/compute/v1/projects/" + project + "/global/networks/" + networkId;
+		var apiInvoker = new GoogleAPIInvoker(gcpEndpoint, this.scope, this.clientEmail, this.privateKey);
+		var responseObj = new JSON().decode(apiInvoker.invokeDelete());
+		
+		var responseStatus = '';
+		var endTime = Packages.java.lang.System.nanoTime() + Packages.java.util.concurrent.TimeUnit.NANOSECONDS.convert(this.TIMEOUT_MINUTES, Packages.java.util.concurrent.TimeUnit.MINUTES);	
+		//Wait-until block		
+		while (!responseStatus.equals("404")) {
+			Packages.java.lang.Thread.sleep(this.THREAD_SLEEP_MILLISECONDS);
+			//Exit if operation fails and exceeds timeout duration
+			if (Packages.java.lang.System.nanoTime() > endTime) {
+				this.error("Class-GoogleNetworkVirtualNetwork: Function-deleteNetwork: Wait-until block executed, operation timed-out.");
+				throw new GoogleAPIException();
+			}
+			//Invoke get network to check whether it has been deleted. Once deleted, 404 response status will be returned by endpoint
+			try	{
+				gcpEndpoint = "https://www.googleapis.com/compute/v1/projects/" + project + "/global/networks/" + networkId;
+				var responseInvoker = new GoogleAPIInvoker(gcpEndpoint, this.scope, this.clientEmail, this.privateKey);
+				var resObj = new JSON().decode(responseInvoker.invokeGet());
+			} catch(restAPIException) {
+				responseStatus = '404';				
+			}
+		}
+
+		//Populate method response DTO
+		var networkNode = new this.NetworkDTO();
+		networkNode.setNetworkId(responseObj.id);
+		networkNode.setNetworkName(networkId);
+		networkNode.setState("DELETED");
+		
+		return networkNode;
+	},
+	///////////////////////////////////////////////////////////////	
+	//CAPI Interface Operation: CreateSubnet	
+	/*
+		Description: Create a subnet within a network
+		Documentation: https://cloud.google.com/compute/docs/reference/latest/subnetworks/insert
+		Mandatory parameters: Project, Location (region is needed from location/zone), NetworkID (name of network) and SubnetRequest (JSON to pass in request body)
+		Return Type: SubnetDTO
+		Response: { "subnetname": "", "cidrblock": "", "networkname": "", "subnetid": "" }
+	*/	
+	createSubnet:function(subnetRequest) {
+	
+		var json = new JSON();
+		var project = parameters.get('Project');
+		var locationStr = parameters.get('Location');
+		var location = locationStr.substring(0, locationStr.length()-2);
+		var networkId = parameters.get('NetworkID');
+		this.debug("Class-GoogleNetworkVirtualNetwork: Function-createSubnet: project: " + project);
+		this.debug("Class-GoogleNetworkVirtualNetwork: Function-createSubnet: locationStr: " + locationStr);
+		this.debug("Class-GoogleNetworkVirtualNetwork: Function-createSubnet: location: " + location);
+		this.debug("Class-GoogleNetworkVirtualNetwork: Function-createSubnet: networkId: " + networkId);
+		
+		//Invoke insert subnet endpoint
+		var gcpEndpoint = "https://www.googleapis.com/compute/v1/projects/" + project + "/regions/" + location + "/subnetworks";
+		var apiInvoker = new GoogleAPIInvoker(gcpEndpoint, this.scope, this.clientEmail, this.privateKey);
+		var responseObj = json.decode(apiInvoker.invokePost(json.encode(subnetRequest)));
+		
+		var responseStatus = '';
+		var endTime = Packages.java.lang.System.nanoTime() + Packages.java.util.concurrent.TimeUnit.NANOSECONDS.convert(this.TIMEOUT_MINUTES, Packages.java.util.concurrent.TimeUnit.MINUTES);	
+		//Wait-until block		
+		while (!(responseStatus.equals("404") || responseStatus.equals("200"))) {
+			Packages.java.lang.Thread.sleep(this.THREAD_SLEEP_MILLISECONDS);
+			//Exit if operation fails and exceeds timeout duration
+			if (Packages.java.lang.System.nanoTime() > endTime) {
+				this.error("Class-GoogleNetworkVirtualNetwork: Function-createSubnet: Wait-until block executed, operation timed-out.");
+				throw new GoogleAPIException();
+			}
+			//Invoke get subnet to check whether it has been created
+			try	{
+				var responseEndpoint = "https://www.googleapis.com/compute/v1/projects/" + project + "/regions/" + location + "/subnetworks/" +subnetRequest.name;
+				var responseInvoker = new GoogleAPIInvoker(responseEndpoint, this.scope, this.clientEmail, this.privateKey);
+				responseObj = json.decode(responseInvoker.invokeGet());
+				if(responseObj.name.toUpperCase().equals(subnetRequest.name.toUpperCase())) {
+					responseStatus = '200';
+				}
+			} catch(restAPIException) {
+				responseStatus = '404';				
+			}
+		}
+			
+		//Populate method response DTO
+		var subnet = new this.SubnetDTO();
+		subnet.setSubnetId(responseObj.id);
+		subnet.setSubnetName(subnetRequest.name);
+		subnet.setNetworkName(networkId);
+		subnet.setCidrBlock(subnetRequest.ipCidrRange);
+		
+		return subnet;
+	},
+	///////////////////////////////////////////////////////////////	
+	//CAPI Interface Operation: DeleteSubnet	
+	/*
+		Description: Delete a subnet within a network
+		Documentation: https://cloud.google.com/compute/docs/reference/latest/subnetworks/delete
+		Mandatory parameters: Project, Location (region is needed from location/zone) and SubnetID (name of subnet)
+		Return Type: SubnetDTO
+		Response: { "subnetname": "", "networkname": "", "subnetid": "", "state": "" }
+	*/	
+	deleteSubnet:function() {
+	
+		var project = parameters.get('Project');
+		var locationStr = parameters.get('Location');
+		var location = locationStr.substring(0, locationStr.length()-2);
+		var subnetId = parameters.get('SubnetID');
+		var networkId = parameters.get('NetworkID');
+		this.debug("Class-GoogleNetworkVirtualNetwork: Function-deleteSubnet: locationStr: " + project);
+		this.debug("Class-GoogleNetworkVirtualNetwork: Function-deleteSubnet: location: " + locationStr);
+		this.debug("Class-GoogleNetworkVirtualNetwork: Function-deleteSubnet: location: " + location);
+		this.debug("Class-GoogleNetworkVirtualNetwork: Function-deleteSubnet: subnetId: " + subnetId);
+		this.debug("Class-GoogleNetworkVirtualNetwork: Function-deleteSubnet: networkId: " + networkId);
+		
+		//Invoke delete subnet endpoint
+		var gcpEndpoint = "https://www.googleapis.com/compute/v1/projects/" + project + "/regions/" + location + "/subnetworks/" + subnetId;
+		var apiInvoker = new GoogleAPIInvoker(gcpEndpoint, this.scope, this.clientEmail, this.privateKey);
+		var responseObj = new JSON().decode(apiInvoker.invokeDelete());
+			
+		var responseStatus = '';
+		var endTime = Packages.java.lang.System.nanoTime() + Packages.java.util.concurrent.TimeUnit.NANOSECONDS.convert(this.TIMEOUT_MINUTES, Packages.java.util.concurrent.TimeUnit.MINUTES);	
+		//Wait-until block		
+		while (!responseStatus.equals("404")) {
+			Packages.java.lang.Thread.sleep(this.THREAD_SLEEP_MILLISECONDS);
+			//Exit if operation fails and exceeds timeout duration
+			if (Packages.java.lang.System.nanoTime() > endTime) {
+				this.error("Class-GoogleNetworkVirtualNetwork: Function-deleteSubnet: Wait-until block executed, operation timed-out.");
+				throw new GoogleAPIException();
+			}
+			//Invoke get subnet to check whether it has been deleted. Once deleted, 404 response status will be returned by endpoint
+			try	{
+				gcpEndpoint = "https://www.googleapis.com/compute/v1/projects/" + project + "/regions/" + location + "/subnetworks/" + subnetId;
+				var responseInvoker = new GoogleAPIInvoker(gcpEndpoint, this.scope, this.clientEmail, this.privateKey);
+				var resObj = new JSON().decode(responseInvoker.invokeGet());
+			} catch(restAPIException) {
+				responseStatus = '404';				
+			}
+		}
+		
+		//Populate method response DTO
+		var subNetwork = new this.SubnetDTO();
+		subNetwork.setSubnetId(responseObj.id);
+		subNetwork.setSubnetName(subnetId);
+		subNetwork.setState("DELETED");
+		subNetwork.setNetworkName(networkId);
+		
+		return subNetwork;
+	},
+	///////////////////////////////////////////////////////////////	
+	//CAPI Interface Operation: ListNetworks	
+	/*
+		Description: List all networks
+		Documentation: https://cloud.google.com/compute/docs/reference/latest/networks/list
+		Mandatory parameters: Project
+		Return Type: List<NetworkDTO>
+		Response: [{ "networkName": "", "networkId": "", "actualNetworkName": "" }]
+	*/	
+	listNetwork: function() {
+		
+		var project = parameters.get('Project');
+		this.debug("Class-GoogleNetworkVirtualNetwork: Function-listNetwork: project: " + project);
+		
+		//Invoke list networks endpoint
+		var computeEndpoint = "https://www.googleapis.com/compute/v1/projects/" + project + "/global/networks";
+		var apiInvoker = new GoogleAPIInvoker(computeEndpoint, this.scope, this.clientEmail, this.privateKey);
+		var responseObj = new JSON().decode(apiInvoker.invokeGet());
+		var networkArray = responseObj.items;
+
+		//Populate method response DTO
+		var networkList = new Packages.java.util.ArrayList();
+		if(networkArray != null && networkArray.length > 0) {
+			for(var i=0; i < networkArray.length; i++) {
+				var networkNode = new this.NetworkDTO();
+				networkNode.setNetworkId(networkArray[i].id);
+				networkNode.setNetworkName(networkArray[i].name);
+				networkNode.setActualNetworkName(networkArray[i].description);
+				networkList.add(networkNode);
+			}
+		}
+		
+		return networkList;
+	},
+	///////////////////////////////////////////////////////////////	
+	//CAPI Interface Operation: ListSubnets	
+	/*
+		Description: List all subnets
+		Documentation: https://cloud.google.com/compute/docs/reference/latest/subnetworks/aggregatedList
+		Mandatory parameters: Project
+		Return Type: List<SubnetDTO>
+		Response: [{ "subnetId": "", "subnetName": "", "networkName": "", "gatewayIP": "", "cidrBlock": "", "availabilityZone": "" }]
+	*/	
+	listSubNetworks:function() {
+	
+		var project = parameters.get('Project');
+		this.debug("Class-GoogleNetworkVirtualNetwork: Function-listSubNetworks: project: " + project);
+		
+		//Invoke aggregated subnetworks endpoint
+		var gcpEndpoint = "https://www.googleapis.com/compute/v1/projects/" + project + "/aggregated/subnetworks";
+		var apiInvoker = new GoogleAPIInvoker(gcpEndpoint, this.scope, this.clientEmail, this.privateKey);
+		var responseObj = new JSON().decode(apiInvoker.invokeGet());
+		var zones = responseObj.items;
+
+		//Populate method response DTO
+		var subNetworkList = new Packages.java.util.ArrayList();
+		for(var zone in zones) {
+			for(var subnet in zones[zone]) {
+				if(subnet == 'subnetworks') {
+					for(var i=0;i<zones[zone][subnet].length;i++) {
+						var subNetwork = new this.SubnetDTO();
+						subNetwork.setSubnetId(zones[zone][subnet][i].id);
+						subNetwork.setSubnetName(zones[zone][subnet][i].name);
+						subNetwork.setCidrBlock(zones[zone][subnet][i].ipCidrRange);
+						subNetwork.setGatewayIP(zones[zone][subnet][i].gatewayAddress);
+						//Extract region name of subnet as API returns self-link of region
+						subNetwork.setAvailabilityZone(zones[zone][subnet][i].region.substring(zones[zone][subnet][i].region.lastIndexOf("/")+1,zones[zone][subnet][i].region.length()));
+						//Extract network name of subnet as API returns self-link of network
+						subNetwork.setNetworkName(zones[zone][subnet][i].network.substring(zones[zone][subnet][i].network.lastIndexOf("/")+1,zones[zone][subnet][i].network.length()));
+						subNetworkList.add(subNetwork);
+					}
+				}
+			}
+		}
+		
+		return subNetworkList;
+	},
+	///////////////////////////////////////////////////////////////	
+	//CAPI Interface Operation: ListRoutes	
+	/*
+		Description: List all routes
+		Documentation: https://cloud.google.com/compute/docs/reference/latest/routes/list
+		Mandatory parameters: Project
+		Return Type: List<RouteDTO>
+	*/	
+	listRoutes:function(){
+	
+		var project = parameters.get('Project');
+		this.debug("Class-GoogleNetworkVirtualNetwork: Function-listRoutes: project: " + project);
+
+		//Invoke list routes endpoint
+		var gcpEndpoint = "https://www.googleapis.com/compute/v1/projects/" + project + "/global/routes";
+		var apiInvoker = new GoogleAPIInvoker(gcpEndpoint, this.scope, this.clientEmail, this.privateKey);
+		var responseObj = new JSON().decode(apiInvoker.invokeGet());
+		var routeList = responseObj.items;
+		
+		//Populate method response DTO
+		var routeArray = new Packages.java.util.ArrayList();
+		if(routeList != null && routeList.length > 0) {
+			for(var i=0;i<routeList.length;i++) {
+				var route = new this.RouteDTO();
+				route.setRouteId(routeList[i].id);
+				route.setName(routeList[i].name);
+				route.setState(routeList[i].description);
+				route.setNetworkInterfaceId(routeList[i].network.substring(routeList[i].network.lastIndexOf("/")+1,routeList[i].network.length()));
+				route.setDestinationCidrBlock(routeList[i].destRange);
+				route.setGatewayId(routeList[i].priority);
+				route.setnetworkId(routeList[i].nextHopNetwork.substring(routeList[i].nextHopNetwork.lastIndexOf("/")+1),routeList[i].nextHopNetwork.length());
+				routeArray.add(route);
+			}
+		}
+		
+		return routeArray;
+	},
+	///////////////////////////////////////////////////////////////	
+	//CAPI Interface Operation: ListVPNGateways	
+	/*
+		Description: List all VPN gateways
+		Documentation: https://cloud.google.com/compute/docs/reference/latest/targetVpnGateways/aggregatedList
+		Mandatory parameters: Project
+		Return Type: List<VPNGatewayDTO>
+	*/	
+	listVPNGateways:function() {
+	
+		var project = parameters.get('Project');
+		this.debug("Class-GoogleNetworkVirtualNetwork: Function-listVPNGateways: project: " + project);
+		
+		//Invoke aggregated target vpn gateways endpoint
+		var gcpEndpoint = "https://www.googleapis.com/compute/v1/projects/" + project + "/aggregated/targetVpnGateways";
+		var apiInvoker = new GoogleAPIInvoker(gcpEndpoint, this.scope, this.clientEmail, this.privateKey);
+		var responseObj = new JSON().decode(apiInvoker.invokeGet());
+		var zones = responseObj.items;
+
+		//Populate method response DTO
+		var vpnGatewayList = new Packages.java.util.ArrayList();
+		for(var zone in zones) {
+			for(var gateway in zones[zone]) {
+				if(gateway == 'targetVpnGateways') {
+					for(var i=0;i<zones[zone][gateway].length;i++) {
+						var vpnGateway = new this.VPNGatewayDTO();
+						vpnGateway.setVPNGatewayId(zones[zone][gateway][i].id);
+						//Extract network name of vpn gateway as API returns self-link of network
+						vpnGateway.setNetworkId(zones[zone][gateway][i].network.substring(zones[zone][gateway][i].network.lastIndexOf("/")+1, zones[zone][gateway][i].network.length));
+						vpnGateway.setType(zones[zone][gateway][i].name);
+						//Extract zone name of vpn gateway as API returns self-link of zone
+						vpnGateway.setAvailabilityZone(zone.substring(zone.lastIndexOf("/")+1, zone.length));
+						if(zones[zone][gateway][i].status == "READY") {
+							vpnGateway.setState("available");
+						}
+						vpnGatewayList.add(vpnGateway);
+					}
+				}
+			}
+		}
+		
+		return vpnGatewayList;
+	},
+	///////////////////////////////////////////////////////////////	
+	//CAPI Interface Operation: CreateSecurityGroup
+	/*
+		Description: Create firewall rule
+		Documentation: https://cloud.google.com/compute/docs/reference/latest/firewalls/insert
+		Mandatory parameters: Project and FirewallRequest (JSON to pass in request body)
+		Return Type: FirewallDTO
+		Response: { "networkname": "", "firewallid": "", "firewallname": "", "ownerid": "", "description": "" }
+	*/	
+	insertFirewall: function(firewallRequest) {
+		
+		var project = parameters.get('Project');
+		this.debug("Class-GoogleNetworkVirtualNetwork: Function-insertFirewall: project: " + project);
+		
+		//Invoke insert firewall endpoint
+		var gcpEndpoint = "https://www.googleapis.com/compute/v1/projects/" + project + "/global/firewalls";
+		var apiInvoker = new GoogleAPIInvoker(gcpEndpoint, this.scope, this.clientEmail, this.privateKey);
+		var responseObj = new JSON().decode(apiInvoker.invokePost(new JSON().encode(firewallRequest)));
+		
+		var firewallId = '';
+		var endTime = Packages.java.lang.System.nanoTime() + Packages.java.util.concurrent.TimeUnit.NANOSECONDS.convert(this.TIMEOUT_MINUTES, Packages.java.util.concurrent.TimeUnit.MINUTES);	
+		//Wait-until block		
+		while (firewallId == '') {
+			Packages.java.lang.Thread.sleep(this.THREAD_SLEEP_MILLISECONDS);
+			//Exit if operation fails and exceeds timeout duration
+			if (Packages.java.lang.System.nanoTime() > endTime) {
+				this.error("Class-GoogleNetworkVirtualNetwork: Function-insertFirewall: Wait-until block executed, operation timed-out.");
+				throw new GoogleAPIException();
+			}
+			//Invoke get firewall to check whether it has been created
+			var responseEndpoint = "https://www.googleapis.com/compute/v1/projects/" + project + "/global/firewalls/" + firewallRequest.name;
+			var responseInvoker = new GoogleAPIInvoker(responseEndpoint, this.scope, this.clientEmail, this.privateKey);
+			responseObj = new JSON().decode(responseInvoker.invokeGet());
+			firewallId = responseObj.id;
+		}
+		
+		//Populate method response DTO
+		var fwDto = new this.FirewallDTO();
+		fwDto.setFirewallId(responseObj.id);
+		fwDto.setFirewallName(responseObj.name);
+		fwDto.setDescription(responseObj.description);
+		//Extract network name of firewall as API returns self-link of network
+		fwDto.setNetworkName(responseObj.network.substring(responseObj.network.lastIndexOf("/")+1,responseObj.network.length()));
+		fwDto.setOwnerId(responseObj.user);
+		
+		return fwDto;
+	},
+	///////////////////////////////////////////////////////////////	
+	//CAPI Interface Operation: DeleteSecurityGroup
+	/*
+		Description: Delete firewall rule
+		Documentation: https://cloud.google.com/compute/docs/reference/latest/firewalls/delete
+		Mandatory parameters: Project, Location and FirewallID (name of firewall)
+		Return Type: FirewallDTO
+		Response: { "networkname": "", "firewallid": "", "firewallname": "", "networkid": "", "description": "" }
+	*/	
+	deleteFirewall:function() {
+	
+		var project = parameters.get('Project');
+		var location = parameters.get('Location');
+		var firewallId = parameters.get('FirewallID');
+		this.debug("Class-GoogleNetworkVirtualNetwork: Function-deleteFirewall: project: " + project);
+		this.debug("Class-GoogleNetworkVirtualNetwork: Function-deleteFirewall: location: " + location);
+		this.debug("Class-GoogleNetworkVirtualNetwork: Function-deleteFirewall: firewallId: " + firewallId);
+		
+		//Invoke delete firewall endpoint
+		var gcpEndpoint = "https://www.googleapis.com/compute/v1/projects/" +project + "/global/firewalls/" + firewallId;
+		var apiInvoker = new GoogleAPIInvoker(gcpEndpoint, this.scope, this.clientEmail, this.privateKey);
+		var responseObj = new JSON().decode(apiInvoker.invokeDelete());
+		
+		var responseStatus = '';
+		var endTime = Packages.java.lang.System.nanoTime() + Packages.java.util.concurrent.TimeUnit.NANOSECONDS.convert(this.TIMEOUT_MINUTES, Packages.java.util.concurrent.TimeUnit.MINUTES);	
+		//Wait-until block		
+		while (!responseStatus.equals("404")) {
+			Packages.java.lang.Thread.sleep(this.THREAD_SLEEP_MILLISECONDS);
+			//Exit if operation fails and exceeds timeout duration
+			if (Packages.java.lang.System.nanoTime() > endTime) {
+				this.error("Class-GoogleNetworkVirtualNetwork: Function-deleteFirewall: Wait-until block executed, operation timed-out.");
+				throw new GoogleAPIException();
+			}
+			//Invoke get firewall to check whether it has been deleted. Once deleted, 404 response status will be returned by endpoint
+			try	{
+				gcpEndpoint = "https://www.googleapis.com/compute/v1/projects/" + project + "/global/firewalls/" + firewallId;
+				var responseInvoker = new GoogleAPIInvoker(gcpEndpoint, this.scope, this.clientEmail, this.privateKey);
+				var resObj = new JSON().decode(responseInvoker.invokeGet());
+			} catch(restAPIException) {
+				responseStatus = '404';				
+			}
+		}
+		
+		//Populate method response DTO
+		var fwDto = new this.FirewallDTO();
+		fwDto.setFirewallId(responseObj.id);
+		fwDto.setFirewallName(responseObj.name);
+		fwDto.setDescription(responseObj.description);
+		fwDto.setNetworkId(responseObj.targetId);
+		fwDto.setNetworkName(responseObj.targetLink);
+		
+		return fwDto;
+	},
+	///////////////////////////////////////////////////////////////	
+	//CAPI Interface Operation: CreateRoute	
+	/*
+		Description: Create a route
+		Documentation: https://cloud.google.com/compute/docs/reference/latest/routes/insert
+		Mandatory parameters: Project and RouteRequest (JSON to pass in request body)
+		Return Type: RouteDTO
+		Response: { "routeId" : "", "destinationCidrBlock" : "", "name" : "", "networkId" : "", "gatewayId" : "" }
+	*/	
+	createRoute:function(routeRequest) {
+	
+		var project = parameters.get('Project');
+		this.debug("Class-GoogleNetworkVirtualNetwork: Function-createRoute: project: " + project);
+		
+		//Invoke insert route endpoint
+		var gcpEndpoint = "https://www.googleapis.com/compute/v1/projects/" + project + "/global/routes";
+		var apiInvoker = new GoogleAPIInvoker(gcpEndpoint, this.scope, this.clientEmail, this.privateKey);
+		var responseObj = new JSON().decode(apiInvoker.invokePost(new JSON().encode(routeRequest)));
+		
+		var responseStatus = responseObj.status;
+		var endTime = Packages.java.lang.System.nanoTime() + Packages.java.util.concurrent.TimeUnit.NANOSECONDS.convert(this.TIMEOUT_MINUTES, Packages.java.util.concurrent.TimeUnit.MINUTES);	
+		var count = 1;
+		//Wait-until block		
+		while (count < 10) {
+			Packages.java.lang.Thread.sleep(this.THREAD_SLEEP_MILLISECONDS);
+			//Exit if operation fails and exceeds timeout duration
+			if (Packages.java.lang.System.nanoTime() > endTime) {
+				this.error("Class-GoogleNetworkVirtualNetwork: Function-createRoute: Wait-until block executed, operation timed-out.");
+				throw new GoogleAPIException();
+			}
+			//Invoke get route to check whether it has been created
+			var responseEndpoint = "https://www.googleapis.com/compute/v1/projects/" + project + "/global/routes/" + routeRequest.name;
+			var responseInvoker = new GoogleAPIInvoker(responseEndpoint, this.scope, this.clientEmail, this.privateKey);
+			responseObj = new JSON().decode(responseInvoker.invokeGet());
+			responseStatus = responseObj.status;
+			count++;
+		}
+		
+		//Populate method response DTO
+		var route = new this.RouteDTO();
+		route.setRouteId(responseObj.id);
+		route.setDestinationCidrBlock(responseObj.destRange);
+		route.setName(responseObj.name);
+		//Extract network name of route as API returns self-link of network
+		route.setNetworkId(responseObj.network.substring(responseObj.network.lastIndexOf("/")+1,responseObj.network.length));
+		//Extract gateway name of route as API returns self-link of gateway
+		route.setGatewayId(responseObj.nextHopGateway.substring(responseObj.nextHopGateway.lastIndexOf("/")+1,responseObj.nextHopGateway.length));
+		
+		return route;
+	},
+	///////////////////////////////////////////////////////////////	
+	//CAPI Interface Operation: DeleteRoute	
+	/*
+		Description: Delete a route
+		Documentation: https://cloud.google.com/compute/docs/reference/latest/routes/delete
+		Mandatory parameters: Project and RouteTableID (name of route) 
+		Return Type: RouteDTO
+		Response: { "routeId" : "" , "networkId" : "" }
+	*/	
+	deleteRoute:function() {
+	
+		var project = parameters.get('Project');
+		var routeTableId = parameters.get('RouteTableID');
+		var additionalParameters = this.parameters.get('AdditionalParameters');
+		this.debug("Class-GoogleNetworkVirtualNetwork: Function-deleteRoute: project: " + project);
+		this.debug("Class-GoogleNetworkVirtualNetwork: Function-deleteRoute: routeTableId: " + routeTableId);
+		this.debug("Class-GoogleNetworkVirtualNetwork: Function-deleteRoute: additionalParameters: " + additionalParameters);
+		
+		//Invoke delete route endpoint
+		var gcpEndpoint = "https://www.googleapis.com/compute/v1/projects/" + project + "/global/routes/" + routeTableId;
+		var apiInvoker = new GoogleAPIInvoker(gcpEndpoint, this.scope, this.clientEmail, this.privateKey);
+		var responseObj = new JSON().decode(apiInvoker.invokeDelete());
+		
+		var responseStatus = '';
+		var endTime = Packages.java.lang.System.nanoTime() + Packages.java.util.concurrent.TimeUnit.NANOSECONDS.convert(this.TIMEOUT_MINUTES, Packages.java.util.concurrent.TimeUnit.MINUTES);	
+		//Wait-until block		
+		while (!responseStatus.equals("404")) {
+			Packages.java.lang.Thread.sleep(this.THREAD_SLEEP_MILLISECONDS);
+			//Exit if operation fails and exceeds timeout duration
+			if (Packages.java.lang.System.nanoTime() > endTime) {
+				this.error("Class-GoogleNetworkVirtualNetwork: Function-deleteRoute: Wait-until block executed, operation timed-out.");
+				throw new GoogleAPIException();
+			}
+			//Invoke get route to check whether it has been deleted. Once deleted, 404 response status will be returned by endpoint
+			try	{
+				gcpEndpoint = "https://www.googleapis.com/compute/v1/projects/" + project + "/global/routes/" + routeTableId;
+				var responseInvoker = new GoogleAPIInvoker(gcpEndpoint, this.scope, this.clientEmail, this.privateKey);
+				var resObj = new JSON().decode(responseInvoker.invokeGet());
+			} catch(restAPIException) {
+					responseStatus = '404';				
+			}
+		}
+		
+		//Populate method response DTO
+		var route = new this.RouteDTO();
+		route.setRouteId(responseObj.targetId);
+		route.setNetworkId(additionalParameters.NetworkID);
+	},
+	///////////////////////////////////////////////////////////////	
+	//CAPI Interface Operation: ListRouters	
+	/*
+		Description: List all cloud routers
+		Documentation: https://cloud.google.com/compute/docs/reference/latest/routers/aggregatedList
+		Mandatory parameters: Project
+		Return Type: List<RouterDTO>
+		Response: [{ "id": "", "name": "", "networkId": "" }]
+	*/	
+	listRouters:function() {
+	
+		var project = parameters.get('Project');
+		this.debug("Class-GoogleNetworkVirtualNetwork: Function-listRouters: project: " + project);
+		
+		//Invoke aggregated routers endpoint
+		var gcpEndpoint = "https://www.googleapis.com/compute/v1/projects/" + project + "/aggregated/routers";
+		var apiInvoker = new GoogleAPIInvoker(gcpEndpoint, this.scope, this.clientEmail, this.privateKey);
+		var responseObj = new JSON().decode(apiInvoker.invokeGet());
+		var routerArray = responseObj.items;
+
+		//Populate method response DTO
+		var routerList = new Packages.java.util.ArrayList();
+		for(var region in routerArray) {
+			for(var router in routerArray[region]) {
+				if(router == 'routers') {
+					for(var i=0; i<routerArray[region][router].length; i++) {
+						var routerObj = new this.RouterDTO();
+						routerObj.setId(routerArray[region][router][i].id);
+						routerObj.setName(routerArray[region][router][i].name);
+						//Extract network name of router as API returns self-link of router
+						routerObj.setNetworkId(routerArray[region][router][i].network.substring(routerArray[region][router][i].network.lastIndexOf("/")+1,routerArray[region][router][i].network.length));
+						routerList.add(routerObj);
+					}
+				}
+			}
+		}
+		
+		return routerList;
+	},
+	///////////////////////////////////////////////////////////////	
+	//CAPI Interface Operation: CreateRouter	
+	/*
+		Description: Create a cloud router
+		Documentation: https://cloud.google.com/compute/docs/reference/latest/routers/insert
+		Mandatory parameters: Project, Location (region is needed from location/zone), RouterName, NetworkID (name of network) and RouterRequest (JSON to pass in request body)
+		Return Type: RouterDTO
+		Response: { "networkid": "", "id": "", "name": "" }
+	*/	
+	createRouter:function(routerRequest) {
+	
+		var project = parameters.get('Project');
+		var locationStr = parameters.get('Location');
+		var location = locationStr.substring(0, locationStr.length()-2);
+		var routerName = parameters.get('RouterName');
+		var networkId = parameters.get('NetworkID');		
+		this.debug("Class-GoogleNetworkVirtualNetwork: Function-createRouter: project: " + project);
+		this.debug("Class-GoogleNetworkVirtualNetwork: Function-createRouter: locationStr: " + locationStr);
+		this.debug("Class-GoogleNetworkVirtualNetwork: Function-createRouter: location: " + location);
+		this.debug("Class-GoogleNetworkVirtualNetwork: Function-createRouter: routerName: " + routerName);
+		this.debug("Class-GoogleNetworkVirtualNetwork: Function-createRouter: networkId: " + networkId);
+
+		//Invoke insert router endpoint
+		var gcpEndpoint = "https://www.googleapis.com/compute/v1/projects/" + project + "/regions/" + location + "/routers";
+		var apiInvoker = new GoogleAPIInvoker(gcpEndpoint, this.scope, this.clientEmail, this.privateKey);
+		var responseObj = new JSON().decode(apiInvoker.invokePost(new JSON().encode(routerRequest)));
+	
+		var responseStatus = '';
+		var endTime = Packages.java.lang.System.nanoTime() + Packages.java.util.concurrent.TimeUnit.NANOSECONDS.convert(this.TIMEOUT_MINUTES, Packages.java.util.concurrent.TimeUnit.MINUTES);	
+		//Wait-until block		
+		while (!(responseStatus.equals("404") || responseStatus.equals("200"))) {
+			Packages.java.lang.Thread.sleep(this.THREAD_SLEEP_MILLISECONDS);
+			//Exit if operation fails and exceeds timeout duration
+			if (Packages.java.lang.System.nanoTime() > endTime) {
+				this.error("Class-GoogleNetworkVirtualNetwork: Function-createRouter: Wait-until block executed, operation timed-out.");
+				throw new GoogleAPIException();
+			}
+			//Invoke get router to check whether it has been created
+			try	{
+				gcpEndpoint = "https://www.googleapis.com/compute/v1/projects/" + project + "/regions/" + location + "/routers/" + routerName;
+				var responseInvoker = new GoogleAPIInvoker(responseObj.targetLink, this.scope, this.clientEmail, this.privateKey);
+				responseObj = new JSON().decode(responseInvoker.invokeGet());
+				if(routerRequest.name.toUpperCase().equals(responseObj.targetLink.substring(responseObj.targetLink.lastIndexOf("/")+1, responseObj.targetLink.length()).toUpperCase()))
+				{
+					responseStatus = '200';
+				}
+			} catch(restAPIException) {
+				responseStatus = '404';				
+			}
+		}
+		
+		//Populate method response DTO
+		var router = new this.RouterDTO();
+		router.setId(responseObj.id);
+		router.setName(routerName);
+		router.setNetworkId(networkId);
+	
+		return router;
+	},
+	///////////////////////////////////////////////////////////////	
+	//CAPI Interface Operation: DeleteRouter	
+	/*
+		Description: Delete a cloud router
+		Documentation: https://cloud.google.com/compute/docs/reference/latest/routers/delete
+		Mandatory parameters: Project, Location (region is needed from location/zone) and RouterID (name of router)
+		Return Type: RouterDTO
+		Response: { "adminstate": "", "id": "", "name": "" }
+	*/	
+	deleteRouter:function() {
+	
+		var project = parameters.get('Project');
+		var locationStr = parameters.get('Location');
+		var location = locationStr.substring(0, locationStr.length()-2);
+		var routerId = parameters.get('RouterID');
+		this.debug("Class-GoogleNetworkVirtualNetwork: Function-deleteRouter: project: " + project);
+		this.debug("Class-GoogleNetworkVirtualNetwork: Function-deleteRouter: location: " + location);
+		this.debug("Class-GoogleNetworkVirtualNetwork: Function-deleteRouter: routerId: " + routerId);
+	
+		//Invoke delete router endpoint
+		var gcpEndpoint = "https://www.googleapis.com/compute/v1/projects/" + project + "/regions/" + location + "/routers/" + routerId;
+		var apiInvoker = new GoogleAPIInvoker(gcpEndpoint, this.scope, this.clientEmail, this.privateKey);
+		var responseObj = new JSON().decode(apiInvoker.invokeDelete());
+		
+		var responseStatus = '';
+		var endTime = Packages.java.lang.System.nanoTime() + Packages.java.util.concurrent.TimeUnit.NANOSECONDS.convert(this.TIMEOUT_MINUTES, Packages.java.util.concurrent.TimeUnit.MINUTES);	
+		//Wait-until block		
+		while (!responseStatus.equals("404")) {
+			Packages.java.lang.Thread.sleep(this.THREAD_SLEEP_MILLISECONDS);
+			//Exit if operation fails and exceeds timeout duration
+			if (Packages.java.lang.System.nanoTime() > endTime) {
+				this.error("Class-GoogleNetworkVirtualNetwork: Function-deleteRouter: Wait-until block executed, operation timed-out.");
+				throw new GoogleAPIException();
+			}
+			//Invoke get router to check whether it has been deleted. Once deleted, 404 response status will be returned by endpoint
+			try	{
+				gcpEndpoint = "https://www.googleapis.com/compute/v1/projects/" + project + "/regions/" + location + "/routers/" + routerId;
+				var responseInvoker = new GoogleAPIInvoker(gcpEndpoint, this.scope, this.clientEmail, this.privateKey);
+				var resObj = new JSON().decode(responseInvoker.invokeGet());
+			} catch(restAPIException) {
+				responseStatus = '404';				
+			}
+		}
+		
+		//Populate method response DTO
+		var router = new this.RouterDTO();
+		router.setId(responseObj.id);
+		router.setName(routerId);
+		router.setAdminState(responseObj.status);	
+	
+		return router;
+	},
+	
+	type: "GoogleNetworkVirtualNetwork"
+});]]></script>
+        <sys_class_name>ecc_agent_script_include</sys_class_name>
+        <sys_created_by>hardik.benani</sys_created_by>
+        <sys_created_on>2018-09-17 23:03:14</sys_created_on>
+        <sys_domain>global</sys_domain>
+        <sys_domain_path>/</sys_domain_path>
+        <sys_id>4299f66edb606300b7829ee6db961965</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>GoogleNetworkVirtualNetwork</sys_name>
+        <sys_overrides/>
+        <sys_package display_value="Google Cloud Management" source="sn_cmp_gcp">40ff1aee0b2023003246ad4363673ac5</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Google Cloud Management">40ff1aee0b2023003246ad4363673ac5</sys_scope>
+        <sys_update_name>ecc_agent_script_include_4299f66edb606300b7829ee6db961965</sys_update_name>
+        <sys_updated_by>hardik.benani</sys_updated_by>
+        <sys_updated_on>2018-09-17 23:03:14</sys_updated_on>
+    </ecc_agent_script_include>
+</record_update>

@@ -1,0 +1,875 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update sys_domain="global" table="ecc_agent_script_include">
+    <ecc_agent_script_include action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <description>GoogleComputeVirtualMachine Script File</description>
+        <name>GoogleComputeVirtualMachine</name>
+        <script><![CDATA[/*
+Class to implement Google Instance API
+Compute interface methods implemented:
+1. CreateNode
+2. ListNodes
+3. DeleteNode
+4. GetNode
+5. ListAvailabilityZones
+6. ListDatacenters
+7. ListHardwareTypes
+8. ListImages
+9. ListIPAddresses
+10. ListSecurityGroups
+11. ListSnapshots
+12. ResizeNode
+13. RestartNode
+14. StartNode
+15. StopNode
+*/
+
+var GoogleComputeVirtualMachine = Class.create();
+
+GoogleComputeVirtualMachine.prototype = Object.extendsObject(CloudAPIBase, {
+	
+	CloudComputeDTO: Packages.com.snc.cmp.connector.dto.CloudCompute,
+	NetworkInterfaceDTO: Packages.com.snc.cmp.connector.dto.NetworkInterface,
+	KeyPairDTO: Packages.com.snc.cmp.connector.dto.KeyPair,
+	SnapshotDTO: Packages.com.snc.cmp.connector.dto.Snapshot,
+	HardwareDTO: Packages.com.snc.cmp.connector.dto.Hardware,
+	LocationDTO: Packages.com.snc.cmp.connector.dto.Location,
+	ImageDTO: Packages.com.snc.cmp.connector.dto.Image,
+	FirewallDTO: Packages.com.snc.cmp.connector.dto.Firewall,
+	TagDTO:  Packages.com.snc.cmp.connector.dto.Tag,
+	NetworkDTO: Packages.com.snc.cmp.connector.dto.Network,
+	VolumeDTO: Packages.com.snc.cmp.connector.dto.Volume,
+	AddressDTO: Packages.com.snc.cmp.connector.dto.Address,
+	scope: "https://www.googleapis.com/auth/cloud-platform",
+	TIMEOUT_MINUTES: 2,
+	THREAD_SLEEP_MILLISECONDS: 5000,
+	
+	initialize: function(parameters, headers) {
+	
+		CloudAPIBase.prototype.initialize.call(this);
+		this.parameters = parameters;
+		this.headers = headers;
+		this.clientEmail = parameters.get('ClientEmail');
+		this.privateKey  = parameters.get('PrivateKey');
+	},
+///////////////////////////////////////////////////////////////	
+/*
+	Description: Get latest finger print of instance to perform metadata operations
+	Mandatory parameters: InstanceName
+	Return Type: String
+*/	
+	_getFingerprint: function(instanceName) {
+	
+		var project = parameters.get('Project');
+		var location = parameters.get('Location');
+
+		//Invoke get instance endpoint 
+		var responseEndpoint = "https://www.googleapis.com/compute/v1/projects/" + project + "/zones/" + location + "/instances/" + instanceName;
+		var responseInvoker = new GoogleAPIInvoker(responseEndpoint, this.scope, this.clientEmail, this.privateKey);
+		var responseObj = new JSON().decode(responseInvoker.invokeGet());
+		var fingerprint = responseObj.metadata.fingerprint;
+			
+		return fingerprint;
+	},
+///////////////////////////////////////////////////////////////	
+//CAPI Interface Operation: CreateNode	
+/*
+	Description: Create an instance
+	Documentation: https://cloud.google.com/compute/docs/reference/latest/instances/insert
+	Mandatory parameters: Project, Location, KeyInfo, ComputeProfile, InstanceRequest, params (OS profile)
+	Return Type: CloudComputeDTO
+	Response: { "sshkeyname": "", "location": "", "nodename": "", "nodeid": "", "processors": "", "state": "", "hardwareid": "", "userid": "",
+		"networkinterfaces": "[{ "networkInterfaceId": "", "name": "", "subnetId": "", "networkId": "", "ownerId": "", "privateIPAddresses": [], "publicIPAddresses":[], "sourceDestCheck": boolean, "resourceGroup": ""}]",
+		"imageid": "", "ram": "" }
+*/	
+	createVirtualMachine: function(instanceRequest, params) {
+		
+		var project = parameters.get('Project');
+		var location = parameters.get('Location');
+		var keyInfo =  parameters.get('KeyInfo');
+		var discoverAndAttachIP =  parameters.get('DiscoverAndAttachIP');
+		var computeProfile = new JSON().decode(parameters.get('ComputeProfile'));
+		var postInitScript = parameters.get('PostInitScript');
+		this.debug("Class-GoogleComputeVirtualMachine: Function-createVirtualMachine: project: " + project);
+		this.debug("Class-GoogleComputeVirtualMachine: Function-createVirtualMachine: location: " + location);
+		this.debug("Class-GoogleComputeVirtualMachine: Function-createVirtualMachine: keyInfo: " + keyInfo);
+		this.debug("Class-GoogleComputeVirtualMachine: Function-createVirtualMachine: discoverAndAttachIP: " + discoverAndAttachIP);
+		this.debug("Class-GoogleComputeVirtualMachine: Function-createVirtualMachine: computeProfile: " + computeProfile);
+		this.debug("Class-GoogleComputeVirtualMachine: Function-createVirtualMachine: postInitScript: " + postInitScript);
+
+		//Login name for end-user to login. Will be getting from keyInfo.
+		var userId = '';
+		//If end-user doesn't know any avaiable reserved static IP address, invoke address endpoint and fetch it
+		if(discoverAndAttachIP == 'Yes') {
+		//Invoke address endpoint to fetch reserved static IP addresses
+			var discoverGcpEndpoint = "https://www.googleapis.com/compute/v1/projects/" + project + "/regions/" + location.substring(0,location.length()-2) + "/addresses";
+			var discoverApiInvoker = new GoogleAPIInvoker(discoverGcpEndpoint, this.scope, this.clientEmail, this.privateKey);
+			var externalIPs = new JSON().decode(discoverApiInvoker.invokeGet());
+			if(externalIPs.items != undefined) {
+				for(var i=0;i<externalIPs.items.length;i++)	{
+					if(externalIPs.items[i].status == "RESERVED") {
+						//Set available IP address in network interface of instance					
+						instanceRequest.networkInterfaces[0].accessConfigs[0].natIP = externalIPs.items[i].address;
+						break;
+					}
+				}
+			}
+		}		
+		//End-user SSH key
+		var nameKeyValue= "";
+		//Management SSH key		
+		var mgmtNameKeyValue= "";
+		//If OS is Linux, inject SSH keys
+		if(instanceRequest.disks[0].initializeParams.sourceImage.indexOf("windows") == -1) {
+			var mappedKeyInfo = new JSON().decode(keyInfo);
+			var userName = mappedKeyInfo.ImageUser;
+			var mgmtUserName = mappedKeyInfo.KeyName;
+			userId = userName;
+			
+			var publicKey = mappedKeyInfo.PublicKey;
+			//As key comes as JSON string, replace occurences of new line string with new line character			
+			publicKey = publicKey.substring(0, publicKey.indexOf('\\n')) + '\n';
+			//Prepare SSH key-value as per format
+			nameKeyValue = userName + ':' + publicKey.replace('admin-default', userName);
+			
+			var mgmtPublicKey = mappedKeyInfo.MgmtPublicKey;
+			mgmtPublicKey = mgmtPublicKey.substring(0, mgmtPublicKey.indexOf('\\n')) + '\n';
+			mgmtUserName = userName;
+			//Replace management login name in key to admin-default because management username is coming as admin-default
+			mgmtNameKeyValue = mgmtUserName + ':' + mgmtPublicKey.replace('sn-fbc47715dbc50300439c361b7c961916-mgt', 'admin-default');
+		}
+		
+		//Invoke insert instance endpoint
+		var gcpEndpoint = "https://www.googleapis.com/compute/v1/projects/" + project + "/zones/" + location + "/instances";
+		var apiInvoker = new GoogleAPIInvoker(gcpEndpoint, this.scope, this.clientEmail, this.privateKey);
+		var responseObj = new JSON().decode(apiInvoker.invokePost(new JSON().encode(instanceRequest)));
+		
+		var responseStatus = responseObj.status;
+		var endTime = Packages.java.lang.System.nanoTime() + Packages.java.util.concurrent.TimeUnit.NANOSECONDS.convert(this.TIMEOUT_MINUTES, Packages.java.util.concurrent.TimeUnit.MINUTES);		
+		//Wait-until block		
+		while (!responseStatus.toUpperCase().equals("RUNNING")) {
+			Packages.java.lang.Thread.sleep(this.THREAD_SLEEP_MILLISECONDS);
+			//Exit if operation fails and exceeds timeout duration
+			if (Packages.java.lang.System.nanoTime() > endTime) {
+				this.error("Class-GoogleComputeVirtualMachine: Function-createVirtualMachine: Wait-until block executed, operation timed-out.");
+				throw new GoogleAPIException();
+			}
+			//Invoke get instance to check whether it has been created
+			var responseEndpoint = "https://www.googleapis.com/compute/v1/projects/" + project + "/zones/" + location + "/instances/" + instanceRequest.name;
+			var responseInvoker = new GoogleAPIInvoker(responseEndpoint, this.scope, this.clientEmail, this.privateKey);
+			responseObj = new JSON().decode(responseInvoker.invokeGet());
+			responseStatus = responseObj.status;
+		}
+		
+		var computeNode = new this.CloudComputeDTO();
+		//Prepare metadata item JSON to inject management and end-user SSH keys		
+		if(instanceRequest.disks[0].initializeParams.sourceImage.indexOf("windows") == -1) {
+			var metadataItem = [{ "key": "sshKeys",	"value": nameKeyValue + mgmtNameKeyValue }];
+			if(!JSUtil.nil(postInitScript)) {
+				metadataItem.push({	"key": "startup-script", "value": postInitScript });
+			}
+			//Prepare metadata JSON by getting latest fingerprint of instance
+			var metadataDetails = {
+				"fingerprint": this._getFingerprint(instanceRequest.name),
+				"items": metadataItem
+			};
+			//Invoke setMetadata endpoint to inject SSH keys
+			var metadataEndpoint = "https://www.googleapis.com/compute/v1/projects/" + project + "/zones/" + location + "/instances/" + instanceRequest.name + "/setMetadata";
+			var metadataInvoker = new GoogleAPIInvoker(metadataEndpoint, this.scope, this.clientEmail, this.privateKey);
+			var metadataResponseObj = new JSON().decode(metadataInvoker.invokePost(new JSON().encode(metadataDetails)));
+			computeNode.setSshKeyName(nameKeyValue);
+		}		
+		
+		//Populate method response DTO
+		computeNode.setLocation(location);
+		computeNode.setNodeName(instanceRequest.name);
+		computeNode.setNodeId(responseObj.id);
+		computeNode.setState(responseObj.status);
+		computeNode.setHardwareId(params.hardwareId);
+		computeNode.setImageId(params.imageId);
+		computeNode.setRam(computeProfile.Memory);
+		computeNode.setProcessors(computeProfile.CPU);
+		computeNode.setUserId(userId);		
+		//Set internal IP address		
+		var privateIPAddressList = new Packages.java.util.ArrayList();
+		privateIPAddressList.add(responseObj.networkInterfaces[0].networkIP);
+		//Set public/external IP address		
+		var publicIPAddressList = new Packages.java.util.ArrayList();
+		publicIPAddressList.add(responseObj.networkInterfaces[0].accessConfigs[0].natIP);
+		
+		var networkInterface = new this.NetworkInterfaceDTO();
+		networkInterface.setNetworkInterfaceId(responseObj.networkInterfaces[0].name);
+		networkInterface.setName(responseObj.networkInterfaces[0].name);
+		networkInterface.setPrivateIPAddresses(privateIPAddressList);
+		networkInterface.setPublicIPAddresses(publicIPAddressList);
+		networkInterface.setSubnetId(responseObj.subnetwork);
+		//Extract network name as API returns self-link of network		
+		networkInterface.setNetworkId(responseObj.network.substring(responseObj.network.lastIndexOf('/'), responseObj.network.length()));
+		networkInterface.setSourceDestCheck(true);
+		networkInterface.setOwnerId(responseObj.id);
+		networkInterface.setResourceGroup(responseObj.name);
+		computeNode.setNetworkInterfaces(new Packages.java.util.ArrayList());
+		computeNode.getNetworkInterfaces().add(networkInterface);
+		
+		return computeNode;
+	},
+///////////////////////////////////////////////////////////////	
+//CAPI Interface Operation: ListNodes		
+/*
+	Description: List all instances
+	Documentation: https://cloud.google.com/compute/docs/reference/latest/instances/list
+	Mandatory parameters: Project
+	Return Type: List<CloudComputeDTO>
+	Response: [{"nodeId": "", "nodeName": "", "state": "", "location": "" }]
+*/	
+	listVirtualMachines:function() {
+	
+		var project = parameters.get('Project');
+		this.debug("Class-GoogleComputeVirtualMachine: Function-listVirtualMachines: project: " + project);
+		
+		//Invoke aggregated instances endpoint
+		var gcpEndPoint = "https://www.googleapis.com/compute/v1/projects/" + project + "/aggregated/instances";
+		var apiInvoker = new GoogleAPIInvoker(gcpEndPoint, this.scope, this.clientEmail, this.privateKey);
+		var responseObj = new JSON().decode(apiInvoker.invokeGet());
+		var zones = responseObj.items;
+		
+		//Populate method response DTO
+		var virtualMachines = new Packages.java.util.ArrayList();
+		for(var zone in zones) {
+			for(var inst in zones[zone]) {
+				if(inst === 'instances') {
+					for(var i=0;i<zones[zone][inst].length;i++)	{
+						var computeNode = new this.CloudComputeDTO();
+						computeNode.setLocation(zone);
+						computeNode.setNodeName(zones[zone][inst][i].name);
+						computeNode.setNodeId(zones[zone][inst][i].id);
+						computeNode.setState(zones[zone][inst][i].status);
+						virtualMachines.add(computeNode);
+					}
+				}
+			}
+		}
+		
+		return virtualMachines;
+	},
+///////////////////////////////////////////////////////////////	
+//CAPI Interface Operation: DeleteNode	
+/*
+	Description: Delete an instance
+	Documentation: https://cloud.google.com/compute/docs/reference/latest/instances/delete
+	Mandatory parameters: Project, NodeID (name of instance) and Location
+	Return Type: CloudComputeDTO
+	Response: { "nodeId": "", "nodeName": "", "state": "" }
+*/	
+	deleteVirtualMachine: function() {
+		
+		var project = parameters.get('Project');
+		var nodeId = parameters.get('NodeID');
+		var location = parameters.get('Location');
+		this.debug("Class-GoogleComputeVirtualMachine: Function-deleteVirtualMachine: project: " + project);
+		this.debug("Class-GoogleComputeVirtualMachine: Function-deleteVirtualMachine: nodeId: " + nodeId);
+		this.debug("Class-GoogleComputeVirtualMachine: Function-deleteVirtualMachine: location: " + location);
+		
+		//Invoke delete instance endpoint
+		var gcpEndpoint = "https://www.googleapis.com/compute/v1/projects/" + project + "/zones/" + location + "/instances/" + nodeId;
+		var apiInvoker = new GoogleAPIInvoker(gcpEndpoint, this.scope, this.clientEmail, this.privateKey);
+		var responseObj = new JSON().decode(apiInvoker.invokeDelete());
+		
+		var responseStatus = '';
+		var endTime = Packages.java.lang.System.nanoTime() + Packages.java.util.concurrent.TimeUnit.NANOSECONDS.convert(this.TIMEOUT_MINUTES, Packages.java.util.concurrent.TimeUnit.MINUTES);		
+		//Wait-until block		
+		while (!responseStatus.equals("404")) {
+			Packages.java.lang.Thread.sleep(this.THREAD_SLEEP_MILLISECONDS);
+			//Exit if operation fails and exceeds timeout duration
+			if (Packages.java.lang.System.nanoTime() > endTime) {
+				this.error("Class-GoogleComputeVirtualMachine: Function-deleteVirtualMachine: Wait-until block executed, operation timed-out.");
+				throw new GoogleAPIException();
+			}
+			//Invoke get instance to check whether it has been deleted. Once deleted, 404 response status will be returned by endpoint
+			try	{
+				var responseEndpoint = "https://www.googleapis.com/compute/v1/projects/" + project + "/zones/" + location + "/instances/" + nodeId;
+				var responseInvoker = new GoogleAPIInvoker(responseEndpoint, this.scope, this.clientEmail, this.privateKey);
+				responseObj = new JSON().decode(responseInvoker.invokeGet());
+			} catch(restAPIException) {
+				responseStatus = '404';				
+			}
+		}
+		
+		//Populate method response DTO
+		var computeNode = new this.CloudComputeDTO();
+		computeNode.setNodeId(responseObj.id);
+		computeNode.setNodeName(nodeId);
+		computeNode.setState("DELETED");
+		
+		return computeNode;
+	},
+///////////////////////////////////////////////////////////////	
+//CAPI Interface Operation: GetNode	
+/*
+	Description: Get details of an instance
+	Documentation: https://cloud.google.com/compute/docs/reference/latest/instances/get
+	Mandatory parameters: Project, NodeID (name of instance) and Location
+	Return Type: CloudComputeDTO
+	Response: { "location": "", "nodename": "", "availabilityzone": "", "nodeid": "", "state": "", "publicips": "[]", "scope": "", "hostname": "", 
+		"networkinterfaces": "[ {"name": "", "privateIPAddresses":[], "publicIPAddresses":[ ]}]", "privateips": "[]", "resourceurl": "" }
+*/	
+	getVirtualMachine: function(nodeName) {
+		
+		var project = parameters.get('Project');
+		var nodeId = !JSUtil.nil(parameters.get('NodeID')) ? parameters.get('NodeID') : nodeName;
+		var location = parameters.get('Location');
+		this.debug("Class-GoogleComputeVirtualMachine: Function-getVirtualMachine: project: " + project);
+		this.debug("Class-GoogleComputeVirtualMachine: Function-getVirtualMachine: nodeId: " + nodeId);
+		this.debug("Class-GoogleComputeVirtualMachine: Function-getVirtualMachine: location: " + location);
+
+		//Invoke get instance endpoint
+		var gcpEndpoint = "https://www.googleapis.com/compute/v1/projects/" + project + "/zones/" + location + "/instances/" + nodeId;
+		var apiInvoker = new GoogleAPIInvoker(gcpEndpoint, this.scope, this.clientEmail, this.privateKey);
+		var responseObj = new JSON().decode(apiInvoker.invokeGet());
+		
+		//Populate method response DTO
+		var computeNode = new this.CloudComputeDTO();
+		computeNode.setNodeId(responseObj.id);
+		computeNode.setNodeName(responseObj.name);
+		computeNode.setState(responseObj.status);
+		computeNode.setLocation(location);
+		computeNode.setAvailabilityZone(responseObj.zone);
+		computeNode.setScope("https://www.googleapis.com/auth/cloud-platform");
+		computeNode.setHostName(responseObj.name);
+		computeNode.setResourceURL(responseObj.selfLink);
+		
+		var publicIpsSet = new Packages.java.util.HashSet();
+		var privateIpsSet = new Packages.java.util.HashSet();
+		var networkInterfaceList = new Packages.java.util.ArrayList();
+		
+		var networkInterfaces = responseObj.networkInterfaces;
+		if(networkInterfaces != null) {
+			for(var i=0; i < networkInterfaces.length; i++)	{
+				var publicIPList = new Packages.java.util.ArrayList();
+				var privateIPList = new Packages.java.util.ArrayList();
+				//Set internal IP address
+				var networkInterface = new this.NetworkInterfaceDTO();
+				networkInterface.setName(networkInterfaces[i].name);
+				privateIpsSet.add(networkInterfaces[i].networkIP);
+				privateIPList.add(networkInterfaces[i].networkIP);
+				//Set public IP address
+				var accessConfigs = networkInterfaces[i].accessConfigs;
+				if(accessConfigs != null) {
+					for(var j=0; j < accessConfigs.length; j++)	{
+						publicIpsSet.add(accessConfigs[i].natIP);
+						publicIPList.add(accessConfigs[i].natIP);
+					}
+				}
+				networkInterface.setPrivateIPAddresses(privateIPList);
+				networkInterface.setPublicIPAddresses(publicIPList);
+				networkInterfaceList.add(networkInterface);
+			}
+		}
+		computeNode.setPublicIps(publicIpsSet);
+		computeNode.setPrivateIps(privateIpsSet);
+		computeNode.setNetworkInterfaces(networkInterfaceList);
+		
+		return computeNode;
+	},
+///////////////////////////////////////////////////////////////	
+//CAPI Interface Operation: ListAvailabilityZones	
+/*
+	Description: List all zones 
+	Documentation: https://cloud.google.com/compute/docs/reference/latest/zones/list
+	Mandatory parameters: Project
+	Return Type: List<LocationDTO>
+	Response: [{ "locationId": "", "locationName": "" }]
+*/	
+	listAvailabilityZones: function() {
+		
+		var project = parameters.get('Project');
+		this.debug("Class-GoogleComputeVirtualMachine: Function-listAvailabilityZones: project: " + project);
+
+		//Invoke google compute regions endpoint
+		var gcpEndpoint = "https://www.googleapis.com/compute/v1/projects/" + project + "/zones";
+		var apiInvoker = new GoogleAPIInvoker(gcpEndpoint, this.scope, this.clientEmail, this.privateKey);
+		var responseObj = new JSON().decode(apiInvoker.invokeGet());
+		var zoneArray = responseObj.items;
+		
+		//Populate method response DTO
+		var zoneList = new Packages.java.util.ArrayList();
+		if(zoneArray != null && zoneArray.length > 0) {
+			for(var i=0; i < zoneArray.length; i++) {
+				var location = new this.LocationDTO();
+				location.setLocationId(zoneArray[i].id);
+				location.setLocationName(zoneArray[i].name);
+				zoneList.add(location);
+			}
+		}		
+		
+		return zoneList;
+	},
+///////////////////////////////////////////////////////////////	
+//CAPI Interface Operation: ListDatacenters	
+/*
+	Description: List all regions
+	Documentation: https://cloud.google.com/compute/docs/reference/latest/regions/list
+	Mandatory parameters: Project
+	Return Type: List<LocationDTO>
+	Response: [{ "locationId": "", "locationName": "" }]
+*/	
+	listDatacenters: function() {
+	
+		var project = parameters.get('Project');
+		this.debug("Class-GoogleComputeVirtualMachine: Function-listDatacenters: project: " + project);
+
+		//Invoke google compute regions endpoint
+		var gcpEndpoint = "https://www.googleapis.com/compute/v1/projects/" + project + "/regions";
+		var apiInvoker = new GoogleAPIInvoker(gcpEndpoint, this.scope, this.clientEmail, this.privateKey);
+		var responseObj = new JSON().decode(apiInvoker.invokeGet());
+		var zoneArray = responseObj.items;
+		
+		//Populate method response DTO
+		var datacenterList = new Packages.java.util.ArrayList();
+		if(zoneArray != null && zoneArray.length > 0) {
+			for(var i=0; i < zoneArray.length; i++) {
+				var subZoneArray = zoneArray[i].zones;
+				if(subZoneArray != null && subZoneArray.length > 0)	{
+					for(var j=0; j < subZoneArray.length; j++) {
+						var location = new this.LocationDTO();
+						location.setLocationId(subZoneArray[j].id);
+						//Extract region name as API returns self-link of region
+						location.setLocationName(subZoneArray[j].substring(subZoneArray[j].lastIndexOf("/")+1, subZoneArray[j].length()));
+						datacenterList.add(location);
+					}
+				}
+			}
+		}
+		
+		return datacenterList;
+	},
+///////////////////////////////////////////////////////////////	
+//CAPI Interface Operation: ListHardwareTypes	
+/*
+	Description: List all machine types
+	Documentation: https://cloud.google.com/compute/docs/reference/latest/machineTypes/aggregatedList
+	Mandatory parameters: Project
+	Return Type: List<HardwareDTO>
+	Response: [{ "hardwareId": "", "name": "", "cloudType": "", "location": "", "storage": "", "memory": "", "vCPUs": "", "core": "" }]
+*/	
+	listHardwareTypes: function() {
+		
+		var project = parameters.get('Project');
+		this.debug("Class-GoogleComputeVirtualMachine: Function-listHardwareTypes: project: " + project);
+		
+		//Invoke aggregated machine types endpoint
+		var gcpEndpoint = "https://www.googleapis.com/compute/v1/projects/" + project + "/aggregated/machineTypes";
+		var apiInvoker = new GoogleAPIInvoker(gcpEndpoint, this.scope, this.clientEmail, this.privateKey);
+		var responseObj = new JSON().decode(apiInvoker.invokeGet());
+		var zones = responseObj.items;
+		
+		//Populate method response DTO
+		var hardwareTypeList = new Packages.java.util.ArrayList();
+		for(var zone in zones) {
+			for(var machineTypes in zones[zone]) {
+				if(machineTypes == 'machineTypes') {
+					for(var i=0;i<zones[zone][machineTypes].length;i++)	{
+						var hardwareType = new this.HardwareDTO();
+						hardwareType.setHardwareId(zones[zone][machineTypes][i].id);
+						hardwareType.setName(zones[zone][machineTypes][i].name);
+						hardwareType.setLocation(zones[zone][machineTypes][i].zone);
+						hardwareType.setStorage(zones[zone][machineTypes][i].maximumPersistentDisks);
+						hardwareType.setMemory(zones[zone][machineTypes][i].memoryMb);
+						hardwareType.setvCPUs(zones[zone][machineTypes][i].guestCpus);
+						hardwareType.setCloudType("Google");
+						hardwareTypeList.add(hardwareType);
+					}
+				}
+			}
+		}
+		
+		return hardwareTypeList;
+	},
+///////////////////////////////////////////////////////////////	
+//CAPI Interface Operation: ListImages	
+/*
+	Description: List private images
+	Documentation: https://cloud.google.com/compute/docs/reference/latest/images/list
+	Mandatory parameters: Project
+	Return Type: List<ImageDTO>
+	Response: [{ "imageId": "", "imageName": "", "imageType": "", "memorySize": "", "osFamily": "" }]
+*/	
+	listImages: function() {
+		
+		var project = parameters.get('Project');
+		this.debug("Class-GoogleComputeVirtualMachine: Function-listImages: project: " + project);
+
+		//Invoke private images endpoint
+		if(project != null)
+		{
+			var gcpEndpoint = "https://www.googleapis.com/compute/v1/projects/" + project + "/global/images";
+			var apiInvoker = new GoogleAPIInvoker(gcpEndpoint, this.scope, this.clientEmail, this.privateKey);
+			var responseObj = new JSON().decode(apiInvoker.invokeGet());
+			var imageTypeArray = responseObj.items;
+		
+			//Populate method response DTO
+			var imageList = new Packages.java.util.ArrayList();
+			if(imageTypeArray != null && imageTypeArray.length > 0) {
+			for(var i=0; i < imageTypeArray.length; i++) {
+				var image = new this.ImageDTO();
+				image.setImageId(imageTypeArray[i].selfLink.replace('https://www.googleapis.com/compute/v1',''));
+				image.setImageName(imageTypeArray[i].name);
+				image.setImageType(imageTypeArray[i].sourceType);
+				image.setOsFamily(imageTypeArray[i].family != undefined ? imageTypeArray[i].family : "");
+				image.setMemorySize(imageTypeArray[i].diskSizeGb);
+				image.setRootDeviceType(imageTypeArray[i].selfLink.replace('https://www.googleapis.com/compute/v1',''));
+				imageList.add(image);
+				}
+			}
+		
+			return imageList;
+		}
+		else
+		{
+			this.debug("Class-GoogleComputeVirtualMachine: Function-listImages project name missing");
+		}
+		
+	},
+///////////////////////////////////////////////////////////////	
+//CAPI Interface Operation: ListIPAddresses	
+	listExternalStaticAddresses: function() {
+/*
+	Description: List reserved IP addresses
+	Documentation: https://cloud.google.com/compute/docs/reference/latest/addresses/aggregatedList
+	Mandatory parameters: Project
+	Return Type: List<AddressDTO>
+	Response: [{ "publicIp": "", "state: "", "nodeId: "" }]
+*/	
+		var project = parameters.get('Project');
+		this.debug("Class-GoogleComputeVirtualMachine: Function-listExternalStaticAddresses: project: " + project);
+		
+		//Invoke aggregated reserved static addresses endpoint
+		var gcpEndpoint = "https://www.googleapis.com/compute/v1/projects/" + project + "/aggregated/addresses";
+		var apiInvoker = new GoogleAPIInvoker(gcpEndpoint, this.scope, this.clientEmail, this.privateKey);
+		var responseObj = new JSON().decode(apiInvoker.invokeGet());
+		var zones = responseObj.items;
+		
+		//Populate method response DTO
+		var ipAddressList = new Packages.java.util.ArrayList();
+		for(var zone in zones) {
+			for(var addresses in zones[zone]) {
+				if(addresses == 'addresses') {
+					for(var i=0;i<zones[zone][addresses].length;i++) {
+						var ipAddress = new this.AddressDTO();
+						ipAddress.setPublicIp(zones[zone][addresses][i].address);
+						ipAddress.setState(zones[zone][addresses][i].status);
+						ipAddress.setNodeId(zones[zone][addresses][i].name);
+						ipAddressList.add(ipAddress);
+					}
+				}
+			}
+		}
+		
+		return ipAddressList;
+	},
+///////////////////////////////////////////////////////////////	
+//CAPI Interface Operation: ListSecurityGroups	
+/*
+	Description: List firewalls
+	Documentation: https://cloud.google.com/compute/docs/reference/latest/firewalls/list
+	Mandatory parameters: Project
+	Return Type: List<FirewallDTO>
+	Response: [ { "firewallName": "", "firewallId": "", "networkName": "", "tags": [{ "key": "", "value": "" }] }]
+*/	
+	listFirewalls: function() {
+		
+		var project = parameters.get('Project');
+		this.debug("Class-GoogleComputeVirtualMachine: Function-listFirewalls: project: " + project);
+		
+//Invoke list firewall endpoint
+		var gcpEndpoint = "https://www.googleapis.com/compute/v1/projects/" + project + "/global/firewalls";
+		var apiInvoker = new GoogleAPIInvoker(gcpEndpoint, this.scope, this.clientEmail, this.privateKey);
+		var responseObj = new JSON().decode(apiInvoker.invokeGet());
+		var items = responseObj.items;
+		
+		//Populate method response DTO
+		var firewallList = new Packages.java.util.ArrayList();
+		for (var i=0; i < items.length; i++) {
+			var firewall = new this.FirewallDTO();
+			firewall.setFirewallName(items[i].name);
+			firewall.setFirewallId(items[i].id);
+			firewall.setDescription(items[i].description);
+			//Extract network name as API returns self-link of network
+			firewall.setNetworkName(items[i].network.substring(items[i].network.lastIndexOf("/")+1,items[i].network.length()));
+			
+			var targetTagArray = items[i].targetTags;
+			if(targetTagArray != null && targetTagArray.length > 0) {
+				var tagList = new Packages.java.util.ArrayList();
+				for(var ii=0; ii < targetTagArray.length; ii++) {
+					var tag = new this.TagDTO();
+					tag.setKey(targetTagArray[ii]);
+					tagList.add(tag);
+				}
+				firewall.setTags(tagList);
+			}
+			else {
+				firewall.setTags(null);
+			}
+			firewallList.add(firewall);
+		}
+		
+		return firewallList;
+	},
+///////////////////////////////////////////////////////////////	
+//CAPI Interface Operation: ListSnapshots	
+/*
+	Description: List all disk snapshots
+	Documentation: https://cloud.google.com/compute/docs/reference/latest/snapshots/list
+	Mandatory parameters: Project
+	Return Type: List<SnapshotDTO>
+	Response: [{ "snapshotName": "", "snapshotId": "", "volumeName": "", "volumeId": "", "createTime": "", "size": "", "state": "" }]
+*/	
+	listSnapshots: function() {
+		
+		var project = parameters.get('Project');
+		this.debug("Class-GoogleComputeVirtualMachine: Function-listSnapshots: project: " + project);
+		
+		//Invoke snapshots endpoint
+		var gcpEndpoint = "https://www.googleapis.com/compute/v1/projects/" + project + "/global/snapshots";
+		var apiInvoker = new GoogleAPIInvoker(gcpEndpoint, this.scope, this.clientEmail, this.privateKey);
+		var responseObj = new JSON().decode(apiInvoker.invokeGet());
+		var snapshotArray = responseObj.items;
+		
+		//Populate method response DTO
+		var snapshotList = new Packages.java.util.ArrayList();
+		if(snapshotArray != null && snapshotArray.length > 0) {
+			var dateFormat = new Packages.java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
+			//subZoneArray[j].substring(subZoneArray[j].lastIndexOf("/")+1, subZoneArray[j].length())
+			for(var i=0; i < snapshotArray.length; i++)	{
+				var snapshot = new this.SnapshotDTO();
+				snapshot.setSnapshotName(snapshotArray[i].name);
+				snapshot.setVolumeId(snapshotArray[i].sourceDiskId);
+				//Extract disk name as API returns self-link of disk
+				snapshot.setVolumeName(snapshotArray[i].sourceDisk.substring(snapshotArray[i].sourceDisk.lastIndexOf("/")+1,snapshotArray[i].sourceDisk.length()));
+				snapshot.setSnapshotId(snapshotArray[i].id);
+				snapshot.setCreateTime(dateFormat.parse(snapshotArray[i].creationTimestamp));
+				snapshot.setState(snapshotArray[i].status);
+				snapshot.setSize(snapshotArray[i].diskSizeGb);
+				snapshotList.add(snapshot);
+			}
+		}
+		
+		return snapshotList;
+	},
+///////////////////////////////////////////////////////////////	
+//CAPI Interface Operation: ResizeNode	
+/*
+	Description: Change machine type of instance
+	Documentation: https://cloud.google.com/compute/docs/reference/latest/instances/setMachineType
+	Mandatory parameters: Project, NodeID (name of instance), Location, ComputeProfile and ResizeRequest (JSON to pass in request body)
+	Return Type: CloudComputeDTO
+	Response: { "location": "", "nodename": "", "availabilityzone": "", "nodeid": "", "state": "", "publicips": "[]", "scope": "", "hostname": "", 
+		"networkinterfaces": "[ {"name": "", "privateIPAddresses":[], "publicIPAddresses":[ ]}]", "privateips": "[]", "resourceurl": "" }
+*/	
+	resizeVirtualMachine: function(resizeRequest) {
+		
+		var project = parameters.get('Project');
+		var nodeId = parameters.get('NodeID');
+		var location = parameters.get('Location');
+		var computeProfile = parameters.get('ComputeProfile');
+		var mappedHardware = new JSON().decode(computeProfile);
+		var hardwareId = mappedHardware.HardwareId;
+		this.debug("Class-GoogleComputeVirtualMachine: Function-resizeVirtualMachine: project: " + project);
+		this.debug("Class-GoogleComputeVirtualMachine: Function-resizeVirtualMachine: nodeId: " + nodeId);
+		this.debug("Class-GoogleComputeVirtualMachine: Function-resizeVirtualMachine: location: " + location);
+		this.debug("Class-GoogleComputeVirtualMachine: Function-resizeVirtualMachine: computeProfile: " + computeProfile);
+		this.debug("Class-GoogleComputeVirtualMachine: Function-resizeVirtualMachine: mappedHardware: " + mappedHardware);
+		this.debug("Class-GoogleComputeVirtualMachine: Function-resizeVirtualMachine: hardwareId: " + hardwareId);
+		
+		//Populate method response DTO
+		var computeNode = this.getVirtualMachine(nodeId);
+		//If instance is runnig, stop the instance
+		if(computeNode.getState().toUpperCase().equals('RUNNING')) {
+			this.stopVirtualMachine(nodeId);
+		}
+		if(computeNode.getState().toUpperCase().equals('TERMINATED')) {
+			//Invoke resize instance endpoint
+			var computeEndpoint = "https://www.googleapis.com/compute/v1/projects/" + project + "/zones/" + location + "/instances/" + nodeId + "/setMachineType";
+			var apiInvoker = new GoogleAPIInvoker(computeEndpoint, this.scope, this.clientEmail, this.privateKey);
+			var responseObj = new JSON().decode(apiInvoker.invokePost(new JSON().encode(resizeRequest)));
+			
+			var newMachineType = '';
+			var endTime = Packages.java.lang.System.nanoTime() + Packages.java.util.concurrent.TimeUnit.NANOSECONDS.convert(this.TIMEOUT_MINUTES, Packages.java.util.concurrent.TimeUnit.MINUTES);		
+			//Wait-until block		
+			while (!newMachineType.toUpperCase().equals(hardwareId.toUpperCase())) {
+				Packages.java.lang.Thread.sleep(this.THREAD_SLEEP_MILLISECONDS);
+				//Exit if operation fails and exceeds timeout duration
+				if (Packages.java.lang.System.nanoTime() > endTime) {
+					this.error("Class-GoogleComputeVirtualMachine: Function-resizeVirtualMachine: Wait-until block executed, operation timed-out.");
+					throw new GoogleAPIException();
+				}
+				//Invoke get instance to check new machine type
+				var responseEndpoint = "https://www.googleapis.com/compute/v1/projects/" + project + "/zones/" + location + "/instances/" + nodeId;
+				var responseInvoker = new GoogleAPIInvoker(responseEndpoint, this.scope, this.clientEmail, this.privateKey);
+				responseObj = new JSON().decode(responseInvoker.invokeGet());
+				newMachineType = responseObj.machineType.substring(responseObj.machineType.lastIndexOf("/")+1,responseObj.machineType.length());
+			}
+			
+			computeNode = this.startVirtualMachine(nodeId);
+			computeNode.setHardwareId(hardwareId);
+		}
+		
+		return computeNode;
+	},
+///////////////////////////////////////////////////////////////	
+//CAPI Interface Operation: RestartNode	
+/*
+	Description: Restart an instance
+	Documentation: Google doesn't support restart. Instead supports reset.
+	Mandatory parameters: 
+	Return Type: CloudComputeDTO
+	Response: { "location": "", "nodename": "", "availabilityzone": "", "nodeid": "", "state": "", "publicips": "[]", "scope": "", "hostname": "", 
+		"networkinterfaces": "[ {"name": "", "privateIPAddresses":[], "publicIPAddresses":[ ]}]", "privateips": "[]", "resourceurl": "" }
+*/	
+	restartVirtualMachine: function() {
+		
+		var project = parameters.get('Project');
+		var nodeId = parameters.get('NodeID');
+		var location = parameters.get('Location');
+		this.debug("Class-GoogleComputeVirtualMachine: Function-restartVirtualMachine: project: " + project);
+		this.debug("Class-GoogleComputeVirtualMachine: Function-restartVirtualMachine: nodeId: " + nodeId);
+		this.debug("Class-GoogleComputeVirtualMachine: Function-restartVirtualMachine: location: " + location);
+		
+		//Populate method response DTO
+		var computeNode = this.getVirtualMachine(nodeId);
+		//If instance is already stopped, start the instance. Else stop and start the instance.
+		if(computeNode.getState().toUpperCase().equals('TERMINATED')) {
+			computeNode = this.startVirtualMachine(nodeId);
+		}
+		else if(computeNode.getState().toUpperCase().equals('RUNNING')) {
+			computeNode = this.stopVirtualMachine(nodeId);
+			computeNode = this.startVirtualMachine(nodeId);			
+		}
+		
+		return computeNode;
+	},
+///////////////////////////////////////////////////////////////	
+//CAPI Interface Operation: StartNode	
+/*
+	Description: Start an instance
+	Documentation: https://cloud.google.com/compute/docs/reference/latest/instances/start
+	Mandatory parameters: Project, NodeID (name of instance) and Location
+	Return Type: CloudComputeDTO
+	Response: { "nodename": "", "nodeid": "", "state": "", "starttime": "" }
+*/	
+	startVirtualMachine: function(nodeName) {
+		
+		var project = parameters.get('Project');
+		var nodeId = !JSUtil.nil(parameters.get('NodeID')) ? parameters.get('NodeID') : nodeName;
+		var location = parameters.get('Location');
+		this.debug("Class-GoogleComputeVirtualMachine: Function-startVirtualMachine: project: " + project);
+		this.debug("Class-GoogleComputeVirtualMachine: Function-startVirtualMachine: nodeId: " + nodeId);
+		this.debug("Class-GoogleComputeVirtualMachine: Function-startVirtualMachine: location: " + location);
+
+		//Invoke start instance endpoint
+		var gcpEndpoint = "https://www.googleapis.com/compute/v1/projects/" + project + "/zones/" + location + "/instances/" + nodeId + "/start";
+		var apiInvoker = new GoogleAPIInvoker(gcpEndpoint, this.scope, this.clientEmail, this.privateKey);
+		var responseObj = new JSON().decode(apiInvoker.invokePost());
+		var startTime = responseObj.insertTime;
+		
+		var responseStatus = responseObj.status;
+		var endTime = Packages.java.lang.System.nanoTime() + Packages.java.util.concurrent.TimeUnit.NANOSECONDS.convert(this.TIMEOUT_MINUTES, Packages.java.util.concurrent.TimeUnit.MINUTES);		
+		//Wait-until block		
+		while (!responseStatus.toUpperCase().equals("RUNNING")) {
+			Packages.java.lang.Thread.sleep(this.THREAD_SLEEP_MILLISECONDS);
+			//Exit if operation fails and exceeds timeout duration
+			if (Packages.java.lang.System.nanoTime() > endTime) {
+				this.error("Class-GoogleComputeVirtualMachine: Function-startVirtualMachine: Wait-until block executed, operation timed-out.");
+				throw new GoogleAPIException();
+			}
+			//Invoke get instance to check whether it has been started
+			var responseEndpoint = "https://www.googleapis.com/compute/v1/projects/" + project + "/zones/" + location + "/instances/" + nodeId;
+			var responseInvoker = new GoogleAPIInvoker(responseEndpoint, this.scope, this.clientEmail, this.privateKey);
+			responseObj = new JSON().decode(responseInvoker.invokeGet());
+			responseStatus = responseObj.status;
+		}
+		
+		var dateFormat = new Packages.java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
+		
+//Populate method response DTO
+		var computeNode = new this.CloudComputeDTO();
+		computeNode.setNodeId(responseObj.id);
+		computeNode.setNodeName(nodeId);
+		computeNode.setState("On");
+		computeNode.setStartTime(dateFormat.parse(startTime));
+		
+		return computeNode;
+	},
+///////////////////////////////////////////////////////////////	
+//CAPI Interface Operation: StopNode	
+/*
+	Description: Stop an instance
+	Documentation: https://cloud.google.com/compute/docs/reference/latest/instances/stop
+	Mandatory parameters: Project, NodeID (name of instance) and Location
+	Return Type: CloudComputeDTO
+	Response: { "nodename": "", "nodeid": "", "state": "", "stoptime": "" }
+*/	
+	stopVirtualMachine: function(nodeName) {
+		
+		var project = parameters.get('Project');
+		var nodeId = !JSUtil.nil(parameters.get('NodeID')) ? parameters.get('NodeID') : nodeName;
+		var location = parameters.get('Location');
+		this.debug("Class-GoogleComputeVirtualMachine: Function-stopVirtualMachine: project: " + project);
+		this.debug("Class-GoogleComputeVirtualMachine: Function-stopVirtualMachine: nodeId: " + nodeId);
+		this.debug("Class-GoogleComputeVirtualMachine: Function-stopVirtualMachine: location: " + location);
+		
+		//Invoke stop instance endpoint
+		var gcpEndpoint = "https://www.googleapis.com/compute/v1/projects/" + project + "/zones/" + location + "/instances/" + nodeId + "/stop";
+		var apiInvoker = new GoogleAPIInvoker(gcpEndpoint, this.scope, this.clientEmail, this.privateKey);
+		var responseObj = new JSON().decode(apiInvoker.invokePost());
+		var stopTime = responseObj.insertTime;
+			
+		var responseStatus = responseObj.status;
+		var endTime = Packages.java.lang.System.nanoTime() + Packages.java.util.concurrent.TimeUnit.NANOSECONDS.convert(this.TIMEOUT_MINUTES, Packages.java.util.concurrent.TimeUnit.MINUTES);		
+		//Wait-until block		
+		while (!responseStatus.toUpperCase().equals("TERMINATED")) {
+			Packages.java.lang.Thread.sleep(this.THREAD_SLEEP_MILLISECONDS);
+			//Exit if operation fails and exceeds timeout duration
+			if (Packages.java.lang.System.nanoTime() > endTime) {
+				this.error("Class-GoogleComputeVirtualMachine: Function-stopVirtualMachine: Wait-until block executed, operation timed-out.");
+				throw new GoogleAPIException();
+			}
+			//Invoke get instance to check whether it has been stopped
+			var responseEndpoint = "https://www.googleapis.com/compute/v1/projects/" + project + "/zones/" + location + "/instances/" + nodeId;
+			var responseInvoker = new GoogleAPIInvoker(responseEndpoint, this.scope, this.clientEmail, this.privateKey);
+			responseObj = new JSON().decode(responseInvoker.invokeGet());
+			responseStatus = responseObj.status;
+		}
+		
+		var dateFormat = new Packages.java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
+		
+		//Populate method response DTO
+		var computeNode = new this.CloudComputeDTO();
+		computeNode.setNodeId(responseObj.id);
+		computeNode.setNodeName(nodeId);
+		computeNode.setState("Off");
+		computeNode.setStopTime(dateFormat.parse(stopTime));
+		
+		return computeNode;
+	},
+///////////////////////////////////////////////////////////////	
+
+	type: "GoogleComputeVirtualMachine"
+});]]></script>
+        <sys_class_name>ecc_agent_script_include</sys_class_name>
+        <sys_created_by>hardik.benani</sys_created_by>
+        <sys_created_on>2018-09-17 23:02:52</sys_created_on>
+        <sys_domain>global</sys_domain>
+        <sys_domain_path>/</sys_domain_path>
+        <sys_id>0879366edb606300b7829ee6db9619be</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>GoogleComputeVirtualMachine</sys_name>
+        <sys_overrides/>
+        <sys_package display_value="Google Cloud Management" source="sn_cmp_gcp">40ff1aee0b2023003246ad4363673ac5</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Google Cloud Management">40ff1aee0b2023003246ad4363673ac5</sys_scope>
+        <sys_update_name>ecc_agent_script_include_0879366edb606300b7829ee6db9619be</sys_update_name>
+        <sys_updated_by>hardik.benani</sys_updated_by>
+        <sys_updated_on>2018-09-17 23:02:52</sys_updated_on>
+    </ecc_agent_script_include>
+</record_update>

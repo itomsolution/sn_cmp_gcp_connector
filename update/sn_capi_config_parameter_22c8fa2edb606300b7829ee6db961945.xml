@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update table="sn_capi_config_parameter">
+    <sn_capi_config_parameter action="INSERT_OR_UPDATE">
+        <config_data_type>string</config_data_type>
+        <config_parameter_name>Project</config_parameter_name>
+        <config_type>header</config_type>
+        <default_value>$(CloudCredential.project)</default_value>
+        <description/>
+        <endpoint/>
+        <sys_class_name>sn_capi_config_parameter</sys_class_name>
+        <sys_created_by>hardik.benani</sys_created_by>
+        <sys_created_on>2018-09-17 22:59:52</sys_created_on>
+        <sys_id>22c8fa2edb606300b7829ee6db961945</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>Project</sys_name>
+        <sys_package display_value="Google Cloud Management" source="sn_cmp_gcp">40ff1aee0b2023003246ad4363673ac5</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Google Cloud Management">40ff1aee0b2023003246ad4363673ac5</sys_scope>
+        <sys_update_name>sn_capi_config_parameter_22c8fa2edb606300b7829ee6db961945</sys_update_name>
+        <sys_updated_by>hardik.benani</sys_updated_by>
+        <sys_updated_on>2018-09-17 22:59:52</sys_updated_on>
+    </sn_capi_config_parameter>
+</record_update>

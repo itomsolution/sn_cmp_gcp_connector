@@ -4,14 +4,28 @@
         <active>true</active>
         <description>Script for CAPI - Google Compute Platform API.CreateSnapshot</description>
         <name>google-compute-1.0-CreateSnapshot</name>
-        <script/>
+        <script><![CDATA[createSnapshot();
+
+function createSnapshot() {
+
+	var snapshotName = this.parameters.get('SnapshotName');		
+
+	var snapshotRequest = { 
+		"name" : snapshotName
+	};
+
+	var gcpvm = new GoogleComputeVirtualMachine(this.parameters, this.headers);
+	var vm = gcpvm.createSnapshot(snapshotRequest);
+	
+	return vm;
+}]]></script>
         <sys_class_name>ecc_agent_script_include</sys_class_name>
         <sys_created_by>hardik.benani</sys_created_by>
         <sys_created_on>2018-09-17 22:48:18</sys_created_on>
         <sys_domain>global</sys_domain>
         <sys_domain_path>/</sys_domain_path>
         <sys_id>9726b2aedb206300b7829ee6db9619f2</sys_id>
-        <sys_mod_count>0</sys_mod_count>
+        <sys_mod_count>1</sys_mod_count>
         <sys_name>google-compute-1.0-CreateSnapshot</sys_name>
         <sys_overrides/>
         <sys_package display_value="Google Cloud Management" source="sn_cmp_gcp">40ff1aee0b2023003246ad4363673ac5</sys_package>
@@ -19,6 +33,6 @@
         <sys_scope display_value="Google Cloud Management">40ff1aee0b2023003246ad4363673ac5</sys_scope>
         <sys_update_name>ecc_agent_script_include_9726b2aedb206300b7829ee6db9619f2</sys_update_name>
         <sys_updated_by>hardik.benani</sys_updated_by>
-        <sys_updated_on>2018-09-17 22:48:18</sys_updated_on>
+        <sys_updated_on>2018-09-17 23:09:43</sys_updated_on>
     </ecc_agent_script_include>
 </record_update>
