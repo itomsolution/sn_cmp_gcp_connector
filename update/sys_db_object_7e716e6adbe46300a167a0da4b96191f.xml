@@ -17,10 +17,10 @@
         <number_ref/>
         <provider_class/>
         <read_access>true</read_access>
-        <super_class display_value="Logical Datacenter" name="cmdb_ci_logical_datacenter">e6b0b6d8db321300b3929e7aca9619eb</super_class>
-        <sys_class_code>!.</sys_class_code>
+        <super_class display_value="Logical Datacenter" name="cmdb_ci_logical_datacenter">560686f811031300bf6ed5eae6a78906</super_class>
+        <sys_class_code>!-</sys_class_code>
         <sys_class_name>sys_db_object</sys_class_name>
-        <sys_class_path>/!!/!)/!!/!(/!.</sys_class_path>
+        <sys_class_path>/!!/!)/!!/!(/!-</sys_class_path>
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2018-09-17 21:18:22</sys_created_on>
         <sys_id>7e716e6adbe46300a167a0da4b96191f</sys_id>
