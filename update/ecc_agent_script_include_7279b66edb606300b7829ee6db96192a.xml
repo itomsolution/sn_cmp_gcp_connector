@@ -4,14 +4,41 @@
         <active>true</active>
         <description>Script for CAPI - Google Block Storage API.AssociateVolume</description>
         <name>google-disk-1.0-AssociateVolume</name>
-        <script/>
+        <script><![CDATA[associateVolume();
+
+function associateVolume() {
+	
+	var projectId = this.parameters.get('Project');
+	var location = this.parameters.get('Location');
+	var volumeName = this.parameters.get('VolumeID');
+ms.log('associateVolume called');
+ms.log('associateVolume: projectId:' + projectId);
+ms.log('associateVolume: location:' + location);
+ms.log('associateVolume: volumeName:' + volumeName);
+
+	var volumeRequest = {
+		"index": 1,
+		"deviceName": volumeName,
+		"source" : "https://www.googleapis.com/compute/v1/projects/" + projectId + "/zones/" + location + "/disks/" + volumeName,
+		"boot": false,
+		"autoDelete": false,
+		"interface": "SCSI",
+		"mode" : "READ_WRITE"
+	};
+ ms.log('associateVolume volumeRequest: ' + volumeRequest);
+	
+	var gsmd = new GoogleStorageManagedDisk(this.parameters, this.headers);
+ 	var d = gsmd.associateVolume(volumeRequest);
+	
+	return d;
+}]]></script>
         <sys_class_name>ecc_agent_script_include</sys_class_name>
         <sys_created_by>hardik.benani</sys_created_by>
         <sys_created_on>2018-09-17 23:02:44</sys_created_on>
         <sys_domain>global</sys_domain>
         <sys_domain_path>/</sys_domain_path>
         <sys_id>7279b66edb606300b7829ee6db96192a</sys_id>
-        <sys_mod_count>0</sys_mod_count>
+        <sys_mod_count>1</sys_mod_count>
         <sys_name>google-disk-1.0-AssociateVolume</sys_name>
         <sys_overrides/>
         <sys_package display_value="Google Cloud Management" source="sn_cmp_gcp">40ff1aee0b2023003246ad4363673ac5</sys_package>
@@ -19,6 +46,6 @@
         <sys_scope display_value="Google Cloud Management">40ff1aee0b2023003246ad4363673ac5</sys_scope>
         <sys_update_name>ecc_agent_script_include_7279b66edb606300b7829ee6db96192a</sys_update_name>
         <sys_updated_by>hardik.benani</sys_updated_by>
-        <sys_updated_on>2018-09-17 23:02:44</sys_updated_on>
+        <sys_updated_on>2018-09-17 23:22:52</sys_updated_on>
     </ecc_agent_script_include>
 </record_update>
