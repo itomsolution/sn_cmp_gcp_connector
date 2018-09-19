@@ -233,7 +233,7 @@
             <sys_updated_on>2018-09-18 00:27:12</sys_updated_on>
             <sys_user/>
             <title>false</title>
-            <view display_value="External Storage" name="external_credential_storage">7ec160127f011200995cbaf8befa91b0</view>
+            <view display_value="External_credential_storage" name="external_credential_storage">7ec160127f011200995cbaf8befa91b0</view>
             <view_name/>
         </sys_ui_section>
     </sys_ui_section>

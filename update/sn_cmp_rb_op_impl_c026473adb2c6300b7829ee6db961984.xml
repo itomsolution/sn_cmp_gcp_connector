@@ -2,7 +2,7 @@
 <record_update table="sn_cmp_rb_op_impl">
     <sn_cmp_rb_op_impl action="INSERT_OR_UPDATE">
         <interface display_value="Compute Interface">f979b35e0be622009e620bcb15673a26</interface>
-        <operation display_value="CustomConnectAndCreateVolume">7a692353db515f0044a490b6db9619e8</operation>
+        <operation display_value="">7a692353db515f0044a490b6db9619e8</operation>
         <operation_output_attributes/>
         <resource display_value="Google Datacenter">af14cb7adb68630044a490b6db96193c</resource>
         <sys_class_name>sn_cmp_rb_op_impl</sys_class_name>

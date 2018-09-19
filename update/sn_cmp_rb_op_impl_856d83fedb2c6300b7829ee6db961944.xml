@@ -2,7 +2,7 @@
 <record_update table="sn_cmp_rb_op_impl">
     <sn_cmp_rb_op_impl action="INSERT_OR_UPDATE">
         <interface display_value="Storage Interface">e26044440b632200668daac125673a4b</interface>
-        <operation display_value="CreateS3Bucket">0076341adb3ed70044a490b6db96197e</operation>
+        <operation display_value="">0076341adb3ed70044a490b6db96197e</operation>
         <operation_output_attributes/>
         <resource display_value="Google Datacenter">af14cb7adb68630044a490b6db96193c</resource>
         <sys_class_name>sn_cmp_rb_op_impl</sys_class_name>

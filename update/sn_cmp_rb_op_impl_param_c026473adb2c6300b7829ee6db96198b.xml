@@ -10,7 +10,7 @@
         <host/>
         <ismandatory>false</ismandatory>
         <name>CloudType</name>
-        <operation display_value="CustomConnectAndCreateVolume">c026473adb2c6300b7829ee6db961984</operation>
+        <operation display_value="">c026473adb2c6300b7829ee6db961984</operation>
         <order>1000</order>
         <read_only>false</read_only>
         <regex/>
