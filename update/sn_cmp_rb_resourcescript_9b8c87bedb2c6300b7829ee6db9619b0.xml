@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update table="sn_cmp_rb_resourcescript">
+    <sn_cmp_rb_resourcescript action="INSERT_OR_UPDATE">
+        <name>Google_Delete_Storage_Volume_Response_Processor</name>
+        <resource display_value="Google Datacenter">af14cb7adb68630044a490b6db96193c</resource>
+        <script>function processResponse(response, cloudServiceAccountId, ldc) {&#13;
+	var cloudModelString = [];&#13;
+	var volumeResponse = global.JSON.parse(response);&#13;
+	var volume = {&#13;
+		"cmdb_ci_storage_volume": {&#13;
+			"validator": "storage_volume_update_validator",&#13;
+			"validator_overrides": { },&#13;
+			"identification": {&#13;
+				"cmdb_ci_cloud_service_account": {&#13;
+					"criterion": {&#13;
+						"object_id": cloudServiceAccountId&#13;
+					}&#13;
+				},&#13;
+				"sn_cmp_gcp_google_datacenter": {&#13;
+					"criterion": {&#13;
+						"object_id": ldc&#13;
+					}&#13;
+				},&#13;
+				"cmdb_ci_storage_volume": {&#13;
+					"criterion": {&#13;
+						"object_id": volumeResponse.volumeId&#13;
+					}&#13;
+				}&#13;
+			},&#13;
+			"attributes": {&#13;
+				"object_id": volumeResponse.volumeId,&#13;
+				"volume_id": volumeResponse.volumeId,&#13;
+				"state": "Terminated"&#13;
+			}&#13;
+		}&#13;
+	};&#13;
+	cloudModelString.push(volume);&#13;
+	return global.JSON.stringify(cloudModelString);&#13;
+}</script>
+        <script_js><![CDATA[function processResponse(response, cloudServiceAccountId, ldc) {
+	var cloudModelString = [];
+	var volumeResponse = global.JSON.parse(response);
+	var volume = {
+		"cmdb_ci_storage_volume": {
+			"validator": "storage_volume_update_validator",
+			"validator_overrides": { },
+			"identification": {
+				"cmdb_ci_cloud_service_account": {
+					"criterion": {
+						"object_id": cloudServiceAccountId
+					}
+				},
+				"sn_cmp_gcp_google_datacenter": {
+					"criterion": {
+						"object_id": ldc
+					}
+				},
+				"cmdb_ci_storage_volume": {
+					"criterion": {
+						"object_id": volumeResponse.volumeId
+					}
+				}
+			},
+			"attributes": {
+				"object_id": volumeResponse.volumeId,
+				"volume_id": volumeResponse.volumeId,
+				"state": "Terminated"
+			}
+		}
+	};
+	cloudModelString.push(volume);
+	return global.JSON.stringify(cloudModelString);
+}]]></script_js>
+        <sys_class_name>sn_cmp_rb_resourcescript</sys_class_name>
+        <sys_created_by>hardik.benani</sys_created_by>
+        <sys_created_on>2018-09-18 19:04:45</sys_created_on>
+        <sys_id>9b8c87bedb2c6300b7829ee6db9619b0</sys_id>
+        <sys_mod_count>3</sys_mod_count>
+        <sys_name>Google_Delete_Storage_Volume_Response_Processor</sys_name>
+        <sys_package display_value="Google Cloud Management" source="sn_cmp_gcp">40ff1aee0b2023003246ad4363673ac5</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Google Cloud Management">40ff1aee0b2023003246ad4363673ac5</sys_scope>
+        <sys_update_name>sn_cmp_rb_resourcescript_9b8c87bedb2c6300b7829ee6db9619b0</sys_update_name>
+        <sys_updated_by>hardik.benani</sys_updated_by>
+        <sys_updated_on>2018-09-18 20:33:04</sys_updated_on>
+        <type>7</type>
+    </sn_cmp_rb_resourcescript>
+</record_update>

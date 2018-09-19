@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update table="sn_cmp_rb_resourcescript">
+    <sn_cmp_rb_resourcescript action="INSERT_OR_UPDATE">
+        <name>List_Google_SubNetworks_Response_Processor</name>
+        <resource display_value="Google Datacenter">af14cb7adb68630044a490b6db96193c</resource>
+        <script>function processResponse(response, cloudServiceAccountId, ldc) {&#13;
+	&#13;
+	var cloudModelString = [];&#13;
+	var json = new global.JSON();&#13;
+	var responseObject = json.decode(response);&#13;
+	&#13;
+	for(var i=0; i &lt; responseObject.length; i++)&#13;
+	{&#13;
+		var vmInfo = {&#13;
+    "cmdb_ci_cloud_subnet": {&#13;
+      "identification": {&#13;
+        "cmdb_ci_cloud_service_account": {&#13;
+          "criterion": {&#13;
+            "object_id": cloudServiceAccountId&#13;
+          }&#13;
+        },&#13;
+        "sn_cmp_gcp_google_datacenter": {&#13;
+          "criterion": {&#13;
+            "object_id": ldc&#13;
+          }&#13;
+        },&#13;
+        "cmdb_ci_cloud_subnet": {&#13;
+          "criterion": {&#13;
+            "object_id": responseObject[i].subnetId&#13;
+          }&#13;
+        },&#13;
+		  "cmdb_ci_network": {&#13;
+					"criterion": {&#13;
+						"object_id": subnetResponse.networkId&#13;
+					}&#13;
+				}&#13;
+      },&#13;
+      "attributes": {&#13;
+        "state": "available",&#13;
+        "name": responseObject[i].subnetName,&#13;
+        "object_id": responseObject[i].subnetId,&#13;
+		"ip_address":responseObject[i].gatewayIP,&#13;
+		"location":responseObject[i].availabilityZone,&#13;
+		"cidr":responseObject[i].cidrBlock&#13;
+      }&#13;
+	}&#13;
+  };&#13;
+		cloudModelString.push(vmInfo);&#13;
+	}&#13;
+&#13;
+	&#13;
+	return global.JSON.stringify(cloudModelString);&#13;
+}</script>
+        <script_js><![CDATA[function processResponse(response, cloudServiceAccountId, ldc) {
+	
+	var cloudModelString = [];
+	var json = new global.JSON();
+	var responseObject = json.decode(response);
+	
+	for(var i=0; i < responseObject.length; i++)
+	{
+		var vmInfo = {
+    "cmdb_ci_cloud_subnet": {
+      "identification": {
+        "cmdb_ci_cloud_service_account": {
+          "criterion": {
+            "object_id": cloudServiceAccountId
+          }
+        },
+        "sn_cmp_gcp_google_datacenter": {
+          "criterion": {
+            "object_id": ldc
+          }
+        },
+        "cmdb_ci_cloud_subnet": {
+          "criterion": {
+            "object_id": responseObject[i].subnetId
+          }
+        },
+		  "cmdb_ci_network": {
+					"criterion": {
+						"object_id": subnetResponse.networkId
+					}
+				}
+      },
+      "attributes": {
+        "state": "available",
+        "name": responseObject[i].subnetName,
+        "object_id": responseObject[i].subnetId,
+		"ip_address":responseObject[i].gatewayIP,
+		"location":responseObject[i].availabilityZone,
+		"cidr":responseObject[i].cidrBlock
+      }
+	}
+  };
+		cloudModelString.push(vmInfo);
+	}
+
+	
+	return global.JSON.stringify(cloudModelString);
+}]]></script_js>
+        <sys_class_name>sn_cmp_rb_resourcescript</sys_class_name>
+        <sys_created_by>hardik.benani</sys_created_by>
+        <sys_created_on>2018-09-18 19:21:52</sys_created_on>
+        <sys_id>636093b2db6c6300b7829ee6db9619fc</sys_id>
+        <sys_mod_count>3</sys_mod_count>
+        <sys_name>List_Google_SubNetworks_Response_Processor</sys_name>
+        <sys_package display_value="Google Cloud Management" source="sn_cmp_gcp">40ff1aee0b2023003246ad4363673ac5</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Google Cloud Management">40ff1aee0b2023003246ad4363673ac5</sys_scope>
+        <sys_update_name>sn_cmp_rb_resourcescript_636093b2db6c6300b7829ee6db9619fc</sys_update_name>
+        <sys_updated_by>hardik.benani</sys_updated_by>
+        <sys_updated_on>2018-09-18 20:41:13</sys_updated_on>
+        <type>7</type>
+    </sn_cmp_rb_resourcescript>
+</record_update>

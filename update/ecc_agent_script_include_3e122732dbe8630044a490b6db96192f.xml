@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update sys_domain="global" table="ecc_agent_script_include">
+    <ecc_agent_script_include action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <description>Script for CAPI - google-compute-1.0-ListAvailabilityZones</description>
+        <name>google-compute-1.0-ListAvailabilityZones</name>
+        <script><![CDATA[listAvailabilityZones();
+
+function listAvailabilityZones() {
+
+	var gcpvm = new GoogleComputeVirtualMachine(this.parameters, this.headers);
+	var vm = gcpvm.listAvailabilityZones();
+
+	return vm;
+}]]></script>
+        <sys_class_name>ecc_agent_script_include</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2018-09-18 20:39:21</sys_created_on>
+        <sys_domain>global</sys_domain>
+        <sys_domain_path>/</sys_domain_path>
+        <sys_id>3e122732dbe8630044a490b6db96192f</sys_id>
+        <sys_mod_count>2</sys_mod_count>
+        <sys_name>google-compute-1.0-ListAvailabilityZones</sys_name>
+        <sys_overrides/>
+        <sys_package display_value="Google Cloud Management" source="sn_cmp_gcp">40ff1aee0b2023003246ad4363673ac5</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Google Cloud Management">40ff1aee0b2023003246ad4363673ac5</sys_scope>
+        <sys_update_name>ecc_agent_script_include_3e122732dbe8630044a490b6db96192f</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2018-09-18 20:53:51</sys_updated_on>
+    </ecc_agent_script_include>
+</record_update>

@@ -1,0 +1,308 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update table="sn_cmp_rb_resourcescript">
+    <sn_cmp_rb_resourcescript action="INSERT_OR_UPDATE">
+        <name>Google_Create_Network_Interfaces_Response_Processor</name>
+        <resource display_value="Google Datacenter">af14cb7adb68630044a490b6db96193c</resource>
+        <script>function processResponse(response, cloudServiceAccountId, ldc) {&#13;
+	var cloudModelString = [];&#13;
+	var nodeData = global.JSON.parse(response);&#13;
+	&#13;
+	if(nodeData.networkInterfaces &amp;&amp; nodeData.networkInterfaces.length &gt; 0){&#13;
+		for (var i=0; i&lt; nodeData.networkInterfaces.length; i++){&#13;
+			var nic = nodeData.networkInterfaces[i];&#13;
+			var nicId = nic.networkInterfaceId;&#13;
+			&#13;
+			var publicIP = '';&#13;
+			if (nic.publicIPAddresses &amp;&amp; nic.publicIPAddresses.length &gt; 0)&#13;
+				publicIP = nic.publicIPAddresses[0];&#13;
+			&#13;
+			var state = 'available';&#13;
+			var endpoints = [];&#13;
+			&#13;
+			if(nic.ownerId !== ''){&#13;
+				state = 'in_use';&#13;
+				var endPointId = "nic-" + nicId + "_endpoint";&#13;
+				var enpoint = {&#13;
+					"attach_to":{&#13;
+						"implemented_by":{&#13;
+							"endpoint_ci":"cmdb_ci_endpoint_vnic",&#13;
+							"endpoint_identification":{&#13;
+								"object_id": endPointId&#13;
+							},&#13;
+							"attributes":{&#13;
+								"name": endPointId,&#13;
+								"host": nic.ownerId,&#13;
+								"target_port":"",&#13;
+								"object_id": endPointId&#13;
+							}&#13;
+						}&#13;
+					}&#13;
+				};&#13;
+				endpoints.push(enpoint);&#13;
+			}&#13;
+			&#13;
+			var networkInfo = {&#13;
+				"cmdb_ci_nic": {&#13;
+					"validator": "nic_create_validator",&#13;
+					"validator_overrides": {&#13;
+					},&#13;
+					"identification": {&#13;
+						"cmdb_ci_cloud_service_account": {&#13;
+							"criterion": {&#13;
+								"object_id" : cloudServiceAccountId&#13;
+							}&#13;
+						},&#13;
+						"sn_cmp_gcp_google_datacenter": {&#13;
+							"criterion": {&#13;
+								"object_id" : ldc&#13;
+							}&#13;
+						},&#13;
+						"cmdb_ci_nic": {&#13;
+							"criterion": {&#13;
+								"object_id": nicId&#13;
+							}&#13;
+						}&#13;
+					},&#13;
+					"attributes": {&#13;
+						"object_id": nicId,&#13;
+						"name": nic.name,&#13;
+						"allocation_id":"",&#13;
+						"attach_time":"",&#13;
+						"gateway": "",&#13;
+						"host_name": "",&#13;
+						"is_connected":"",&#13;
+						"is_static":"",&#13;
+						"net_mask": "",&#13;
+						"owner": nic.ownerId,&#13;
+						"private_dns": "",&#13;
+						"private_ip": nic.privateIPAddresses[0],&#13;
+						"public_ip": publicIP, &#13;
+						"public_dns":"",&#13;
+						"is_source_dest_check": nic.sourceDestCheck,&#13;
+						"ip_address": publicIP,&#13;
+						"node_id": nodeData.nodeId,&#13;
+						"network_id": nic.networkId,&#13;
+						"network":"",&#13;
+						"subnet_id": nic.subnetId,&#13;
+						"state": state&#13;
+					},&#13;
+					"references": {&#13;
+						"cmdb_ci_cloud_subnet": {&#13;
+							"identification": {&#13;
+								"cmdb_ci_cloud_service_account": {&#13;
+									"criterion": {&#13;
+										"object_id": cloudServiceAccountId&#13;
+									}&#13;
+								},&#13;
+								"x_aits2_gcp_google_datacenter": {&#13;
+									"criterion": {&#13;
+										"object_id": ldc&#13;
+									}&#13;
+								},&#13;
+								"cmdb_ci_network": {&#13;
+									"criterion": {&#13;
+										"object_id": nic.networkId&#13;
+									}&#13;
+								},&#13;
+								"cmdb_ci_cloud_subnet": {&#13;
+									"criterion": {&#13;
+										"object_id": nic.subnetId&#13;
+									}&#13;
+								}&#13;
+							},&#13;
+							"attributes": {&#13;
+								"object_id": nic.subnetId&#13;
+							}&#13;
+						},&#13;
+						"cmdb_ci_resource_group": {&#13;
+							"identification": {&#13;
+								"cmdb_ci_cloud_service_account": {&#13;
+									"criterion": {&#13;
+										"object_id": cloudServiceAccountId&#13;
+									}&#13;
+								},&#13;
+								"x_aits2_gcp_google_datacenter": {&#13;
+									"criterion": {&#13;
+										"object_id": ldc&#13;
+									}&#13;
+								},&#13;
+								"cmdb_ci_resource_group": {&#13;
+									"criterion": {&#13;
+										"object_id": nic.resourceGroup&#13;
+									}&#13;
+								}&#13;
+							},&#13;
+							"attributes": {&#13;
+								"object_id": nic.resourceGroup,&#13;
+							}&#13;
+						}&#13;
+					},&#13;
+					"bindings": endpoints&#13;
+				}&#13;
+			};&#13;
+		&#13;
+			cloudModelString.push(networkInfo);&#13;
+		}&#13;
+	}&#13;
+	&#13;
+	return global.JSON.stringify(cloudModelString);&#13;
+}</script>
+        <script_js><![CDATA[function processResponse(response, cloudServiceAccountId, ldc) {
+	var cloudModelString = [];
+	var nodeData = global.JSON.parse(response);
+	
+	if(nodeData.networkInterfaces && nodeData.networkInterfaces.length > 0){
+		for (var i=0; i< nodeData.networkInterfaces.length; i++){
+			var nic = nodeData.networkInterfaces[i];
+			var nicId = nic.networkInterfaceId;
+			
+			var publicIP = '';
+			if (nic.publicIPAddresses && nic.publicIPAddresses.length > 0)
+				publicIP = nic.publicIPAddresses[0];
+			
+			var state = 'available';
+			var endpoints = [];
+			
+			if(nic.ownerId !== ''){
+				state = 'in_use';
+				var endPointId = "nic-" + nicId + "_endpoint";
+				var enpoint = {
+					"attach_to":{
+						"implemented_by":{
+							"endpoint_ci":"cmdb_ci_endpoint_vnic",
+							"endpoint_identification":{
+								"object_id": endPointId
+							},
+							"attributes":{
+								"name": endPointId,
+								"host": nic.ownerId,
+								"target_port":"",
+								"object_id": endPointId
+							}
+						}
+					}
+				};
+				endpoints.push(enpoint);
+			}
+			
+			var networkInfo = {
+				"cmdb_ci_nic": {
+					"validator": "nic_create_validator",
+					"validator_overrides": {
+					},
+					"identification": {
+						"cmdb_ci_cloud_service_account": {
+							"criterion": {
+								"object_id" : cloudServiceAccountId
+							}
+						},
+						"sn_cmp_gcp_google_datacenter": {
+							"criterion": {
+								"object_id" : ldc
+							}
+						},
+						"cmdb_ci_nic": {
+							"criterion": {
+								"object_id": nicId
+							}
+						}
+					},
+					"attributes": {
+						"object_id": nicId,
+						"name": nic.name,
+						"allocation_id":"",
+						"attach_time":"",
+						"gateway": "",
+						"host_name": "",
+						"is_connected":"",
+						"is_static":"",
+						"net_mask": "",
+						"owner": nic.ownerId,
+						"private_dns": "",
+						"private_ip": nic.privateIPAddresses[0],
+						"public_ip": publicIP, 
+						"public_dns":"",
+						"is_source_dest_check": nic.sourceDestCheck,
+						"ip_address": publicIP,
+						"node_id": nodeData.nodeId,
+						"network_id": nic.networkId,
+						"network":"",
+						"subnet_id": nic.subnetId,
+						"state": state
+					},
+					"references": {
+						"cmdb_ci_cloud_subnet": {
+							"identification": {
+								"cmdb_ci_cloud_service_account": {
+									"criterion": {
+										"object_id": cloudServiceAccountId
+									}
+								},
+								"x_aits2_gcp_google_datacenter": {
+									"criterion": {
+										"object_id": ldc
+									}
+								},
+								"cmdb_ci_network": {
+									"criterion": {
+										"object_id": nic.networkId
+									}
+								},
+								"cmdb_ci_cloud_subnet": {
+									"criterion": {
+										"object_id": nic.subnetId
+									}
+								}
+							},
+							"attributes": {
+								"object_id": nic.subnetId
+							}
+						},
+						"cmdb_ci_resource_group": {
+							"identification": {
+								"cmdb_ci_cloud_service_account": {
+									"criterion": {
+										"object_id": cloudServiceAccountId
+									}
+								},
+								"x_aits2_gcp_google_datacenter": {
+									"criterion": {
+										"object_id": ldc
+									}
+								},
+								"cmdb_ci_resource_group": {
+									"criterion": {
+										"object_id": nic.resourceGroup
+									}
+								}
+							},
+							"attributes": {
+								"object_id": nic.resourceGroup,
+							}
+						}
+					},
+					"bindings": endpoints
+				}
+			};
+		
+			cloudModelString.push(networkInfo);
+		}
+	}
+	
+	return global.JSON.stringify(cloudModelString);
+}]]></script_js>
+        <sys_class_name>sn_cmp_rb_resourcescript</sys_class_name>
+        <sys_created_by>hardik.benani</sys_created_by>
+        <sys_created_on>2018-09-18 18:51:36</sys_created_on>
+        <sys_id>6d894ffadb2c6300b7829ee6db961936</sys_id>
+        <sys_mod_count>2</sys_mod_count>
+        <sys_name>Google_Create_Network_Interfaces_Response_Processor</sys_name>
+        <sys_package display_value="Google Cloud Management" source="sn_cmp_gcp">40ff1aee0b2023003246ad4363673ac5</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Google Cloud Management">40ff1aee0b2023003246ad4363673ac5</sys_scope>
+        <sys_update_name>sn_cmp_rb_resourcescript_6d894ffadb2c6300b7829ee6db961936</sys_update_name>
+        <sys_updated_by>hardik.benani</sys_updated_by>
+        <sys_updated_on>2018-09-18 20:28:46</sys_updated_on>
+        <type>7</type>
+    </sn_cmp_rb_resourcescript>
+</record_update>
