@@ -707,6 +707,9 @@ GoogleComputeVirtualMachine.prototype = Object.extendsObject(CloudAPIBase, {
 		var computeProfile = parameters.get('ComputeProfile');
 		var mappedHardware = new JSON().decode(computeProfile);
 		var hardwareId = mappedHardware.HardwareId;
+		var additionalParameters = parameters.get('AdditionalParameters');
+        var additionalParametersJson =  new JSON().decode(additionalParameters);
+		var az = additionalParametersJson['AvailabilityZone'];
 		this.debug("Class-GoogleComputeVirtualMachine: Function-resizeVirtualMachine: project: " + project);
 		this.debug("Class-GoogleComputeVirtualMachine: Function-resizeVirtualMachine: nodeId: " + nodeId);
 		this.debug("Class-GoogleComputeVirtualMachine: Function-resizeVirtualMachine: location: " + location);
@@ -722,7 +725,7 @@ GoogleComputeVirtualMachine.prototype = Object.extendsObject(CloudAPIBase, {
 		}
 		if(computeNode.getState().toUpperCase().equals('TERMINATED')) {
 			//Invoke resize instance endpoint
-			var computeEndpoint = "https://www.googleapis.com/compute/v1/projects/" + project + "/zones/" + location + "/instances/" + nodeId + "/setMachineType";
+			var computeEndpoint = "https://www.googleapis.com/compute/v1/projects/" + project + "/zones/" + az + "/instances/" + nodeId + "/setMachineType";
 			var apiInvoker = new GoogleAPIInvoker(computeEndpoint, this.scope, this.clientEmail, this.privateKey);
 			var responseObj = new JSON().decode(apiInvoker.invokePost(new JSON().encode(resizeRequest)));
 
@@ -737,7 +740,7 @@ GoogleComputeVirtualMachine.prototype = Object.extendsObject(CloudAPIBase, {
 					throw new GoogleAPIException();
 				}
 				//Invoke get instance to check new machine type
-				var responseEndpoint = "https://www.googleapis.com/compute/v1/projects/" + project + "/zones/" + location + "/instances/" + nodeId;
+				var responseEndpoint = "https://www.googleapis.com/compute/v1/projects/" + project + "/zones/" + az + "/instances/" + nodeId;
 				var responseInvoker = new GoogleAPIInvoker(responseEndpoint, this.scope, this.clientEmail, this.privateKey);
 				responseObj = new JSON().decode(responseInvoker.invokeGet());
 				newMachineType = responseObj.machineType.substring(responseObj.machineType.lastIndexOf("/")+1,responseObj.machineType.length());
@@ -767,7 +770,7 @@ GoogleComputeVirtualMachine.prototype = Object.extendsObject(CloudAPIBase, {
 		this.debug("Class-GoogleComputeVirtualMachine: Function-restartVirtualMachine: project: " + project);
 		this.debug("Class-GoogleComputeVirtualMachine: Function-restartVirtualMachine: nodeId: " + nodeId);
 		this.debug("Class-GoogleComputeVirtualMachine: Function-restartVirtualMachine: location: " + location);
-
+      
 		//Populate method response DTO
 		var computeNode = this.getVirtualMachine(nodeId);
 		//If instance is already stopped, start the instance. Else stop and start the instance.
@@ -909,7 +912,7 @@ GoogleComputeVirtualMachine.prototype = Object.extendsObject(CloudAPIBase, {
         <sys_domain>global</sys_domain>
         <sys_domain_path>/</sys_domain_path>
         <sys_id>0879366edb606300b7829ee6db9619be</sys_id>
-        <sys_mod_count>47</sys_mod_count>
+        <sys_mod_count>48</sys_mod_count>
         <sys_name>GoogleComputeVirtualMachine</sys_name>
         <sys_overrides/>
         <sys_package display_value="Google Cloud Management" source="sn_cmp_gcp">40ff1aee0b2023003246ad4363673ac5</sys_package>
@@ -917,6 +920,6 @@ GoogleComputeVirtualMachine.prototype = Object.extendsObject(CloudAPIBase, {
         <sys_scope display_value="Google Cloud Management">40ff1aee0b2023003246ad4363673ac5</sys_scope>
         <sys_update_name>ecc_agent_script_include_0879366edb606300b7829ee6db9619be</sys_update_name>
         <sys_updated_by>hardik.benani</sys_updated_by>
-        <sys_updated_on>2018-09-20 17:17:05</sys_updated_on>
+        <sys_updated_on>2018-09-20 17:30:14</sys_updated_on>
     </ecc_agent_script_include>
 </record_update>

@@ -2,16 +2,16 @@
 <record_update table="sn_cmp_rb_op_impl_step">
     <sn_cmp_rb_op_impl_step action="INSERT_OR_UPDATE">
         <capi_interface display_value="Compute Interface">c7688c340b3222004b1b812f15673ae7</capi_interface>
-        <capi_method display_value="ListNodes">5768cc340b3222004b1b812f15673a5e</capi_method>
+        <capi_method display_value="ListHardwareTypes">2f68cc340b3222004b1b812f15673a72</capi_method>
         <capi_version>1.0</capi_version>
         <condition/>
         <depends_on/>
-        <enabled>false</enabled>
+        <enabled>true</enabled>
         <interface/>
         <interface_operation/>
-        <name>Compute Interface.ListNodes</name>
+        <name>Compute Interface.ListHardwareTypes</name>
         <operationimpl display_value="Discover">0c2403badb68630044a490b6db961963</operationimpl>
-        <order>11</order>
+        <order>21</order>
         <owner_type>1</owner_type>
         <parent_step/>
         <parentstep/>
@@ -19,16 +19,16 @@
         <provider>google-compute</provider>
         <provider_type/>
         <sys_class_name>sn_cmp_rb_op_impl_step</sys_class_name>
-        <sys_created_by>admin</sys_created_by>
-        <sys_created_on>2018-09-18 21:02:01</sys_created_on>
-        <sys_id>98776736dbe8630044a490b6db9619c2</sys_id>
-        <sys_mod_count>1</sys_mod_count>
-        <sys_name>Compute Interface.ListNodes</sys_name>
+        <sys_created_by>hardik.benani</sys_created_by>
+        <sys_created_on>2018-09-20 17:27:25</sys_created_on>
+        <sys_id>8c898dafdbe46300de65594e5e961960</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>Compute Interface.ListHardwareTypes</sys_name>
         <sys_package display_value="Google Cloud Management" source="sn_cmp_gcp">40ff1aee0b2023003246ad4363673ac5</sys_package>
         <sys_policy/>
         <sys_scope display_value="Google Cloud Management">40ff1aee0b2023003246ad4363673ac5</sys_scope>
-        <sys_update_name>sn_cmp_rb_op_impl_step_98776736dbe8630044a490b6db9619c2</sys_update_name>
+        <sys_update_name>sn_cmp_rb_op_impl_step_8c898dafdbe46300de65594e5e961960</sys_update_name>
         <sys_updated_by>hardik.benani</sys_updated_by>
-        <sys_updated_on>2018-09-20 17:27:48</sys_updated_on>
+        <sys_updated_on>2018-09-20 17:27:25</sys_updated_on>
     </sn_cmp_rb_op_impl_step>
 </record_update>
