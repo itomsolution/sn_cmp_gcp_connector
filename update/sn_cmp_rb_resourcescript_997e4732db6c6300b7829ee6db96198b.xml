@@ -44,7 +44,31 @@
                 "assignment_group":reqContext.groupId,&#13;
 				"cpus":vmResponse.processors,&#13;
 				"memory":vmResponse.ram&#13;
+            },&#13;
+         "references":{  &#13;
+            "cmdb_ci_availability_zone":{  &#13;
+               "identification":{  &#13;
+                  "cmdb_ci_cloud_service_account":{  &#13;
+                     "criterion":{  &#13;
+                        "object_id":cloudServiceAccountId&#13;
+                     }&#13;
+                  },&#13;
+                  "sn_cmp_gcp_google_datacenter":{  &#13;
+                     "criterion":{  &#13;
+                        "object_id":ldc&#13;
+                     }&#13;
+                  },&#13;
+                  "cmdb_ci_availability_zone":{  &#13;
+                     "criterion":{  &#13;
+                        "object_id":vmResponse.availabilityZone&#13;
+                     }&#13;
+                  }&#13;
+               },&#13;
+               "attributes":{  &#13;
+                  "object_id":vmResponse.availabilityZone&#13;
+               }&#13;
             }&#13;
+         }&#13;
         }&#13;
     };&#13;
  &#13;
@@ -92,7 +116,31 @@
                 "assignment_group":reqContext.groupId,
 				"cpus":vmResponse.processors,
 				"memory":vmResponse.ram
+            },
+         "references":{  
+            "cmdb_ci_availability_zone":{  
+               "identification":{  
+                  "cmdb_ci_cloud_service_account":{  
+                     "criterion":{  
+                        "object_id":cloudServiceAccountId
+                     }
+                  },
+                  "sn_cmp_gcp_google_datacenter":{  
+                     "criterion":{  
+                        "object_id":ldc
+                     }
+                  },
+                  "cmdb_ci_availability_zone":{  
+                     "criterion":{  
+                        "object_id":vmResponse.availabilityZone
+                     }
+                  }
+               },
+               "attributes":{  
+                  "object_id":vmResponse.availabilityZone
+               }
             }
+         }
         }
     };
  
@@ -103,14 +151,14 @@
         <sys_created_by>hardik.benani</sys_created_by>
         <sys_created_on>2018-09-18 19:13:17</sys_created_on>
         <sys_id>997e4732db6c6300b7829ee6db96198b</sys_id>
-        <sys_mod_count>3</sys_mod_count>
+        <sys_mod_count>9</sys_mod_count>
         <sys_name>Create_VM_GCP_Response_Processor</sys_name>
         <sys_package display_value="Google Cloud Management" source="sn_cmp_gcp">40ff1aee0b2023003246ad4363673ac5</sys_package>
         <sys_policy/>
         <sys_scope display_value="Google Cloud Management">40ff1aee0b2023003246ad4363673ac5</sys_scope>
         <sys_update_name>sn_cmp_rb_resourcescript_997e4732db6c6300b7829ee6db96198b</sys_update_name>
         <sys_updated_by>hardik.benani</sys_updated_by>
-        <sys_updated_on>2018-09-18 20:27:15</sys_updated_on>
+        <sys_updated_on>2018-09-20 14:45:41</sys_updated_on>
         <type>7</type>
     </sn_cmp_rb_resourcescript>
 </record_update>

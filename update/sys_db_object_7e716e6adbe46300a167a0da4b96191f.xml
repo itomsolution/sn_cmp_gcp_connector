@@ -17,7 +17,7 @@
         <number_ref/>
         <provider_class/>
         <read_access>true</read_access>
-        <super_class display_value="Logical Datacenter" name="cmdb_ci_logical_datacenter">1c2897cb10202300bf6e4ea9289e5ba6</super_class>
+        <super_class display_value="Logical Datacenter" name="cmdb_ci_logical_datacenter">0d3fe6fadb202300f530f5861d961965</super_class>
         <sys_class_code>!-</sys_class_code>
         <sys_class_name>sys_db_object</sys_class_name>
         <sys_class_path>/!!/!)/!!/!(/!-</sys_class_path>
