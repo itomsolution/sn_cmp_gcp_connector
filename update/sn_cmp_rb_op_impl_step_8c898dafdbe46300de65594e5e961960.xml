@@ -11,7 +11,7 @@
         <interface_operation/>
         <name>Compute Interface.ListHardwareTypes</name>
         <operationimpl display_value="Discover">0c2403badb68630044a490b6db961963</operationimpl>
-        <order>21</order>
+        <order>2</order>
         <owner_type>1</owner_type>
         <parent_step/>
         <parentstep/>
@@ -22,13 +22,13 @@
         <sys_created_by>hardik.benani</sys_created_by>
         <sys_created_on>2018-09-20 17:27:25</sys_created_on>
         <sys_id>8c898dafdbe46300de65594e5e961960</sys_id>
-        <sys_mod_count>1</sys_mod_count>
+        <sys_mod_count>2</sys_mod_count>
         <sys_name>Compute Interface.ListHardwareTypes</sys_name>
         <sys_package display_value="Google Cloud Management" source="sn_cmp_gcp">40ff1aee0b2023003246ad4363673ac5</sys_package>
         <sys_policy/>
         <sys_scope display_value="Google Cloud Management">40ff1aee0b2023003246ad4363673ac5</sys_scope>
         <sys_update_name>sn_cmp_rb_op_impl_step_8c898dafdbe46300de65594e5e961960</sys_update_name>
         <sys_updated_by>hardik.benani</sys_updated_by>
-        <sys_updated_on>2018-09-20 18:09:43</sys_updated_on>
+        <sys_updated_on>2018-09-20 20:23:57</sys_updated_on>
     </sn_cmp_rb_op_impl_step>
 </record_update>

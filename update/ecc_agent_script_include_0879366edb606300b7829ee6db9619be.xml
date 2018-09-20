@@ -307,7 +307,7 @@ GoogleComputeVirtualMachine.prototype = Object.extendsObject(CloudAPIBase, {
 
 		//Populate method response DTO
 		var computeNode = new this.CloudComputeDTO();
-		computeNode.setNodeId(responseObj.id);
+		computeNode.setNodeId(responseObj.targetId);
 		computeNode.setNodeName(nodeId);
 		computeNode.setState("DELETED");
 
@@ -914,7 +914,7 @@ GoogleComputeVirtualMachine.prototype = Object.extendsObject(CloudAPIBase, {
         <sys_domain>global</sys_domain>
         <sys_domain_path>/</sys_domain_path>
         <sys_id>0879366edb606300b7829ee6db9619be</sys_id>
-        <sys_mod_count>54</sys_mod_count>
+        <sys_mod_count>55</sys_mod_count>
         <sys_name>GoogleComputeVirtualMachine</sys_name>
         <sys_overrides/>
         <sys_package display_value="Google Cloud Management" source="sn_cmp_gcp">40ff1aee0b2023003246ad4363673ac5</sys_package>
@@ -922,6 +922,6 @@ GoogleComputeVirtualMachine.prototype = Object.extendsObject(CloudAPIBase, {
         <sys_scope display_value="Google Cloud Management">40ff1aee0b2023003246ad4363673ac5</sys_scope>
         <sys_update_name>ecc_agent_script_include_0879366edb606300b7829ee6db9619be</sys_update_name>
         <sys_updated_by>hardik.benani</sys_updated_by>
-        <sys_updated_on>2018-09-20 18:09:37</sys_updated_on>
+        <sys_updated_on>2018-09-20 19:23:56</sys_updated_on>
     </ecc_agent_script_include>
 </record_update>
