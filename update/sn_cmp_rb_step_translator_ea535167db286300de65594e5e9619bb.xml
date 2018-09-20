@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update table="sn_cmp_rb_step_translator">
+    <sn_cmp_rb_step_translator action="INSERT_OR_UPDATE">
+        <order>0</order>
+        <script display_value="List_Google_Images_Response_Processor">705f0372db6c6300b7829ee6db961992</script>
+        <step display_value="Compute Interface.ListImages">9643dd27db286300de65594e5e9619e8</step>
+        <sys_class_name>sn_cmp_rb_step_translator</sys_class_name>
+        <sys_created_by>hardik.benani</sys_created_by>
+        <sys_created_on>2018-09-20 18:10:27</sys_created_on>
+        <sys_id>ea535167db286300de65594e5e9619bb</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="Google Cloud Management" source="sn_cmp_gcp">40ff1aee0b2023003246ad4363673ac5</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Google Cloud Management">40ff1aee0b2023003246ad4363673ac5</sys_scope>
+        <sys_update_name>sn_cmp_rb_step_translator_ea535167db286300de65594e5e9619bb</sys_update_name>
+        <sys_updated_by>hardik.benani</sys_updated_by>
+        <sys_updated_on>2018-09-20 18:10:27</sys_updated_on>
+    </sn_cmp_rb_step_translator>
+</record_update>
