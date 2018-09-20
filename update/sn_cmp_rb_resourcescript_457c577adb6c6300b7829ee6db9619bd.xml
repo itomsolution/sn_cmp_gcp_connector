@@ -43,6 +43,7 @@
     };&#13;
  &#13;
     cloudModelString.push(vmInfo);&#13;
+	gs.info("@HardikBenani---&gt;"+global.JSON.stringify(cloudModelString));&#13;
     return global.JSON.stringify(cloudModelString);	&#13;
 	}</script>
         <script_js><![CDATA[function processResponse(response, cloudServiceAccountId, ldc, correlationId, step, requestorContext, stackId) {
@@ -85,20 +86,21 @@
     };
  
     cloudModelString.push(vmInfo);
+	gs.info("@HardikBenani--->"+global.JSON.stringify(cloudModelString));
     return global.JSON.stringify(cloudModelString);	
 	}]]></script_js>
         <sys_class_name>sn_cmp_rb_resourcescript</sys_class_name>
         <sys_created_by>hardik.benani</sys_created_by>
         <sys_created_on>2018-09-18 20:14:26</sys_created_on>
         <sys_id>457c577adb6c6300b7829ee6db9619bd</sys_id>
-        <sys_mod_count>7</sys_mod_count>
+        <sys_mod_count>9</sys_mod_count>
         <sys_name>Start_Virtual_Server_Response_Processor</sys_name>
         <sys_package display_value="Google Cloud Management" source="sn_cmp_gcp">40ff1aee0b2023003246ad4363673ac5</sys_package>
         <sys_policy/>
         <sys_scope display_value="Google Cloud Management">40ff1aee0b2023003246ad4363673ac5</sys_scope>
         <sys_update_name>sn_cmp_rb_resourcescript_457c577adb6c6300b7829ee6db9619bd</sys_update_name>
         <sys_updated_by>hardik.benani</sys_updated_by>
-        <sys_updated_on>2018-09-20 18:00:50</sys_updated_on>
+        <sys_updated_on>2018-09-20 18:21:44</sys_updated_on>
         <type>7</type>
     </sn_cmp_rb_resourcescript>
 </record_update>
