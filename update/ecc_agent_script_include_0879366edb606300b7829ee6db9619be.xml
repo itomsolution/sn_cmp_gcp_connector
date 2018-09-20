@@ -123,7 +123,9 @@ GoogleComputeVirtualMachine.prototype = Object.extendsObject(CloudAPIBase, {
 		var mgmtNameKeyValue= "";
 		//If OS is Linux, inject SSH keys
 		if(instanceRequest.disks[0].initializeParams.sourceImage.indexOf("windows") == -1) {
+			ms.log('KeyInfo****************** '+keyInfo);
 			var mappedKeyInfo = new JSON().decode(keyInfo);
+			ms.log('mappedKeyInfo****************** '+mappedKeyInfo);
 			var userName = mappedKeyInfo.ImageUser;
 			var mgmtUserName = mappedKeyInfo.KeyName;
 			userId = userName;
@@ -840,6 +842,36 @@ GoogleComputeVirtualMachine.prototype = Object.extendsObject(CloudAPIBase, {
 		computeNode.setNodeId(responseObj.id);
 		computeNode.setNodeName(nodeId);
 		computeNode.setState("On");
+		var publicIpsSet = new Packages.java.util.HashSet();
+		var privateIpsSet = new Packages.java.util.HashSet();
+		var networkInterfaceList = new Packages.java.util.ArrayList();
+
+		var networkInterfaces = responseObj.networkInterfaces;
+		if(networkInterfaces != null) {
+			for(var i=0; i < networkInterfaces.length; i++)            {
+				var publicIPList = new Packages.java.util.ArrayList();
+				var privateIPList = new Packages.java.util.ArrayList();
+				//Set internal IP address
+				var networkInterface = new this.NetworkInterfaceDTO();
+				networkInterface.setName(networkInterfaces[i].name);
+				privateIpsSet.add(networkInterfaces[i].networkIP);
+				privateIPList.add(networkInterfaces[i].networkIP);
+				//Set public IP address
+				var accessConfigs = networkInterfaces[i].accessConfigs;
+				if(accessConfigs != null) {
+					for(var j=0; j < accessConfigs.length; j++)     {
+						publicIpsSet.add(accessConfigs[i].natIP);
+						publicIPList.add(accessConfigs[i].natIP);
+					}
+				}
+				networkInterface.setPrivateIPAddresses(privateIPList);
+				networkInterface.setPublicIPAddresses(publicIPList);
+				networkInterfaceList.add(networkInterface);
+			}
+		}
+		computeNode.setPublicIps(publicIpsSet);
+		computeNode.setPrivateIps(privateIpsSet);
+		computeNode.setNetworkInterfaces(networkInterfaceList);
 		computeNode.setStartTime(dateFormat.parse(startTime));
 
 		return computeNode;
@@ -860,7 +892,7 @@ GoogleComputeVirtualMachine.prototype = Object.extendsObject(CloudAPIBase, {
 		var location = parameters.get('Location');
 		var additionalParameters = parameters.get('AdditionalParameters');
 		var additionalParametersJson =  new JSON().decode(additionalParameters);
-		var az = additionalParametersJson['AvailabilityZone'];
+		var az = additionalParametersJson["AvailabilityZone"];
 
 		this.debug("Class-GoogleComputeVirtualMachine: Function-stopVirtualMachine: AvailabilityZone: " + az);
 		this.info("Class-GoogleComputeVirtualMachine: Function-stopVirtualMachine: project: " + project);
@@ -914,7 +946,7 @@ GoogleComputeVirtualMachine.prototype = Object.extendsObject(CloudAPIBase, {
         <sys_domain>global</sys_domain>
         <sys_domain_path>/</sys_domain_path>
         <sys_id>0879366edb606300b7829ee6db9619be</sys_id>
-        <sys_mod_count>55</sys_mod_count>
+        <sys_mod_count>58</sys_mod_count>
         <sys_name>GoogleComputeVirtualMachine</sys_name>
         <sys_overrides/>
         <sys_package display_value="Google Cloud Management" source="sn_cmp_gcp">40ff1aee0b2023003246ad4363673ac5</sys_package>
@@ -922,6 +954,6 @@ GoogleComputeVirtualMachine.prototype = Object.extendsObject(CloudAPIBase, {
         <sys_scope display_value="Google Cloud Management">40ff1aee0b2023003246ad4363673ac5</sys_scope>
         <sys_update_name>ecc_agent_script_include_0879366edb606300b7829ee6db9619be</sys_update_name>
         <sys_updated_by>hardik.benani</sys_updated_by>
-        <sys_updated_on>2018-09-20 19:23:56</sys_updated_on>
+        <sys_updated_on>2018-09-20 20:41:03</sys_updated_on>
     </ecc_agent_script_include>
 </record_update>

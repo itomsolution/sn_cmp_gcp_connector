@@ -313,20 +313,28 @@ GoogleNetworkVirtualNetwork.prototype = Object.extendsObject(CloudAPIBase, {
 	listSubNetworks:function() {
 	
 		var project = parameters.get('Project');
+		var location = parameters.get('Location');
 		this.debug("Class-GoogleNetworkVirtualNetwork: Function-listSubNetworks: project: " + project);
 		
 		//Invoke aggregated subnetworks endpoint
-		var gcpEndpoint = "https://www.googleapis.com/compute/v1/projects/" + project + "/aggregated/subnetworks";
+		var gcpEndpoint = "https://www.googleapis.com/compute/v1/projects/" + project + "/regions/"+location+"/subnetworks";
 		var apiInvoker = new GoogleAPIInvoker(gcpEndpoint, this.scope, this.clientEmail, this.privateKey);
 		var responseObj = new JSON().decode(apiInvoker.invokeGet());
 		var zones = responseObj.items;
+		ms.log("@Changes List subnetwork responseObj: "+responseObj);
+		ms.log("@Changes List subnetwork zones: "+zones);
 
 		//Populate method response DTO
 		var subNetworkList = new Packages.java.util.ArrayList();
 		for(var zone in zones) {
+			ms.log("@Changes inside zone loop: "+zones);
 			for(var subnet in zones[zone]) {
+				ms.log("@Changes inside subnet loop: "+zones[zone]);
+				ms.log("@Changes inside subnet loop: "+subnet);
 				if(subnet == 'subnetworks') {
+					ms.log("@Changes inside subnet if condition");
 					for(var i=0;i<zones[zone][subnet].length;i++) {
+						ms.log("@Changes inside final loop.");
 						var subNetwork = new this.SubnetDTO();
 						subNetwork.setSubnetId(zones[zone][subnet][i].id);
 						subNetwork.setSubnetName(zones[zone][subnet][i].name);
@@ -341,7 +349,7 @@ GoogleNetworkVirtualNetwork.prototype = Object.extendsObject(CloudAPIBase, {
 				}
 			}
 		}
-		
+		ms.log("@Changes list subnetworks: "+subNetworkList);
 		return subNetworkList;
 	},
 	///////////////////////////////////////////////////////////////	
@@ -781,7 +789,7 @@ GoogleNetworkVirtualNetwork.prototype = Object.extendsObject(CloudAPIBase, {
         <sys_domain>global</sys_domain>
         <sys_domain_path>/</sys_domain_path>
         <sys_id>4299f66edb606300b7829ee6db961965</sys_id>
-        <sys_mod_count>3</sys_mod_count>
+        <sys_mod_count>6</sys_mod_count>
         <sys_name>GoogleNetworkVirtualNetwork</sys_name>
         <sys_overrides/>
         <sys_package display_value="Google Cloud Management" source="sn_cmp_gcp">40ff1aee0b2023003246ad4363673ac5</sys_package>
@@ -789,6 +797,6 @@ GoogleNetworkVirtualNetwork.prototype = Object.extendsObject(CloudAPIBase, {
         <sys_scope display_value="Google Cloud Management">40ff1aee0b2023003246ad4363673ac5</sys_scope>
         <sys_update_name>ecc_agent_script_include_4299f66edb606300b7829ee6db961965</sys_update_name>
         <sys_updated_by>hardik.benani</sys_updated_by>
-        <sys_updated_on>2018-09-20 18:44:15</sys_updated_on>
+        <sys_updated_on>2018-09-20 20:46:59</sys_updated_on>
     </ecc_agent_script_include>
 </record_update>
