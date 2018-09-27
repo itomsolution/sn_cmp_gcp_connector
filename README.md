@@ -5,9 +5,8 @@
 **Questions and Issues**
 For questions and bug reports please use the github issue tracker. If you are interested in contributing or want to get details please email giri.padmanabh@servicenow.com.
 
-**Contributors Welcome**
+**Contributors Welcome
 
-**Status - Active Development**
 
 # Generated files
 This repository contains generated files and a checksum.
