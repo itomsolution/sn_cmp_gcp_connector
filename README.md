@@ -2,11 +2,6 @@
 
 **This repository is used by the ITOM Product Success team to jointly develop GCP connector with customer collaborators for Kingston release. It is used for the Building the Google Compute Connector Scoped App, for automating IaaS on GCP from ServiceNow, ITOM CMP Plugin.**
 
-**Questions and Issues**
-For questions and bug reports please use the github issue tracker. If you are interested in contributing or want to get details please email giri.padmanabh@servicenow.com.
-
-**Contributors Welcome
-
 
 # Generated files
 This repository contains generated files and a checksum.
