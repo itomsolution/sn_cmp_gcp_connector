@@ -123,9 +123,7 @@ GoogleComputeVirtualMachine.prototype = Object.extendsObject(CloudAPIBase, {
 		var mgmtNameKeyValue= "";
 		//If OS is Linux, inject SSH keys
 		if(instanceRequest.disks[0].initializeParams.sourceImage.indexOf("windows") == -1) {
-			ms.log('KeyInfo****************** '+keyInfo);
 			var mappedKeyInfo = new JSON().decode(keyInfo);
-			ms.log('mappedKeyInfo****************** '+mappedKeyInfo);
 			var userName = mappedKeyInfo.ImageUser;
 			var mgmtUserName = mappedKeyInfo.KeyName;
 			userId = userName;
@@ -946,7 +944,7 @@ GoogleComputeVirtualMachine.prototype = Object.extendsObject(CloudAPIBase, {
         <sys_domain>global</sys_domain>
         <sys_domain_path>/</sys_domain_path>
         <sys_id>0879366edb606300b7829ee6db9619be</sys_id>
-        <sys_mod_count>58</sys_mod_count>
+        <sys_mod_count>60</sys_mod_count>
         <sys_name>GoogleComputeVirtualMachine</sys_name>
         <sys_overrides/>
         <sys_package display_value="Google Cloud Management" source="sn_cmp_gcp">40ff1aee0b2023003246ad4363673ac5</sys_package>
@@ -954,6 +952,6 @@ GoogleComputeVirtualMachine.prototype = Object.extendsObject(CloudAPIBase, {
         <sys_scope display_value="Google Cloud Management">40ff1aee0b2023003246ad4363673ac5</sys_scope>
         <sys_update_name>ecc_agent_script_include_0879366edb606300b7829ee6db9619be</sys_update_name>
         <sys_updated_by>hardik.benani</sys_updated_by>
-        <sys_updated_on>2018-09-20 20:41:03</sys_updated_on>
+        <sys_updated_on>2018-09-26 08:49:16</sys_updated_on>
     </ecc_agent_script_include>
 </record_update>
