@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update sys_domain="global" table="ecc_agent_script_include">
+    <ecc_agent_script_include action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <description>Handler for Google Deployment Manager API calls</description>
+        <name>GoogleDeploymentManager</name>
+        <script><![CDATA[var GoogleDeploymentManager = Class.create();
+GoogleDeploymentManager.prototype = Object.extendsObject({
+	
+	/**
+ 	* Parameters and headers are expected to come from the exchange from the blueprint
+ 	* orchestrator on the instance side.
+ 	*/
+	initialize: function(parameters, headers) {
+	},
+	
+	createStack: function(stackName, template, templateParameters, tags, additionalApiParams) {
+		
+	},
+	
+	createStackFromURL: function(stackName, templateUrl, templateParameters, tags, additionalApiParams) {
+		
+	},
+	
+	getStackDetails: function(stackId) {
+		
+	},
+	
+	deleteStack: function(stackId) {
+		
+	},
+	
+	stopStack: function(stackId) {
+		
+	},
+	
+	startStack: function(stackId) {
+		
+	},
+	
+	_stopStartStack: function(stackId, stop) {
+		
+	},
+	
+	describeStack: function(stackId) {
+		
+	},
+	
+	getTemplate: function(stackId) {
+		
+	},
+	
+	listStackResources: function(stackId) {
+		
+	},
+	
+	describeStackEvents: function(stackId) {
+		
+	},
+	
+	
+	_waitForDeployment: function(stackId, inProgressStatesStr, completeState) {
+		
+	},
+	
+	/**
+ 	* Push template body as a file in a S3 bucket for provisioning
+ 	* If a bucket name is specified, use it, and don't mark the bucket
+ 	* for deletion.  Otherwise, generate a temporary bucket and put the template there
+ 	* and mark the bucket as temporary to be cleaned up after provisioning.
+ 	*/
+	_pushTemplateToS3: function(template) {
+		
+	},
+	
+	_cleanupFromS3: function(s3TemplateInfo) {
+		
+	},
+	
+	_generateFileName: function() {
+		// return this.S3_PREFIX + '-' + this._getDateStr() + this.JSON;
+	},
+	
+	_generateURL: function(location,  bucketName, fileName) {
+		
+	},
+	
+	_generateCFStackName: function(name) {
+		
+	},
+	
+	type: 'GoogleDeploymentManager'
+});]]></script>
+        <sys_class_name>ecc_agent_script_include</sys_class_name>
+        <sys_created_by>hardik.benani</sys_created_by>
+        <sys_created_on>2018-10-03 11:50:46</sys_created_on>
+        <sys_domain>global</sys_domain>
+        <sys_domain_path>/</sys_domain_path>
+        <sys_id>9408f6afdbf86b00de65594e5e96190f</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>GoogleDeploymentManager</sys_name>
+        <sys_overrides/>
+        <sys_package display_value="Google Cloud Management" source="sn_cmp_gcp">40ff1aee0b2023003246ad4363673ac5</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Google Cloud Management">40ff1aee0b2023003246ad4363673ac5</sys_scope>
+        <sys_update_name>ecc_agent_script_include_9408f6afdbf86b00de65594e5e96190f</sys_update_name>
+        <sys_updated_by>hardik.benani</sys_updated_by>
+        <sys_updated_on>2018-10-03 11:50:46</sys_updated_on>
+    </ecc_agent_script_include>
+</record_update>
