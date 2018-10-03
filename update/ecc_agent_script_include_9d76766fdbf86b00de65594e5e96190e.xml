@@ -10,7 +10,6 @@ function createStack() {
 	var cf = new GoogleDeploymentManager(this.parameters, this.headers);
 
 	var template = '' + this.parameters.get('StackOrchestrationTemplate');
-	 ms.log('********************'+template);
 
 	var apiParameters = '' + this.parameters.get('Parameters');
 	var apiParams = JSON.parse(apiParameters);
@@ -18,7 +17,6 @@ function createStack() {
 	var templateParameters = '' + this.parameters.get('templateParameters');
 	
 	var tags = '' + this.parameters.get('CustomTags');
-	ms.log('********************'+template);
 	var additionalApiParams = {};
 // 	// If there are additional API parameters, check if it is a string as policy property override
 // 	// sends a string if you type a JSON string
@@ -46,7 +44,7 @@ function createStack() {
         <sys_domain>global</sys_domain>
         <sys_domain_path>/</sys_domain_path>
         <sys_id>9d76766fdbf86b00de65594e5e96190e</sys_id>
-        <sys_mod_count>5</sys_mod_count>
+        <sys_mod_count>6</sys_mod_count>
         <sys_name>google-deployment-manager-1.0-CreateStac</sys_name>
         <sys_overrides/>
         <sys_package display_value="Google Cloud Management" source="sn_cmp_gcp">40ff1aee0b2023003246ad4363673ac5</sys_package>
@@ -54,6 +52,6 @@ function createStack() {
         <sys_scope display_value="Google Cloud Management">40ff1aee0b2023003246ad4363673ac5</sys_scope>
         <sys_update_name>ecc_agent_script_include_9d76766fdbf86b00de65594e5e96190e</sys_update_name>
         <sys_updated_by>jayant.kaushal</sys_updated_by>
-        <sys_updated_on>2018-10-03 16:04:46</sys_updated_on>
+        <sys_updated_on>2018-10-03 19:48:57</sys_updated_on>
     </ecc_agent_script_include>
 </record_update>
