@@ -36,8 +36,9 @@ GoogleDeploymentManager.prototype = Object.extendsObject(CloudAPIBase, {
 		var apiInvoker = new GoogleAPIInvoker(gcpEndpoint, this.scope, this.clientEmail, this.privateKey);
 		var responseObj = new JSON().decode(apiInvoker.invokePost(new JSON().encode(requestParameters)));
 		var gcpRetrEndpoint =responseObj.targetLink;
-		this._waitForDeployment(gcpRetrEndpoint);
-		return responseObj;
+		var output = this._waitForDeployment(gcpRetrEndpoint);
+		var resources = this._getDeploymentResources(stackName,project);
+		return resources;
 
 	},
 
@@ -45,7 +46,11 @@ GoogleDeploymentManager.prototype = Object.extendsObject(CloudAPIBase, {
 
 	},
 
-	getStackDetails: function(stackId) {
+	_getDeploymentResources: function(deployment,project) {
+		var resourceFetchURL = "https://www.googleapis.com/deploymentmanager/v2/projects/"+project+"/global/deployments/"+deployment+"/resources";
+		var apiInvoker1 = new GoogleAPIInvoker(resourceFetchURL, this.scope, this.clientEmail, this.privateKey);
+		var responseObj1 = new JSON().decode(apiInvoker1.invokeGet());
+	return responseObj1;
 
 	},
 
@@ -66,7 +71,6 @@ GoogleDeploymentManager.prototype = Object.extendsObject(CloudAPIBase, {
 	},
 
 	describeStack: function(targetLink,project) {
-		//var gcpRetrEndpoint = "https://www.googleapis.com/deploymentmanager/v2/projects/"+project+"/global/deployments";
 		var apiInvoker1 = new GoogleAPIInvoker(targetLink, this.scope, this.clientEmail, this.privateKey);
 		var responseObj1 = new JSON().decode(apiInvoker1.invokeGet());
 	},
@@ -87,17 +91,18 @@ GoogleDeploymentManager.prototype = Object.extendsObject(CloudAPIBase, {
 	_waitForDeployment: function(targetLink) {
 		var counter = 0;
 		var deploymentStatus;
+		var deploymentStatusOutput;
 		do {
 			var deployStatusApiInvoker = new GoogleAPIInvoker(targetLink, this.scope, this.clientEmail, this.privateKey);
-			var deploymentStatusOutput = deployStatusApiInvoker.invokeGet();
+			deploymentStatusOutput = deployStatusApiInvoker.invokeGet();
 			var decodedDeploymentStatusOutput = new JSON().decode(deployStatusApiInvoker.invokeGet());
 			deploymentStatus = decodedDeploymentStatusOutput.operation.status;
 			Packages.java.lang.Thread.sleep(5000);
 			ms.log('current deployment status is '+ deploymentStatus +', if not Running then wait...' );
 			counter++;
-		}while ((deploymentStatus != "RUNNING" )&& counter <5);
+		}while ((deploymentStatus != "DONE" )&& counter <5);
 
-
+	return deploymentStatusOutput;
 	},
 
 	/**
@@ -134,7 +139,7 @@ GoogleDeploymentManager.prototype = Object.extendsObject(CloudAPIBase, {
         <sys_domain>global</sys_domain>
         <sys_domain_path>/</sys_domain_path>
         <sys_id>9408f6afdbf86b00de65594e5e96190f</sys_id>
-        <sys_mod_count>38</sys_mod_count>
+        <sys_mod_count>43</sys_mod_count>
         <sys_name>GoogleDeploymentManager</sys_name>
         <sys_overrides/>
         <sys_package display_value="Google Cloud Management" source="sn_cmp_gcp">40ff1aee0b2023003246ad4363673ac5</sys_package>
@@ -142,6 +147,6 @@ GoogleDeploymentManager.prototype = Object.extendsObject(CloudAPIBase, {
         <sys_scope display_value="Google Cloud Management">40ff1aee0b2023003246ad4363673ac5</sys_scope>
         <sys_update_name>ecc_agent_script_include_9408f6afdbf86b00de65594e5e96190f</sys_update_name>
         <sys_updated_by>jayant.kaushal</sys_updated_by>
-        <sys_updated_on>2018-10-04 09:29:49</sys_updated_on>
+        <sys_updated_on>2018-10-04 12:35:03</sys_updated_on>
     </ecc_agent_script_include>
 </record_update>
