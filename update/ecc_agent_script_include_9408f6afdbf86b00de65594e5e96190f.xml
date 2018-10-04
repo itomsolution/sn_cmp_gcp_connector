@@ -6,84 +6,100 @@
         <name>GoogleDeploymentManager</name>
         <script><![CDATA[var GoogleDeploymentManager = Class.create();
 GoogleDeploymentManager.prototype = Object.extendsObject(CloudAPIBase, {
-	
+
 	/**
  	* Parameters and headers are expected to come from the exchange from the blueprint
  	* orchestrator on the instance side.
  	*/
 	scope: "https://www.googleapis.com/auth/cloud-platform",
 	initialize: function(parameters, headers) {
-	CloudAPIBase.prototype.initialize.call(this);
+		CloudAPIBase.prototype.initialize.call(this);
 		this.parameters = parameters;
 		this.headers = headers;
 		this.clientEmail = parameters.get('ClientEmail');
 		this.privateKey  = parameters.get('PrivateKey');
-		
-	},
-	
-		createStack: function(stackName, template, templateParameters, tags, additionalApiParams) {
-			var requestParameters = {};
-			var project = parameters.get('Project');
 
-			var target = {};
-			requestParameters.name=stackName;
-			var content = {};
-			content.content = template;
-			target.config=content;
-			requestParameters.target = target;
-			
+	},
+
+	createStack: function(stackName, template, templateParameters, tags, additionalApiParams) {
+		var requestParameters = {};
+		var project = parameters.get('Project');
+
+		var target = {};
+		requestParameters.name=stackName;
+		var content = {};
+		content.content = template;
+		target.config=content;
+		requestParameters.target = target;
+
 		var gcpEndpoint = "https://www.googleapis.com/deploymentmanager/v2/projects/"+project+"/global/deployments";
 		var apiInvoker = new GoogleAPIInvoker(gcpEndpoint, this.scope, this.clientEmail, this.privateKey);
 		var responseObj = new JSON().decode(apiInvoker.invokePost(new JSON().encode(requestParameters)));
-			return responseObj;
+		var gcpRetrEndpoint =responseObj.targetLink;
+		this._waitForDeployment(gcpRetrEndpoint);
+		return responseObj;
 
 	},
-	
+
 	createStackFromURL: function(stackName, templateUrl, templateParameters, tags, additionalApiParams) {
-		
+
 	},
-	
+
 	getStackDetails: function(stackId) {
-		
+
 	},
-	
+
 	deleteStack: function(stackId) {
-		
+
 	},
-	
+
 	stopStack: function(stackId) {
-		
+
 	},
-	
+
 	startStack: function(stackId) {
-		
+
 	},
-	
+
 	_stopStartStack: function(stackId, stop) {
-		
+
 	},
-	
-	describeStack: function(stackId) {
-		
+
+	describeStack: function(targetLink,project) {
+		//var gcpRetrEndpoint = "https://www.googleapis.com/deploymentmanager/v2/projects/"+project+"/global/deployments";
+		var apiInvoker1 = new GoogleAPIInvoker(targetLink, this.scope, this.clientEmail, this.privateKey);
+		var responseObj1 = new JSON().decode(apiInvoker1.invokeGet());
 	},
-	
+
 	getTemplate: function(stackId) {
-		
+
 	},
-	
+
 	listStackResources: function(stackId) {
-		
+
 	},
-	
+
 	describeStackEvents: function(stackId) {
-		
+
 	},
-	
-	
-	_waitForDeployment: function(stackId, inProgressStatesStr, completeState) {
-		
+
+
+	_waitForDeployment: function(targetLink) {
+		var counter = 0;
+		var deploymentStatus;
+		do {
+			var deployStatusApiInvoker = new GoogleAPIInvoker(targetLink, this.scope, this.clientEmail, this.privateKey);
+			var deploymentStatusOutput = deployStatusApiInvoker.invokeGet();
+			var decodedDeploymentStatusOutput = new JSON().decode(deployStatusApiInvoker.invokeGet());
+			deploymentStatus = decodedDeploymentStatusOutput.operation.status;
+			Packages.java.lang.Thread.sleep(5000);
+			ms.log('current deployment status is '+ deploymentStatus +', if not Running then wait...' );
+			counter++;
+		}while ((deploymentStatus != "RUNNING" )&& counter <5);
+
+
 	},
-	
+
 	/**
  	* Push template body as a file in a S3 bucket for provisioning
  	* If a bucket name is specified, use it, and don't mark the bucket
@@ -91,25 +107,25 @@ GoogleDeploymentManager.prototype = Object.extendsObject(CloudAPIBase, {
  	* and mark the bucket as temporary to be cleaned up after provisioning.
  	*/
 	_pushTemplateToS3: function(template) {
-		
+
 	},
-	
+
 	_cleanupFromS3: function(s3TemplateInfo) {
-		
+
 	},
-	
+
 	_generateFileName: function() {
 		// return this.S3_PREFIX + '-' + this._getDateStr() + this.JSON;
 	},
-	
+
 	_generateURL: function(location,  bucketName, fileName) {
-		
+
 	},
-	
+
 	_generateCFStackName: function(name) {
-		
+
 	},
-	
+
 	type: 'GoogleDeploymentManager'
 });]]></script>
         <sys_class_name>ecc_agent_script_include</sys_class_name>
@@ -118,7 +134,7 @@ GoogleDeploymentManager.prototype = Object.extendsObject(CloudAPIBase, {
         <sys_domain>global</sys_domain>
         <sys_domain_path>/</sys_domain_path>
         <sys_id>9408f6afdbf86b00de65594e5e96190f</sys_id>
-        <sys_mod_count>17</sys_mod_count>
+        <sys_mod_count>38</sys_mod_count>
         <sys_name>GoogleDeploymentManager</sys_name>
         <sys_overrides/>
         <sys_package display_value="Google Cloud Management" source="sn_cmp_gcp">40ff1aee0b2023003246ad4363673ac5</sys_package>
@@ -126,6 +142,6 @@ GoogleDeploymentManager.prototype = Object.extendsObject(CloudAPIBase, {
         <sys_scope display_value="Google Cloud Management">40ff1aee0b2023003246ad4363673ac5</sys_scope>
         <sys_update_name>ecc_agent_script_include_9408f6afdbf86b00de65594e5e96190f</sys_update_name>
         <sys_updated_by>jayant.kaushal</sys_updated_by>
-        <sys_updated_on>2018-10-03 19:52:24</sys_updated_on>
+        <sys_updated_on>2018-10-04 09:29:49</sys_updated_on>
     </ecc_agent_script_include>
 </record_update>
