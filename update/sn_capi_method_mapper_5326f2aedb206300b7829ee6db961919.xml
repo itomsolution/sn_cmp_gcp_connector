@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<record_update table="sn_capi_method_mapper">
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sn_capi_method_mapper">
     <sn_capi_method_mapper action="INSERT_OR_UPDATE">
         <capi_interface_operation display_value="ListSubscriptions">b30e2aa70b0003003503e0d425673afc</capi_interface_operation>
         <cloud_api display_value="Google Compute Platform API">b2267e6edb206300b7829ee6db961935</cloud_api>

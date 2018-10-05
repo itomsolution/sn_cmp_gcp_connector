@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<record_update table="sn_capi_method_mapper">
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sn_capi_method_mapper">
     <sn_capi_method_mapper action="INSERT_OR_UPDATE">
         <capi_interface_operation display_value="ListVolumeTypes">6b339bb20b3222004b1b812f15673a18</capi_interface_operation>
         <cloud_api display_value="Google Block Storage API">a279366edb606300b7829ee6db9619d8</cloud_api>

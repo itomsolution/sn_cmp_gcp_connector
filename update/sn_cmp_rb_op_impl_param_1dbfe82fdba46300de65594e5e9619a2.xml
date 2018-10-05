@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<record_update table="sn_cmp_rb_op_impl_param">
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sn_cmp_rb_op_impl_param">
     <sn_cmp_rb_op_impl_param action="INSERT_OR_UPDATE">
         <applicable_to/>
         <datasource>1</datasource>
@@ -10,10 +9,11 @@
         <host/>
         <ismandatory>false</ismandatory>
         <name>AdditionalParameters</name>
-        <operation display_value="ConnectAndStopVirtualMachine">af0ce71d0b2132004b1b812f15673a2f</operation>
+        <operation display_value="">af0ce71d0b2132004b1b812f15673a2f</operation>
         <order>1000</order>
         <read_only>false</read_only>
         <regex/>
+        <step/>
         <sys_class_name>sn_cmp_rb_op_impl_param</sys_class_name>
         <sys_created_by>hardik.benani</sys_created_by>
         <sys_created_on>2018-09-20 15:34:43</sys_created_on>

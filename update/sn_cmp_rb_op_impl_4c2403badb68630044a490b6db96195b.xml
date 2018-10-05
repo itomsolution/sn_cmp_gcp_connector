@@ -1,8 +1,7 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<record_update table="sn_cmp_rb_op_impl">
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sn_cmp_rb_op_impl">
     <sn_cmp_rb_op_impl action="INSERT_OR_UPDATE">
         <interface display_value="Discovery Interface">9c7039300b903200668daac125673ad8</interface>
-        <operation display_value="ListPrices">279487f30b000300a682aac125673a17</operation>
+        <operation display_value="">279487f30b000300a682aac125673a17</operation>
         <operation_output_attributes/>
         <resource display_value="Google Datacenter">af14cb7adb68630044a490b6db96193c</resource>
         <sys_class_name>sn_cmp_rb_op_impl</sys_class_name>

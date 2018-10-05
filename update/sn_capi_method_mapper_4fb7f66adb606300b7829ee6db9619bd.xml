@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<record_update table="sn_capi_method_mapper">
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sn_capi_method_mapper">
     <sn_capi_method_mapper action="INSERT_OR_UPDATE">
         <capi_interface_operation display_value="DisassociateInternetGateway">38ed23800b4322004b1b812f15673a48</capi_interface_operation>
         <cloud_api display_value="Google Network API">b2b7b62adb606300b7829ee6db9619ab</cloud_api>

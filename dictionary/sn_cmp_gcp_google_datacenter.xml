@@ -1,6 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<database>
-    <element extends="cmdb_ci_logical_datacenter" label="Google Datacenter" max_length="40" name="sn_cmp_gcp_google_datacenter" sizeclass="34" type="collection">
+<?xml version="1.0" encoding="UTF-8"?><database>
+    <element extends="cmdb_ci_logical_datacenter" label="Google Datacenter" max_length="40" name="sn_cmp_gcp_google_datacenter" type="collection">
         <element attributes="readonly_clickthrough=true" label="Asset" max_length="32" name="asset" read_only="true" reference="alm_asset" reference_cascade_rule="delete" type="reference"/>
         <element attributes="edge_encryption_enabled=true" label="Asset tag" max_length="40" name="asset_tag" type="string"/>
         <element label="Assigned" max_length="40" name="assigned" type="glide_date_time"/>
@@ -75,6 +74,9 @@
         <element attributes="edge_encryption_enabled=true" label="Subcategory" max_length="40" name="subcategory" type="string"/>
         <element label="Supported by" max_length="32" name="supported_by" reference="sys_user" type="reference"/>
         <element label="Support group" max_length="32" name="support_group" reference="sys_user_group" type="reference"/>
+        <element attributes="synchronizePartitions=true" choice="3" default="javascript:current.getTableName();" dynamic_default_value="b5cb83a85f220100a9ad2572f2b4773c" label="Class" max_length="80" name="sys_class_name" type="sys_class_name" use_dynamic_default="true">
+            <choice/>
+        </element>
         <element default="global" label="Domain" max_length="32" name="sys_domain" type="domain_id"/>
         <element label="Domain Path" max_length="255" name="sys_domain_path" type="domain_path"/>
         <element label="Requires verification" max_length="40" name="unverified" read_only="true" type="boolean"/>
@@ -101,63 +103,69 @@
             <element name="sys_domain_path"/>
         </index>
         <index name="index7">
-            <element name="cost_center"/>
+            <element name="maintenance_schedule"/>
         </index>
         <index name="index8">
-            <element name="supported_by"/>
+            <element name="cost_center"/>
         </index>
         <index name="index9">
-            <element name="name"/>
+            <element name="supported_by"/>
         </index>
         <index name="index10">
-            <element name="assignment_group"/>
+            <element name="name"/>
         </index>
         <index name="index11">
-            <element name="managed_by"/>
+            <element name="assignment_group"/>
         </index>
         <index name="index12">
-            <element name="manufacturer"/>
+            <element name="managed_by"/>
         </index>
         <index name="index13">
-            <element name="mac_address"/>
+            <element name="sys_class_name"/>
         </index>
         <index name="index14">
-            <element name="vendor"/>
+            <element name="manufacturer"/>
         </index>
         <index name="index15">
-            <element name="company"/>
+            <element name="mac_address"/>
         </index>
         <index name="index16">
-            <element name="department"/>
+            <element name="vendor"/>
         </index>
         <index name="index17">
-            <element name="assigned_to"/>
+            <element name="company"/>
         </index>
         <index name="index18">
-            <element name="serial_number"/>
+            <element name="department"/>
         </index>
         <index name="index19">
-            <element name="ip_address"/>
+            <element name="assigned_to"/>
         </index>
         <index name="index20">
-            <element name="model_id"/>
+            <element name="serial_number"/>
         </index>
         <index name="index21">
-            <element name="support_group"/>
+            <element name="ip_address"/>
         </index>
         <index name="index22">
-            <element name="schedule"/>
+            <element name="model_id"/>
         </index>
         <index name="index23">
-            <element name="correlation_id"/>
+            <element name="support_group"/>
         </index>
         <index name="index24">
-            <element name="location"/>
+            <element name="schedule"/>
         </index>
         <index name="index25">
-            <element name="asset"/>
+            <element name="correlation_id"/>
         </index>
         <index name="index26">
+            <element name="location"/>
+        </index>
+        <index name="index27">
+            <element name="asset"/>
+        </index>
+        <index name="index28">
             <element name="category"/>
             <element name="subcategory"/>
         </index>

@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<record_update table="sn_cmp_rb_op_impl">
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sn_cmp_rb_op_impl">
     <sn_cmp_rb_op_impl action="INSERT_OR_UPDATE">
         <interface display_value="LB Server Interface">c679b35e0be622009e620bcb15673a2c</interface>
         <operation display_value="Deprovision">b8f9ff9e0be622009e620bcb15673ab0</operation>

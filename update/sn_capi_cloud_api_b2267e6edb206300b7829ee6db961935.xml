@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<record_update table="sn_capi_cloud_api">
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sn_capi_cloud_api">
     <sn_capi_cloud_api action="INSERT_OR_UPDATE">
         <category display_value="Compute">57c0dbd9934b22004a9032bfa67ffb79</category>
         <cloud_api_interface display_value="Compute Interface">c7688c340b3222004b1b812f15673ae7</cloud_api_interface>

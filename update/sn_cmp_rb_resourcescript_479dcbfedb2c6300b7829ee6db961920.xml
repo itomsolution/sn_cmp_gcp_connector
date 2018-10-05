@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<record_update table="sn_cmp_rb_resourcescript">
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sn_cmp_rb_resourcescript">
     <sn_cmp_rb_resourcescript action="INSERT_OR_UPDATE">
         <name>List_Google_Hardwares_Response_Processor</name>
         <resource display_value="Google Datacenter">af14cb7adb68630044a490b6db96193c</resource>

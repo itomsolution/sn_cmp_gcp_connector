@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<record_update table="sn_cmp_rb_op_impl_param">
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sn_cmp_rb_op_impl_param">
     <sn_cmp_rb_op_impl_param action="INSERT_OR_UPDATE">
         <applicable_to/>
         <datasource>1</datasource>
@@ -14,6 +13,7 @@
         <order>200</order>
         <read_only>false</read_only>
         <regex/>
+        <step/>
         <sys_class_name>sn_cmp_rb_op_impl_param</sys_class_name>
         <sys_created_by>hardik.benani</sys_created_by>
         <sys_created_on>2018-09-18 19:08:13</sys_created_on>

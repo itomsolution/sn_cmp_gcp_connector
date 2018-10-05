@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<record_update table="sn_capi_config_parameter">
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sn_capi_config_parameter">
     <sn_capi_config_parameter action="INSERT_OR_UPDATE">
         <config_data_type>string</config_data_type>
         <config_parameter_name>Project</config_parameter_name>

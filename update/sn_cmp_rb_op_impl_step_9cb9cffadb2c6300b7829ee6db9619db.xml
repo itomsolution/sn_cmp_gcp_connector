@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<record_update table="sn_cmp_rb_op_impl_step">
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sn_cmp_rb_op_impl_step">
     <sn_cmp_rb_op_impl_step action="INSERT_OR_UPDATE">
         <capi_interface display_value="Compute Interface">c7688c340b3222004b1b812f15673ae7</capi_interface>
         <capi_method display_value="StartNode">cf688c340b3222004b1b812f15673af0</capi_method>
@@ -7,6 +6,8 @@
         <condition/>
         <depends_on/>
         <enabled>true</enabled>
+        <flow_type/>
+        <force_async>false</force_async>
         <interface/>
         <interface_operation/>
         <name>Compute Interface.StartNode</name>
@@ -30,5 +31,6 @@
         <sys_update_name>sn_cmp_rb_op_impl_step_9cb9cffadb2c6300b7829ee6db9619db</sys_update_name>
         <sys_updated_by>hardik.benani</sys_updated_by>
         <sys_updated_on>2018-09-18 18:52:03</sys_updated_on>
+        <target_entity_flow/>
     </sn_cmp_rb_op_impl_step>
 </record_update>

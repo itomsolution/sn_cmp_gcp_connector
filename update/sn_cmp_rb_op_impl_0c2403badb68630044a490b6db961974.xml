@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<record_update table="sn_cmp_rb_op_impl">
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sn_cmp_rb_op_impl">
     <sn_cmp_rb_op_impl action="INSERT_OR_UPDATE">
         <interface display_value="Discovery Interface">9c7039300b903200668daac125673ad8</interface>
         <operation display_value="ListSubscriptions">9f28faab0b0003003503e0d425673adf</operation>

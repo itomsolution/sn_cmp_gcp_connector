@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<record_update table="sn_cmp_rb_keyvalue">
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sn_cmp_rb_keyvalue">
     <sn_cmp_rb_keyvalue action="INSERT_OR_UPDATE">
         <action/>
         <key>NamePrefix</key>

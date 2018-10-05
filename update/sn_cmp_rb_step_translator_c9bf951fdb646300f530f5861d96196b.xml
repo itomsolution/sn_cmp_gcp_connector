@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<record_update table="sn_cmp_rb_step_translator">
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sn_cmp_rb_step_translator">
     <sn_cmp_rb_step_translator action="INSERT_OR_UPDATE">
         <order>0</order>
         <script display_value="List_Google_Nodes_Response_Pocessor">ea001f72db6c6300b7829ee6db961973</script>

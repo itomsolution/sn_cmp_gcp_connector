@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<record_update table="sn_cmp_rb_guest_interface">
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sn_cmp_rb_guest_interface">
     <sn_cmp_rb_guest_interface action="INSERT_OR_UPDATE">
         <guestinterface display_value="LB Server Interface">c679b35e0be622009e620bcb15673a2c</guestinterface>
         <resource display_value="Google Datacenter">af14cb7adb68630044a490b6db96193c</resource>

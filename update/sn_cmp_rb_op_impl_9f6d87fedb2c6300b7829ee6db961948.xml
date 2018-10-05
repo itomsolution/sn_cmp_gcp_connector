@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<record_update table="sn_cmp_rb_op_impl">
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sn_cmp_rb_op_impl">
     <sn_cmp_rb_op_impl action="INSERT_OR_UPDATE">
         <interface display_value="Storage Interface">e26044440b632200668daac125673a4b</interface>
         <operation display_value="Attach">f470c8440b632200668daac125673aa1</operation>

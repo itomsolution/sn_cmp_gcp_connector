@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<record_update table="sn_capi_method_mapper">
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sn_capi_method_mapper">
     <sn_capi_method_mapper action="INSERT_OR_UPDATE">
         <capi_interface_operation display_value="ListStorageAccount">64bb63eb93d032007472f23a767ffb16</capi_interface_operation>
         <cloud_api display_value="Google Blob Storage API">bdfabaeedb606300b7829ee6db9619c6</cloud_api>

@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<record_update table="sys_wizard_answer">
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_wizard_answer">
     <sys_wizard_answer action="INSERT_OR_UPDATE">
         <active>true</active>
         <answer>Google Credentials</answer>
@@ -10,7 +9,7 @@
         <next_question/>
         <order>100</order>
         <payload_name/>
-        <question display_value="Credentials" name="Credentials">20823672dba02300f530f5861d96190e</question>
+        <question display_value="Credentials" name="Credentials">c51c9450dbc9230074f257a0cf961993</question>
         <roles/>
         <script/>
         <sys_class_name>sys_wizard_answer</sys_class_name>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sn_cmp_rb_op_impl">
+    <sn_cmp_rb_op_impl action="INSERT_OR_UPDATE">
+        <interface display_value="Stack Orchestration Interface">64271337d722220097eb6ccf6e6103f5</interface>
+        <operation display_value="Delete Stack">b9c5631c9f30320048111f80a57fcfa2</operation>
+        <operation_output_attributes/>
+        <resource display_value="Google Datacenter">af14cb7adb68630044a490b6db96193c</resource>
+        <sys_class_name>sn_cmp_rb_op_impl</sys_class_name>
+        <sys_created_by>jayant.kaushal</sys_created_by>
+        <sys_created_on>2018-10-05 17:29:48</sys_created_on>
+        <sys_id>91e99a10dbc9a300b930d790cf96194f</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>b9c5631c9f30320048111f80a57fcfa2</sys_name>
+        <sys_package display_value="Google Cloud Management" source="sn_cmp_gcp">40ff1aee0b2023003246ad4363673ac5</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Google Cloud Management">40ff1aee0b2023003246ad4363673ac5</sys_scope>
+        <sys_update_name>sn_cmp_rb_op_impl_91e99a10dbc9a300b930d790cf96194f</sys_update_name>
+        <sys_updated_by>jayant.kaushal</sys_updated_by>
+        <sys_updated_on>2018-10-05 17:29:48</sys_updated_on>
+    </sn_cmp_rb_op_impl>
+</record_update>

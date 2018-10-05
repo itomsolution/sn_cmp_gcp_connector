@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<record_update table="sn_cmp_rb_dc_capacity_type">
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sn_cmp_rb_dc_capacity_type">
     <sn_cmp_rb_dc_capacity_type action="INSERT_OR_UPDATE">
         <resoure_block display_value="Google Datacenter">af14cb7adb68630044a490b6db96193c</resoure_block>
         <supported_capability display_value="Network">10fb53e30b1032003ad5c73ef6673a94</supported_capability>

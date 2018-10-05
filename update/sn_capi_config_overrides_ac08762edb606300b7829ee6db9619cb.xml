@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<record_update table="sn_capi_config_overrides">
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sn_capi_config_overrides">
     <sn_capi_config_overrides action="INSERT_OR_UPDATE">
         <cloud_api display_value="Google Compute Platform API">b2267e6edb206300b7829ee6db961935</cloud_api>
         <config_parameter display_value="ClientEmail">8d18b62edb606300b7829ee6db9619ed</config_parameter>

@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<record_update table="sn_cmp_rb_resourcehost">
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sn_cmp_rb_resourcehost">
     <sn_cmp_rb_resourcehost action="INSERT_OR_UPDATE">
         <guestresource display_value="Virtual Server">6a4a735e0be622009e620bcb15673a04</guestresource>
         <hostresource display_value="Google Datacenter">af14cb7adb68630044a490b6db96193c</hostresource>

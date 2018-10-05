@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<record_update table="sn_cmp_rb_op_impl">
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sn_cmp_rb_op_impl">
     <sn_cmp_rb_op_impl action="INSERT_OR_UPDATE">
         <interface display_value="Network Interface">1a9359bc67532200ff506c706785eff7</interface>
         <operation display_value="DeleteSecurityGroup">c1a35dfc67532200ff506c706785ef90</operation>

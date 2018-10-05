@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<record_update table="sn_cmp_bp_rule_info">
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sn_cmp_bp_rule_info">
     <sn_cmp_bp_rule_info action="INSERT_OR_UPDATE">
         <guest display_value="Google Datacenter">af14cb7adb68630044a490b6db96193c</guest>
         <host_resource>Any</host_resource>

@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<record_update table="sn_capi_provider">
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sn_capi_provider">
     <sn_capi_provider action="INSERT_OR_UPDATE">
+        <active>false</active>
         <datacenter_class>sn_cmp_gcp_google_datacenter</datacenter_class>
         <description>Google Cloud Management</description>
         <name>Google</name>

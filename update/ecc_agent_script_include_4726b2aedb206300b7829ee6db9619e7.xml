@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<record_update sys_domain="global" table="ecc_agent_script_include">
+<?xml version="1.0" encoding="UTF-8"?><record_update sys_domain="global" table="ecc_agent_script_include">
     <ecc_agent_script_include action="INSERT_OR_UPDATE">
         <active>true</active>
         <description>Script for CAPI - Google Compute Platform API.ListNodes</description>

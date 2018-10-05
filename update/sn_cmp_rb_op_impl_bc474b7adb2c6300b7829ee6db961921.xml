@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<record_update table="sn_cmp_rb_op_impl">
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sn_cmp_rb_op_impl">
     <sn_cmp_rb_op_impl action="INSERT_OR_UPDATE">
         <interface display_value="Firewall Interface">4279b35e0be622009e620bcb15673a2b</interface>
         <operation display_value="Setup Monitoring">72e9bf9e0be622009e620bcb15673a03</operation>
