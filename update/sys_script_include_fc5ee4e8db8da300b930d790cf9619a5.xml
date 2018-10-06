@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_include">
+    <sys_script_include action="INSERT_OR_UPDATE">
+        <access>public</access>
+        <active>true</active>
+        <api_name>sn_cmp_gcp.GoogleDeploymentManagerTemplateUtil</api_name>
+        <client_callable>false</client_callable>
+        <description/>
+        <name>GoogleDeploymentManagerTemplateUtil</name>
+        <script><![CDATA[var GoogleDeploymentManagerTemplateUtil = Class.create();
+GoogleDeploymentManagerTemplateUtil.prototype = Object.extendsObject(sn_cmp.CMPTemplateUtil, {
+
+    initialize: function() {
+		sn_cmp.CMPTemplateUtil.prototype.initialize.call(this);
+    },
+	
+	getInputs: function(templateObj, template) {
+		gs.info("templateObj"+JSON.stringify(templateObj));
+		gs.info("template"+template);
+		
+		var parameters = templateObj.Parameters;
+		var metaData = templateObj.Metadata;
+		var processedParams = {};	
+		
+		var order = 0;
+		if (parameters) {			
+			for (var param in parameters) {
+				var paramValue = parameters[param];
+				if(param == 'location') // we cannot consume location as is. Making it cft_location
+					param = 'template_location';
+
+				var parameter = {};
+				processedParams[param] = parameter;
+				
+				parameter.type = this.getType(paramValue.Type, paramValue.NoEcho);
+				parameter.source = 'Text';
+				
+				if (paramValue.hasOwnProperty('Default'))
+					parameter.defaultValue = paramValue.Default;
+
+				if (paramValue.hasOwnProperty('AllowedValues')) {
+					parameter.value = global.JSON.stringify(paramValue.AllowedValues);
+					parameter.source = 'CSVList';
+				}
+				
+				if (paramValue.hasOwnProperty('AllowedPattern'))
+					parameter.regex = paramValue.AllowedPattern;
+				
+				if (paramValue.hasOwnProperty('ConstraintDescription'))
+					parameter.error_text = paramValue.ConstraintDescription;
+
+			    if (metaData) {
+				 var snMetaData = (metaData.hasOwnProperty('SNC::Parameter::Metadata')) ? metaData['SNC::Parameter::Metadata'] : '';
+					if (!gs.nil(snMetaData)) {
+						var matchedParam = (snMetaData.hasOwnProperty(param)) ? snMetaData[param] : '';
+						if (!gs.nil(matchedParam)) {
+							if ( matchedParam.hasOwnProperty('datasource') ) {
+								//trim space
+								parameter.value = matchedParam.datasource.replace(/\s+/g, '');
+								parameter.source = 'Pools';
+							}
+						}
+					}
+				}
+
+				parameter.mandatory = true;
+				parameter.order = order;
+				order++;
+			}
+
+			var tagParameter = {};
+			processedParams['CustomTags'] = tagParameter;
+			tagParameter.type = 'String';
+			tagParameter.source = 'Text';
+			tagParameter.mandatory = false;
+			tagParameter.order = order;
+		}
+		
+		return processedParams;
+	},
+	
+	getType: function(type, noEcho) {
+		if ((noEcho && typeof noEcho.toLowerCase === "function" && noEcho.toLowerCase() == "true") || noEcho == true)
+			return "Password";
+		
+		switch (type){
+			// There are other types that need to be handled
+			case 'Number':
+				return 'Integer';
+			default:
+				return 'String';
+		}
+	},
+
+	extractTemplateDescription : function (template, templateObj) {
+		return templateObj.Description || '';
+	},
+	
+	getOutputAttribute : function(name, template, templateObj) {
+		var outputs = templateObj.Outputs;
+		var outputAttributes = {};
+		var prefix = '${Host.Stack Orchestration Interface.CreateStack.Output.resp.outputs.';
+        if (outputs) {
+			Object.keys(outputs).forEach(function(val) {
+				outputAttributes[val] = prefix + val + '}';
+			});
+			return Object.keys(outputAttributes).length > 0 ? global.JSON.stringify(outputAttributes) : '';
+		}
+		 return '';
+	},
+	
+	validateTemplate: function(templateObj, template) {
+		var errorMessage = "";
+		//return object should have "isValid" and "errorMessage"
+		var result = {};
+		result.isValid = true;
+		result.errorMessage = "No Error";
+		return result;
+	},
+
+    type: 'GoogleDeploymentManagerTemplateUtil'
+});]]></script>
+        <sys_class_name>sys_script_include</sys_class_name>
+        <sys_created_by>jayant.kaushal</sys_created_by>
+        <sys_created_on>2018-10-06 04:19:00</sys_created_on>
+        <sys_id>fc5ee4e8db8da300b930d790cf9619a5</sys_id>
+        <sys_mod_count>3</sys_mod_count>
+        <sys_name>GoogleDeploymentManagerTemplateUtil</sys_name>
+        <sys_package display_value="Google Cloud Management" source="sn_cmp_gcp">40ff1aee0b2023003246ad4363673ac5</sys_package>
+        <sys_policy>read</sys_policy>
+        <sys_scope display_value="Google Cloud Management">40ff1aee0b2023003246ad4363673ac5</sys_scope>
+        <sys_update_name>sys_script_include_fc5ee4e8db8da300b930d790cf9619a5</sys_update_name>
+        <sys_updated_by>jayant.kaushal</sys_updated_by>
+        <sys_updated_on>2018-10-06 04:44:24</sys_updated_on>
+    </sys_script_include>
+</record_update>
