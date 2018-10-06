@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sn_cmp_bp_catalog_prop">
+    <sn_cmp_bp_catalog_prop action="INSERT_OR_UPDATE">
+        <bp_cat_form_behavior display_value="GDM0001 ModifyLease">11a71a2cdb41e300b930d790cf961937</bp_cat_form_behavior>
+        <datasource>2</datasource>
+        <default_value/>
+        <display_name>Lease End Date</display_name>
+        <display_order>86</display_order>
+        <error_text/>
+        <form_ui_group display_value="General Info">c7a75a2cdb41e300b930d790cf9619b7</form_ui_group>
+        <global_prop display_value="LeaseEndDate">d297562cdb41e300b930d790cf96199a</global_prop>
+        <help_text/>
+        <mandatory>false</mandatory>
+        <name>LeaseEndDate</name>
+        <parameter_type>1</parameter_type>
+        <policy/>
+        <read_only>false</read_only>
+        <regex/>
+        <sys_class_name>sn_cmp_bp_catalog_prop</sys_class_name>
+        <sys_created_by>jayant.kaushal</sys_created_by>
+        <sys_created_on>2018-10-06 11:58:35</sys_created_on>
+        <sys_id>07a75a2cdb41e300b930d790cf9619bd</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>LeaseEndDate</sys_name>
+        <sys_package display_value="Google Cloud Management" source="sn_cmp_gcp">40ff1aee0b2023003246ad4363673ac5</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Google Cloud Management">40ff1aee0b2023003246ad4363673ac5</sys_scope>
+        <sys_update_name>sn_cmp_bp_catalog_prop_07a75a2cdb41e300b930d790cf9619bd</sys_update_name>
+        <sys_updated_by>jayant.kaushal</sys_updated_by>
+        <sys_updated_on>2018-10-06 11:58:35</sys_updated_on>
+        <ui_data_type>3</ui_data_type>
+        <unique_id>2760</unique_id>
+        <visibility>true</visibility>
+    </sn_cmp_bp_catalog_prop>
+</record_update>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sn_cmp_bp_catalog_prop">
+    <sn_cmp_bp_catalog_prop action="INSERT_OR_UPDATE">
+        <bp_cat_form_behavior display_value="GDM0001">e697962cdb41e300b930d790cf961904</bp_cat_form_behavior>
+        <datasource>4</datasource>
+        <default_value/>
+        <display_name>Business Service</display_name>
+        <display_order>878</display_order>
+        <error_text/>
+        <form_ui_group display_value="General Info">94b7da2cdb41e300b930d790cf961918</form_ui_group>
+        <global_prop display_value="BusinessService">3197562cdb41e300b930d790cf961941</global_prop>
+        <help_text/>
+        <mandatory>false</mandatory>
+        <name>BusinessService</name>
+        <parameter_type>1</parameter_type>
+        <policy>cmdb_ci_service</policy>
+        <read_only>false</read_only>
+        <regex/>
+        <sys_class_name>sn_cmp_bp_catalog_prop</sys_class_name>
+        <sys_created_by>jayant.kaushal</sys_created_by>
+        <sys_created_on>2018-10-06 11:58:40</sys_created_on>
+        <sys_id>18b7da2cdb41e300b930d790cf96191e</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>BusinessService</sys_name>
+        <sys_package display_value="Google Cloud Management" source="sn_cmp_gcp">40ff1aee0b2023003246ad4363673ac5</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Google Cloud Management">40ff1aee0b2023003246ad4363673ac5</sys_scope>
+        <sys_update_name>sn_cmp_bp_catalog_prop_18b7da2cdb41e300b930d790cf96191e</sys_update_name>
+        <sys_updated_by>jayant.kaushal</sys_updated_by>
+        <sys_updated_on>2018-10-06 11:58:40</sys_updated_on>
+        <ui_data_type>11</ui_data_type>
+        <unique_id>1411</unique_id>
+        <visibility>true</visibility>
+    </sn_cmp_bp_catalog_prop>
+</record_update>

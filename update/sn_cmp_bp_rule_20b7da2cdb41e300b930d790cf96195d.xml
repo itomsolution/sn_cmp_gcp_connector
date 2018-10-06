@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sn_cmp_bp_rule">
+    <sn_cmp_bp_rule action="INSERT_OR_UPDATE">
+        <description>TriggerChangeEvent CloudAccount</description>
+        <event display_value="FormLoad">a0b7da2cdb41e300b930d790cf961940</event>
+        <name>TriggerChangeEvent CloudAccount</name>
+        <order>20</order>
+        <source_key/>
+        <status>1</status>
+        <sys_class_name>sn_cmp_bp_rule</sys_class_name>
+        <sys_created_by>jayant.kaushal</sys_created_by>
+        <sys_created_on>2018-10-06 11:58:41</sys_created_on>
+        <sys_id>20b7da2cdb41e300b930d790cf96195d</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>TriggerChangeEvent CloudAccount</sys_name>
+        <sys_package display_value="Google Cloud Management" source="sn_cmp_gcp">40ff1aee0b2023003246ad4363673ac5</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Google Cloud Management">40ff1aee0b2023003246ad4363673ac5</sys_scope>
+        <sys_update_name>sn_cmp_bp_rule_20b7da2cdb41e300b930d790cf96195d</sys_update_name>
+        <sys_updated_by>jayant.kaushal</sys_updated_by>
+        <sys_updated_on>2018-10-06 11:58:41</sys_updated_on>
+    </sn_cmp_bp_rule>
+</record_update>

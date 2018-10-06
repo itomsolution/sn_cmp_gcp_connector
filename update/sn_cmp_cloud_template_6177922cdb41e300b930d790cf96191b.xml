@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update sys_domain="global" table="sn_cmp_cloud_template">
+    <sn_cmp_cloud_template action="INSERT_OR_UPDATE">
+        <attachment/>
+        <body>{&#13;
+ "name": "example-config-with-templates",&#13;
+ "target": {&#13;
+  "config": {&#13;
+   "content": "resources:\n- name: vm-created-by-cloud-config\n  type: compute.v1.instance\n  properties:\n    zone: us-central1-a\n    machineType: https://www.googleapis.com/compute/v1/projects/myproject/zones/us-central1-a/machineTypes/n1-standard-1\n    disks:\n    - deviceName: boot\n      type: PERSISTENT\n      boot: true\n      autoDelete: true\n      initializeParams:\n        diskName: disk-created-by-cloud-config\n        sourceImage: https://www.googleapis.com/compute/v1/projects/debian-cloud/global/images/debian-7-wheezy-v20151104\n    networkInterfaces:\n    - network: https://www.googleapis.com/compute/v1/projects/myproject/global/networks/default\n"&#13;
+  }&#13;
+ }&#13;
+}</body>
+        <cloud_template_url/>
+        <format display_value="JSON">f1bd5cb0875f13008de7483cf6cb0bca</format>
+        <ingestion_method>body</ingestion_method>
+        <name>GDM0001</name>
+        <published>true</published>
+        <short_description/>
+        <status>success</status>
+        <status_message>Template is valid and saved.</status_message>
+        <sys_class_name>sn_cmp_cloud_template</sys_class_name>
+        <sys_created_by>jayant.kaushal</sys_created_by>
+        <sys_created_on>2018-10-06 11:57:53</sys_created_on>
+        <sys_domain>global</sys_domain>
+        <sys_id>6177922cdb41e300b930d790cf96191b</sys_id>
+        <sys_mod_count>3</sys_mod_count>
+        <sys_name>GDM0001</sys_name>
+        <sys_package display_value="Google Cloud Management" source="sn_cmp_gcp">40ff1aee0b2023003246ad4363673ac5</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Google Cloud Management">40ff1aee0b2023003246ad4363673ac5</sys_scope>
+        <sys_update_name>sn_cmp_cloud_template_6177922cdb41e300b930d790cf96191b</sys_update_name>
+        <sys_updated_by>jayant.kaushal</sys_updated_by>
+        <sys_updated_on>2018-10-06 11:58:41</sys_updated_on>
+        <template_url/>
+        <type display_value="Google Deployment Manager">efbc9290dbc9a300b930d790cf9619f2</type>
+        <use_template_body>true</use_template_body>
+    </sn_cmp_cloud_template>
+</record_update>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sn_cmp_rb_keyvalue">
+    <sn_cmp_rb_keyvalue action="INSERT_OR_UPDATE">
+        <action/>
+        <key>providerAPIParameters</key>
+        <object_mapping>true</object_mapping>
+        <owner_instance/>
+        <owner_table/>
+        <step display_value="Stack Orchestration Interface.Create Stack">8b87922cdb41e300b930d790cf9619ee</step>
+        <sys_class_name>sn_cmp_rb_keyvalue</sys_class_name>
+        <sys_created_by>jayant.kaushal</sys_created_by>
+        <sys_created_on>2018-10-06 11:58:02</sys_created_on>
+        <sys_id>d387d22cdb41e300b930d790cf96190b</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>providerAPIParameters</sys_name>
+        <sys_package display_value="Google Cloud Management" source="sn_cmp_gcp">40ff1aee0b2023003246ad4363673ac5</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Google Cloud Management">40ff1aee0b2023003246ad4363673ac5</sys_scope>
+        <sys_update_name>sn_cmp_rb_keyvalue_d387d22cdb41e300b930d790cf96190b</sys_update_name>
+        <sys_updated_by>jayant.kaushal</sys_updated_by>
+        <sys_updated_on>2018-10-06 11:58:02</sys_updated_on>
+        <value/>
+    </sn_cmp_rb_keyvalue>
+</record_update>
