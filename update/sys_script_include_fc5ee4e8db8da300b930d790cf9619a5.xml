@@ -14,67 +14,72 @@ GoogleDeploymentManagerTemplateUtil.prototype = Object.extendsObject(sn_cmp.CMPT
     },
 	
 	getInputs: function(templateObj, template) {
-		gs.info("templateObj"+JSON.stringify(templateObj));
-		gs.info("template"+template);
-		
-		var parameters = templateObj.Parameters;
-		var metaData = templateObj.Metadata;
-		var processedParams = {};	
-		
+		var content = templateObj.target.config.content;
+		var parsedContent = new sn_cmp_api.CloudTemplateScript().parseYAML(content);
+		var resources = parsedContent.resources;
 		var order = 0;
-		if (parameters) {			
-			for (var param in parameters) {
-				var paramValue = parameters[param];
-				if(param == 'location') // we cannot consume location as is. Making it cft_location
-					param = 'template_location';
-
+		var processedParams = {};	
+		for(var index in resources){
+			var resource = resources[index];
+			var resProperties = resource.properties;
+			for(var resPropertie in resProperties){
+				gs.info(resPropertie +''+resProperties[resPropertie]);
 				var parameter = {};
-				processedParams[param] = parameter;
+				processedParams[resPropertie] = parameter;
 				
-				parameter.type = this.getType(paramValue.Type, paramValue.NoEcho);
+		//		parameter.type = this.getType(paramValue.Type, paramValue.NoEcho);
 				parameter.source = 'Text';
-				
-				if (paramValue.hasOwnProperty('Default'))
-					parameter.defaultValue = paramValue.Default;
-
-				if (paramValue.hasOwnProperty('AllowedValues')) {
-					parameter.value = global.JSON.stringify(paramValue.AllowedValues);
-					parameter.source = 'CSVList';
+				var parsedValue;
+				try{
+				 parsedValue =JSON.parse(resProperties[resPropertie]);	
+				}catch(e){
+				parameter.defaultValue = resProperties[resPropertie];	
+				gs.info(resPropertie+" has a simple value");	
 				}
 				
-				if (paramValue.hasOwnProperty('AllowedPattern'))
-					parameter.regex = paramValue.AllowedPattern;
 				
-				if (paramValue.hasOwnProperty('ConstraintDescription'))
-					parameter.error_text = paramValue.ConstraintDescription;
+// 				if (paramValue.hasOwnProperty('Default'))
+// 					parameter.defaultValue = paramValue.Default;
 
-			    if (metaData) {
-				 var snMetaData = (metaData.hasOwnProperty('SNC::Parameter::Metadata')) ? metaData['SNC::Parameter::Metadata'] : '';
-					if (!gs.nil(snMetaData)) {
-						var matchedParam = (snMetaData.hasOwnProperty(param)) ? snMetaData[param] : '';
-						if (!gs.nil(matchedParam)) {
-							if ( matchedParam.hasOwnProperty('datasource') ) {
-								//trim space
-								parameter.value = matchedParam.datasource.replace(/\s+/g, '');
-								parameter.source = 'Pools';
-							}
-						}
-					}
-				}
+// 				if (paramValue.hasOwnProperty('AllowedValues')) {
+// 					parameter.value = global.JSON.stringify(paramValue.AllowedValues);
+// 					parameter.source = 'CSVList';
+// 				}
+				
+// 				if (paramValue.hasOwnProperty('AllowedPattern'))
+// 					parameter.regex = paramValue.AllowedPattern;
+				
+// 				if (paramValue.hasOwnProperty('ConstraintDescription'))
+// 					parameter.error_text = paramValue.ConstraintDescription;
 
-				parameter.mandatory = true;
+// 			    if (metaData) {
+// 				 var snMetaData = (metaData.hasOwnProperty('SNC::Parameter::Metadata')) ? metaData['SNC::Parameter::Metadata'] : '';
+// 					if (!gs.nil(snMetaData)) {
+// 						var matchedParam = (snMetaData.hasOwnProperty(param)) ? snMetaData[param] : '';
+// 						if (!gs.nil(matchedParam)) {
+// 							if ( matchedParam.hasOwnProperty('datasource') ) {
+// 								//trim space
+// 								parameter.value = matchedParam.datasource.replace(/\s+/g, '');
+// 								parameter.source = 'Pools';
+// 							}
+// 						}
+// 					}
+// 				}
+
+				parameter.mandatory = false;
 				parameter.order = order;
 				order++;
 			}
-
-			var tagParameter = {};
-			processedParams['CustomTags'] = tagParameter;
-			tagParameter.type = 'String';
-			tagParameter.source = 'Text';
-			tagParameter.mandatory = false;
-			tagParameter.order = order;
 		}
+
+// 			var tagParameter = {};
+// 			processedParams['CustomTags'] = tagParameter;
+// 			tagParameter.type = 'String';
+// 			tagParameter.source = 'Text';
+// 			tagParameter.mandatory = false;
+// 			tagParameter.order = order;
 		
+		gs.info(JSON.stringify(processedParams));
 		return processedParams;
 	},
 	
@@ -123,13 +128,13 @@ GoogleDeploymentManagerTemplateUtil.prototype = Object.extendsObject(sn_cmp.CMPT
         <sys_created_by>jayant.kaushal</sys_created_by>
         <sys_created_on>2018-10-06 04:19:00</sys_created_on>
         <sys_id>fc5ee4e8db8da300b930d790cf9619a5</sys_id>
-        <sys_mod_count>3</sys_mod_count>
+        <sys_mod_count>23</sys_mod_count>
         <sys_name>GoogleDeploymentManagerTemplateUtil</sys_name>
         <sys_package display_value="Google Cloud Management" source="sn_cmp_gcp">40ff1aee0b2023003246ad4363673ac5</sys_package>
         <sys_policy>read</sys_policy>
         <sys_scope display_value="Google Cloud Management">40ff1aee0b2023003246ad4363673ac5</sys_scope>
         <sys_update_name>sys_script_include_fc5ee4e8db8da300b930d790cf9619a5</sys_update_name>
         <sys_updated_by>jayant.kaushal</sys_updated_by>
-        <sys_updated_on>2018-10-06 04:44:24</sys_updated_on>
+        <sys_updated_on>2018-10-06 11:26:39</sys_updated_on>
     </sys_script_include>
 </record_update>

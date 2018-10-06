@@ -1,0 +1,3 @@
+<?xml version="1.0" encoding="UTF-8"?><database>
+    <element extends="cmdb_ci_vm_object" label="Google Deployment Manager Stack" max_length="40" name="sn_cmp_gcp_cmdb_ci_google_deployment_manager_stack" type="collection"/>
+</database>

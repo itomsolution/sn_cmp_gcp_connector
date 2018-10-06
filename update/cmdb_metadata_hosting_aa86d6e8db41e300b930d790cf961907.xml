@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="cmdb_metadata_hosting">
+    <cmdb_metadata_hosting action="INSERT_OR_UPDATE">
+        <child_type>cmdb_ci_logical_datacenter</child_type>
+        <is_reverse>false</is_reverse>
+        <parent_type>sn_cmp_gcp_cmdb_ci_google_deployment_manager_stack</parent_type>
+        <rel_type display_value="Hosted on::Hosts">5f985e0ec0a8010e00a9714f2a172815</rel_type>
+        <sys_class_name>cmdb_metadata_hosting</sys_class_name>
+        <sys_created_by>jayant.kaushal</sys_created_by>
+        <sys_created_on>2018-10-06 11:53:38</sys_created_on>
+        <sys_id>aa86d6e8db41e300b930d790cf961907</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name/>
+        <sys_package display_value="Google Cloud Management" source="sn_cmp_gcp">40ff1aee0b2023003246ad4363673ac5</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Google Cloud Management">40ff1aee0b2023003246ad4363673ac5</sys_scope>
+        <sys_update_name>cmdb_metadata_hosting_aa86d6e8db41e300b930d790cf961907</sys_update_name>
+        <sys_updated_by>jayant.kaushal</sys_updated_by>
+        <sys_updated_on>2018-10-06 11:53:38</sys_updated_on>
+    </cmdb_metadata_hosting>
+</record_update>
