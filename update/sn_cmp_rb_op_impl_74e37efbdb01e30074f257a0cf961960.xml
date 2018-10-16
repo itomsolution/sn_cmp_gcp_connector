@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sn_cmp_rb_op_impl">
+    <sn_cmp_rb_op_impl action="INSERT_OR_UPDATE">
+        <interface display_value="GDMTest0009 Resource Interface">67d33efbdb01e30074f257a0cf961937</interface>
+        <operation display_value="Start">fce37efbdb01e30074f257a0cf96195c</operation>
+        <operation_output_attributes/>
+        <resource display_value="GDMTest0009 Blueprint Resource">23d33efbdb01e30074f257a0cf961939</resource>
+        <sys_class_name>sn_cmp_rb_op_impl</sys_class_name>
+        <sys_created_by>jayant.kaushal</sys_created_by>
+        <sys_created_on>2018-10-16 16:22:05</sys_created_on>
+        <sys_id>74e37efbdb01e30074f257a0cf961960</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>fce37efbdb01e30074f257a0cf96195c</sys_name>
+        <sys_package display_value="Google Cloud Management" source="sn_cmp_gcp">40ff1aee0b2023003246ad4363673ac5</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Google Cloud Management">40ff1aee0b2023003246ad4363673ac5</sys_scope>
+        <sys_update_name>sn_cmp_rb_op_impl_74e37efbdb01e30074f257a0cf961960</sys_update_name>
+        <sys_updated_by>jayant.kaushal</sys_updated_by>
+        <sys_updated_on>2018-10-16 16:22:05</sys_updated_on>
+    </sn_cmp_rb_op_impl>
+</record_update>

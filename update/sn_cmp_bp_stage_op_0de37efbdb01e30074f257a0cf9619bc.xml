@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sn_cmp_bp_stage_op">
+    <sn_cmp_bp_stage_op action="INSERT_OR_UPDATE">
+        <blueprint_stage_model display_value="">c9e37efbdb01e30074f257a0cf9619b9</blueprint_stage_model>
+        <is_plan_customized>true</is_plan_customized>
+        <is_plan_synced>false</is_plan_synced>
+        <name>Provision</name>
+        <operation_impl display_value="Provision">27d33efbdb01e30074f257a0cf961943</operation_impl>
+        <parallel_plan_generated>false</parallel_plan_generated>
+        <sys_class_name>sn_cmp_bp_stage_op</sys_class_name>
+        <sys_created_by>jayant.kaushal</sys_created_by>
+        <sys_created_on>2018-10-16 16:22:07</sys_created_on>
+        <sys_id>0de37efbdb01e30074f257a0cf9619bc</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>Provision</sys_name>
+        <sys_package display_value="Google Cloud Management" source="sn_cmp_gcp">40ff1aee0b2023003246ad4363673ac5</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Google Cloud Management">40ff1aee0b2023003246ad4363673ac5</sys_scope>
+        <sys_update_name>sn_cmp_bp_stage_op_0de37efbdb01e30074f257a0cf9619bc</sys_update_name>
+        <sys_updated_by>jayant.kaushal</sys_updated_by>
+        <sys_updated_on>2018-10-16 16:22:13</sys_updated_on>
+    </sn_cmp_bp_stage_op>
+</record_update>

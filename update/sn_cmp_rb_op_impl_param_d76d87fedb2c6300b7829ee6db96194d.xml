@@ -9,6 +9,7 @@
         <host/>
         <ismandatory>false</ismandatory>
         <name>Host</name>
+        <op_param/>
         <operation display_value="Attach">9f6d87fedb2c6300b7829ee6db961948</operation>
         <order/>
         <read_only>false</read_only>

@@ -9,6 +9,7 @@
         <host/>
         <ismandatory>false</ismandatory>
         <name>NodeId</name>
+        <op_param/>
         <operation display_value="AttachVolumeToServer">5426473adb2c6300b7829ee6db9619f9</operation>
         <order/>
         <read_only>false</read_only>

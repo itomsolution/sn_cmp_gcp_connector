@@ -9,6 +9,7 @@
         <host/>
         <ismandatory>false</ismandatory>
         <name>StorageServer</name>
+        <op_param/>
         <operation display_value="Provision">d26d47fedb2c6300b7829ee6db96190a</operation>
         <order/>
         <read_only>false</read_only>

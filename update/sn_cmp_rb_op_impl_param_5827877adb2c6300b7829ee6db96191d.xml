@@ -9,6 +9,7 @@
         <host/>
         <ismandatory>false</ismandatory>
         <name>Name</name>
+        <op_param/>
         <operation display_value="Provision">1c27877adb2c6300b7829ee6db96190f</operation>
         <order>1000</order>
         <read_only>false</read_only>

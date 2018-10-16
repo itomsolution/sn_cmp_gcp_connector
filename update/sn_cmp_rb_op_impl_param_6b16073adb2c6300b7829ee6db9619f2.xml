@@ -9,6 +9,7 @@
         <host/>
         <ismandatory>false</ismandatory>
         <name>SecurityGroupProfile</name>
+        <op_param/>
         <operation display_value="ConnectAndCreateVirtualMachine">1b16073adb2c6300b7829ee6db9619b6</operation>
         <order/>
         <read_only>false</read_only>

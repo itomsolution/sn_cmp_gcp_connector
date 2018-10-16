@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sn_cmp_bp_stage_res_op_attr">
+    <sn_cmp_bp_stage_res_op_attr action="INSERT_OR_UPDATE">
+        <default_value>${parameter.Virtual_Server_SSHKeyName}</default_value>
+        <name>SSHKeyName</name>
+        <rb_operation_attribute display_value="SSHKeyName">7b4a77de0be622009e620bcb15673a88</rb_operation_attribute>
+        <stage_resource_operation display_value="Virtual Server.Provision">43b4edd9db412700b930d790cf961975</stage_resource_operation>
+        <sys_class_name>sn_cmp_bp_stage_res_op_attr</sys_class_name>
+        <sys_created_by>jayant.kaushal</sys_created_by>
+        <sys_created_on>2018-10-08 16:11:29</sys_created_on>
+        <sys_id>d7b4edd9db412700b930d790cf9619cd</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>SSHKeyName</sys_name>
+        <sys_package display_value="Google Cloud Management" source="sn_cmp_gcp">40ff1aee0b2023003246ad4363673ac5</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Google Cloud Management">40ff1aee0b2023003246ad4363673ac5</sys_scope>
+        <sys_update_name>sn_cmp_bp_stage_res_op_attr_d7b4edd9db412700b930d790cf9619cd</sys_update_name>
+        <sys_updated_by>jayant.kaushal</sys_updated_by>
+        <sys_updated_on>2018-10-08 16:11:29</sys_updated_on>
+        <type_of_map>1</type_of_map>
+        <use_in_operation>true</use_in_operation>
+    </sn_cmp_bp_stage_res_op_attr>
+</record_update>

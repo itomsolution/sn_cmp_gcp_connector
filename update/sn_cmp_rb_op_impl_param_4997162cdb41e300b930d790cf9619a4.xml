@@ -9,6 +9,7 @@
         <host/>
         <ismandatory>false</ismandatory>
         <name>StackID</name>
+        <op_param/>
         <operation display_value="Cleanup">4597162cdb41e300b930d790cf961983</operation>
         <order>70</order>
         <read_only>false</read_only>

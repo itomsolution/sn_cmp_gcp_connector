@@ -9,6 +9,7 @@
         <host/>
         <ismandatory>false</ismandatory>
         <name>Host</name>
+        <op_param/>
         <operation display_value="Setup Monitoring">bc474b7adb2c6300b7829ee6db961921</operation>
         <order/>
         <read_only>false</read_only>

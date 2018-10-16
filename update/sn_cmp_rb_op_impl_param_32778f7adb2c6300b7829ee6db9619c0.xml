@@ -9,6 +9,7 @@
         <host/>
         <ismandatory>false</ismandatory>
         <name>FrontEndPort</name>
+        <op_param/>
         <operation display_value="Delete Load Balancer">b2778f7adb2c6300b7829ee6db9619b9</operation>
         <order/>
         <read_only>false</read_only>

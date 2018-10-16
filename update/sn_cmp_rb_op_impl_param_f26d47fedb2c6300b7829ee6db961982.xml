@@ -9,6 +9,7 @@
         <host/>
         <ismandatory>false</ismandatory>
         <name>Container</name>
+        <op_param/>
         <operation display_value="RemoveVolumes">aa6d47fedb2c6300b7829ee6db96197d</operation>
         <order/>
         <read_only>false</read_only>

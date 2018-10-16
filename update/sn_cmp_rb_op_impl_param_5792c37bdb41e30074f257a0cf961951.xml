@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sn_cmp_rb_op_impl_param">
+    <sn_cmp_rb_op_impl_param action="INSERT_OR_UPDATE">
+        <applicable_to/>
+        <datasource>1</datasource>
+        <datasourcevalue/>
+        <defaultvalue>${parameter.TriggerReaper}</defaultvalue>
+        <error_text/>
+        <help_text/>
+        <host/>
+        <ismandatory>false</ismandatory>
+        <name>TriggerReaper</name>
+        <op_param display_value="TriggerReaper">5392c37bdb41e30074f257a0cf961952</op_param>
+        <operation display_value="Create Stack">41e99a10dbc9a300b930d790cf96192b</operation>
+        <order>1030</order>
+        <read_only>false</read_only>
+        <regex/>
+        <step display_value="Node Access Interface.ExecuteSSHScript">c792c37bdb41e30074f257a0cf961929</step>
+        <sys_class_name>sn_cmp_rb_op_impl_param</sys_class_name>
+        <sys_created_by>jayant.kaushal</sys_created_by>
+        <sys_created_on>2018-10-16 17:26:26</sys_created_on>
+        <sys_id>5792c37bdb41e30074f257a0cf961951</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>TriggerReaper</sys_name>
+        <sys_package display_value="Google Cloud Management" source="sn_cmp_gcp">40ff1aee0b2023003246ad4363673ac5</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Google Cloud Management">40ff1aee0b2023003246ad4363673ac5</sys_scope>
+        <sys_update_name>sn_cmp_rb_op_impl_param_5792c37bdb41e30074f257a0cf961951</sys_update_name>
+        <sys_updated_by>jayant.kaushal</sys_updated_by>
+        <sys_updated_on>2018-10-16 17:26:26</sys_updated_on>
+        <ui_data_type/>
+        <value>${parameter.TriggerReaper}</value>
+        <visibilty>false</visibilty>
+    </sn_cmp_rb_op_impl_param>
+</record_update>

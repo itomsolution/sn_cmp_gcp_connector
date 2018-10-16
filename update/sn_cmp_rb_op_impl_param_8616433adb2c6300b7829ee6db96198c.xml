@@ -9,6 +9,7 @@
         <host/>
         <ismandatory>false</ismandatory>
         <name>NewSize</name>
+        <op_param/>
         <operation display_value="ExtendVolume">8a16433adb2c6300b7829ee6db961986</operation>
         <order/>
         <read_only>false</read_only>

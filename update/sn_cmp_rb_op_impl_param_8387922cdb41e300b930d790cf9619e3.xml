@@ -9,6 +9,7 @@
         <host/>
         <ismandatory>false</ismandatory>
         <name>disks</name>
+        <op_param/>
         <operation display_value="Provision">7687922cdb41e300b930d790cf9619bb</operation>
         <order>2</order>
         <read_only>false</read_only>

@@ -9,6 +9,7 @@
         <host/>
         <ismandatory>false</ismandatory>
         <name>Parameters</name>
+        <op_param/>
         <operation display_value="Delete Stack">d9c0450e9f01320048111f80a57fcf10</operation>
         <order>1000</order>
         <read_only>false</read_only>

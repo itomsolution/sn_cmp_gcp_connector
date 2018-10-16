@@ -9,6 +9,7 @@
         <host/>
         <ismandatory>false</ismandatory>
         <name>Location</name>
+        <op_param/>
         <operation display_value="Connect">126d47fedb2c6300b7829ee6db961901</operation>
         <order>200</order>
         <read_only>false</read_only>

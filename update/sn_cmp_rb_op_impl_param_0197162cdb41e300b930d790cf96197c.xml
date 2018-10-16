@@ -9,6 +9,7 @@
         <host/>
         <ismandatory>false</ismandatory>
         <name>LeaseEndDate</name>
+        <op_param/>
         <operation display_value="ModifyLease">c197162cdb41e300b930d790cf961967</operation>
         <order>75</order>
         <read_only>false</read_only>

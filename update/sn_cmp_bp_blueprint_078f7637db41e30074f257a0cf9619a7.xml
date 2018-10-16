@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update sys_domain="global" table="sn_cmp_bp_blueprint">
+    <sn_cmp_bp_blueprint action="INSERT_OR_UPDATE">
+        <category display_value="Compute">57c0dbd9934b22004a9032bfa67ffb79</category>
+        <cloud_service/>
+        <description/>
+        <layer>1</layer>
+        <name>GDMTest0010</name>
+        <sm_checkpoint_id/>
+        <source_sm_checkpoint_id/>
+        <status>2</status>
+        <svc_layer display_value="GDMTest0010">838f7637db41e30074f257a0cf9619ab</svc_layer>
+        <sys_class_name>sn_cmp_bp_blueprint</sys_class_name>
+        <sys_created_by>jayant.kaushal</sys_created_by>
+        <sys_created_on>2018-10-16 17:13:02</sys_created_on>
+        <sys_domain>global</sys_domain>
+        <sys_id>078f7637db41e30074f257a0cf9619a7</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>GDMTest0010</sys_name>
+        <sys_overrides/>
+        <sys_package display_value="Google Cloud Management" source="sn_cmp_gcp">40ff1aee0b2023003246ad4363673ac5</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Google Cloud Management">40ff1aee0b2023003246ad4363673ac5</sys_scope>
+        <sys_update_name>sn_cmp_bp_blueprint_078f7637db41e30074f257a0cf9619a7</sys_update_name>
+        <sys_updated_by>jayant.kaushal</sys_updated_by>
+        <sys_updated_on>2018-10-16 17:13:17</sys_updated_on>
+        <template_id display_value="GDMTest0010">605f7237db41e30074f257a0cf961972</template_id>
+        <tlr display_value="GDMTest0010 Blueprint Resource">db8f7637db41e30074f257a0cf9619b5</tlr>
+    </sn_cmp_bp_blueprint>
+</record_update>

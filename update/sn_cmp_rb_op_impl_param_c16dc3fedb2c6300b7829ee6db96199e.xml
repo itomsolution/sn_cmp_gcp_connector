@@ -9,6 +9,7 @@
         <host/>
         <ismandatory>false</ismandatory>
         <name>Name</name>
+        <op_param/>
         <operation display_value="UnShareStorage">016dc3fedb2c6300b7829ee6db96199c</operation>
         <order/>
         <read_only>false</read_only>

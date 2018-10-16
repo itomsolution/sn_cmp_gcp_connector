@@ -9,6 +9,7 @@
         <host/>
         <ismandatory>false</ismandatory>
         <name>Location</name>
+        <op_param/>
         <operation display_value="DeleteNetworks">89a783badb2c6300b7829ee6db961961</operation>
         <order/>
         <read_only>false</read_only>

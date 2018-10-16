@@ -9,6 +9,7 @@
         <host/>
         <ismandatory>false</ismandatory>
         <name>CloudType</name>
+        <op_param/>
         <operation display_value="Storage Volume Array Detach Virtual Server">7a6d47fedb2c6300b7829ee6db9619cb</operation>
         <order/>
         <read_only>false</read_only>

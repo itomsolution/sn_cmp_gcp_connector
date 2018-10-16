@@ -9,6 +9,7 @@
         <host/>
         <ismandatory>false</ismandatory>
         <name>Volume</name>
+        <op_param/>
         <operation display_value="DeleteSnapshot">d56dc3fedb2c6300b7829ee6db9619f5</operation>
         <order/>
         <read_only>false</read_only>

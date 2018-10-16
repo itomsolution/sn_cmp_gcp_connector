@@ -9,6 +9,7 @@
         <host/>
         <ismandatory>false</ismandatory>
         <name>StorageMapping</name>
+        <op_param/>
         <operation display_value="Detach">866d07fedb2c6300b7829ee6db96197c</operation>
         <order/>
         <read_only>false</read_only>

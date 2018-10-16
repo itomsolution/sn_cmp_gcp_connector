@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sn_cmp_bp_stage_resource">
+    <sn_cmp_bp_stage_resource action="INSERT_OR_UPDATE">
+        <alias_name>AWS Datacenter</alias_name>
+        <bp_stage_model display_value="">607469d9db412700b930d790cf961920</bp_stage_model>
+        <constraint/>
+        <host_ci/>
+        <resource_block display_value="AWS Datacenter">0279b35e0be622009e620bcb15673a2e</resource_block>
+        <sys_class_name>sn_cmp_bp_stage_resource</sys_class_name>
+        <sys_created_by>jayant.kaushal</sys_created_by>
+        <sys_created_on>2018-10-08 16:11:27</sys_created_on>
+        <sys_id>b6b4add9db412700b930d790cf961904</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>AWS Datacenter</sys_name>
+        <sys_package display_value="Google Cloud Management" source="sn_cmp_gcp">40ff1aee0b2023003246ad4363673ac5</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Google Cloud Management">40ff1aee0b2023003246ad4363673ac5</sys_scope>
+        <sys_update_name>sn_cmp_bp_stage_resource_b6b4add9db412700b930d790cf961904</sys_update_name>
+        <sys_updated_by>jayant.kaushal</sys_updated_by>
+        <sys_updated_on>2018-10-08 16:11:27</sys_updated_on>
+        <type>1</type>
+    </sn_cmp_bp_stage_resource>
+</record_update>

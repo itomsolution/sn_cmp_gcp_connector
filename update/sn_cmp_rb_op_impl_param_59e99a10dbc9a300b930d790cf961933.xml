@@ -9,6 +9,7 @@
         <host/>
         <ismandatory>false</ismandatory>
         <name>templateParameters</name>
+        <op_param/>
         <operation display_value="Create Stack">41e99a10dbc9a300b930d790cf96192b</operation>
         <order/>
         <read_only>false</read_only>

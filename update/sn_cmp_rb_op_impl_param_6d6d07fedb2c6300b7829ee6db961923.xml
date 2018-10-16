@@ -9,6 +9,7 @@
         <host/>
         <ismandatory>false</ismandatory>
         <name>CloudAccount</name>
+        <op_param/>
         <operation display_value="NAS Storage Detach Virtual Server">256d07fedb2c6300b7829ee6db96191f</operation>
         <order/>
         <read_only>false</read_only>

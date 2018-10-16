@@ -9,6 +9,7 @@
         <host/>
         <ismandatory>false</ismandatory>
         <name>Region</name>
+        <op_param/>
         <operation display_value="ListSecurityGroups">f316473adb2c6300b7829ee6db961935</operation>
         <order/>
         <read_only>false</read_only>

@@ -9,6 +9,7 @@
         <host/>
         <ismandatory>false</ismandatory>
         <name>CloudType</name>
+        <op_param/>
         <operation display_value="AddVolumes">166d07fedb2c6300b7829ee6db9619db</operation>
         <order/>
         <read_only>false</read_only>

@@ -9,6 +9,7 @@
         <host/>
         <ismandatory>false</ismandatory>
         <name>Location</name>
+        <op_param/>
         <operation display_value="">4c2403badb68630044a490b6db96195b</operation>
         <order>1</order>
         <read_only>false</read_only>

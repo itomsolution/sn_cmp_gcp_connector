@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sn_cmp_bp_global_prop">
+    <sn_cmp_bp_global_prop action="INSERT_OR_UPDATE">
+        <bp_stage_operation display_value="Stop">c9e37efbdb01e30074f257a0cf9619c1</bp_stage_operation>
+        <bp_stage_res_op_attr display_value="StackID">4ae3fefbdb01e30074f257a0cf961945</bp_stage_res_op_attr>
+        <mandatory>false</mandatory>
+        <name>StackID</name>
+        <order>10</order>
+        <resource_op_unique_id>7397</resource_op_unique_id>
+        <sys_class_name>sn_cmp_bp_global_prop</sys_class_name>
+        <sys_created_by>jayant.kaushal</sys_created_by>
+        <sys_created_on>2018-10-16 16:22:11</sys_created_on>
+        <sys_id>c2e3fefbdb01e30074f257a0cf961946</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>StackID</sys_name>
+        <sys_package display_value="Google Cloud Management" source="sn_cmp_gcp">40ff1aee0b2023003246ad4363673ac5</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Google Cloud Management">40ff1aee0b2023003246ad4363673ac5</sys_scope>
+        <sys_update_name>sn_cmp_bp_global_prop_c2e3fefbdb01e30074f257a0cf961946</sys_update_name>
+        <sys_updated_by>jayant.kaushal</sys_updated_by>
+        <sys_updated_on>2018-10-16 16:22:11</sys_updated_on>
+    </sn_cmp_bp_global_prop>
+</record_update>

@@ -9,6 +9,7 @@
         <host/>
         <ismandatory>false</ismandatory>
         <name>SourceStorageServer</name>
+        <op_param/>
         <operation display_value="FailOver">6a6d47fedb2c6300b7829ee6db961966</operation>
         <order/>
         <read_only>false</read_only>

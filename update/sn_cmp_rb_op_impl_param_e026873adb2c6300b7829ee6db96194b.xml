@@ -9,6 +9,7 @@
         <host/>
         <ismandatory>false</ismandatory>
         <name>ContainerName</name>
+        <op_param/>
         <operation display_value="ConnectAndDeleteStorageContainer">2026873adb2c6300b7829ee6db961949</operation>
         <order/>
         <read_only>false</read_only>

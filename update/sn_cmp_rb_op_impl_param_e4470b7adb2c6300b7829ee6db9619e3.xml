@@ -9,6 +9,7 @@
         <host/>
         <ismandatory>false</ismandatory>
         <name>ReturnStatus</name>
+        <op_param/>
         <operation display_value="Attach">24470b7adb2c6300b7829ee6db9619e1</operation>
         <order/>
         <read_only>false</read_only>

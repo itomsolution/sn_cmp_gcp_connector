@@ -9,6 +9,7 @@
         <host/>
         <ismandatory>false</ismandatory>
         <name>LastStartTime</name>
+        <op_param/>
         <operation display_value="ConnectAndStopVirtualMachine">2616c33adb2c6300b7829ee6db9619e3</operation>
         <order/>
         <read_only>false</read_only>

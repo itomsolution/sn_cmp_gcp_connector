@@ -9,6 +9,7 @@
         <host/>
         <ismandatory>false</ismandatory>
         <name>LookupKey</name>
+        <op_param/>
         <operation display_value="Connect">ac26873adb2c6300b7829ee6db96194f</operation>
         <order/>
         <read_only>false</read_only>

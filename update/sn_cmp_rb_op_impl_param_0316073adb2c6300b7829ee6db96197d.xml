@@ -9,6 +9,7 @@
         <host/>
         <ismandatory>false</ismandatory>
         <name>IPAddress</name>
+        <op_param/>
         <operation display_value="DetachIPAddress">4f16073adb2c6300b7829ee6db96197a</operation>
         <order/>
         <read_only>false</read_only>

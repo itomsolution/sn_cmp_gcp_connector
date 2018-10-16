@@ -9,6 +9,7 @@
         <host/>
         <ismandatory>false</ismandatory>
         <name>CertificateName</name>
+        <op_param/>
         <operation display_value="Create Load Balancer">4a774f7adb2c6300b7829ee6db9619e3</operation>
         <order/>
         <read_only>false</read_only>

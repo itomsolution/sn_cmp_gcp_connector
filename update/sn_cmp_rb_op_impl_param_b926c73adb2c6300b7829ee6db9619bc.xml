@@ -9,6 +9,7 @@
         <host/>
         <ismandatory>false</ismandatory>
         <name>VolumeId</name>
+        <op_param/>
         <operation display_value="DetachStorageVolume">6526c73adb2c6300b7829ee6db9619a9</operation>
         <order/>
         <read_only>false</read_only>

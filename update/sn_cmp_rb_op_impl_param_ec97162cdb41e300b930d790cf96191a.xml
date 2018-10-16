@@ -9,6 +9,7 @@
         <host/>
         <ismandatory>true</ismandatory>
         <name>ScheduleProfile</name>
+        <op_param/>
         <operation display_value="ModifySchedule">6897162cdb41e300b930d790cf961912</operation>
         <order>65</order>
         <read_only>false</read_only>

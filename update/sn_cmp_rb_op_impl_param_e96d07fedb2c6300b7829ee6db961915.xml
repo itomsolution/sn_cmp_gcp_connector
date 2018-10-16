@@ -9,6 +9,7 @@
         <host/>
         <ismandatory>false</ismandatory>
         <name>Size</name>
+        <op_param/>
         <operation display_value="Storage Volume Attach Virtual Server">256d07fedb2c6300b7829ee6db961903</operation>
         <order>1000</order>
         <read_only>false</read_only>

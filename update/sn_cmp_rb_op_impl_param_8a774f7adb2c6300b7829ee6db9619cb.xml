@@ -9,6 +9,7 @@
         <host/>
         <ismandatory>false</ismandatory>
         <name>VLAN</name>
+        <op_param/>
         <operation display_value="Create SNAT Pool">c6774f7adb2c6300b7829ee6db9619c2</operation>
         <order/>
         <read_only>false</read_only>

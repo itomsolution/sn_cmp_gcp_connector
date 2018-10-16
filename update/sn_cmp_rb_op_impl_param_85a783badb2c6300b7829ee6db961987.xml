@@ -9,6 +9,7 @@
         <host/>
         <ismandatory>false</ismandatory>
         <name>RouteTable</name>
+        <op_param/>
         <operation display_value="CreateSubnet">81a783badb2c6300b7829ee6db96196d</operation>
         <order>1000</order>
         <read_only>false</read_only>

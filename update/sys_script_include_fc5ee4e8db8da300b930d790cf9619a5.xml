@@ -9,86 +9,81 @@
         <script><![CDATA[var GoogleDeploymentManagerTemplateUtil = Class.create();
 GoogleDeploymentManagerTemplateUtil.prototype = Object.extendsObject(sn_cmp.CMPTemplateUtil, {
 
-    initialize: function() {
+	initialize: function() {
 		sn_cmp.CMPTemplateUtil.prototype.initialize.call(this);
-    },
-	
+	},
+
 	getInputs: function(templateObj, template) {
-		var content = templateObj.target.config.content;
-		var parsedContent = new sn_cmp_api.CloudTemplateScript().parseYAML(content);
+		var parsedContent = new sn_cmp_api.CloudTemplateScript().parseYAML(template);
 		var resources = parsedContent.resources;
-		var order = 0;
+		var configinfo = parsedContent.configinfo;
+		var i = 0;
 		var processedParams = {};	
 		for(var index in resources){
 			var resource = resources[index];
 			var resProperties = resource.properties;
 			for(var resPropertie in resProperties){
-				gs.info(resPropertie +''+resProperties[resPropertie]);
 				var parameter = {};
 				processedParams[resPropertie] = parameter;
-				
-		//		parameter.type = this.getType(paramValue.Type, paramValue.NoEcho);
 				parameter.source = 'Text';
+				// we will expose only those parameters which are of simple key value type, any complex attribute will be ignored.	
 				var parsedValue;
 				try{
-				 parsedValue =JSON.parse(resProperties[resPropertie]);	
+					// this needs to be revisited. somehow system is considering this as array and not passing proper value.
+					var value =JSON.parse(resProperties[resPropertie]);
+					parsedValue = JSON.stringify(resProperties[resPropertie]);
 				}catch(e){
-				parameter.defaultValue = resProperties[resPropertie];	
-				gs.info(resPropertie+" has a simple value");	
+					parsedValue = resProperties[resPropertie];	
 				}
-				
-				
-// 				if (paramValue.hasOwnProperty('Default'))
-// 					parameter.defaultValue = paramValue.Default;
-
-// 				if (paramValue.hasOwnProperty('AllowedValues')) {
-// 					parameter.value = global.JSON.stringify(paramValue.AllowedValues);
-// 					parameter.source = 'CSVList';
-// 				}
-				
-// 				if (paramValue.hasOwnProperty('AllowedPattern'))
-// 					parameter.regex = paramValue.AllowedPattern;
-				
-// 				if (paramValue.hasOwnProperty('ConstraintDescription'))
-// 					parameter.error_text = paramValue.ConstraintDescription;
-
-// 			    if (metaData) {
-// 				 var snMetaData = (metaData.hasOwnProperty('SNC::Parameter::Metadata')) ? metaData['SNC::Parameter::Metadata'] : '';
-// 					if (!gs.nil(snMetaData)) {
-// 						var matchedParam = (snMetaData.hasOwnProperty(param)) ? snMetaData[param] : '';
-// 						if (!gs.nil(matchedParam)) {
-// 							if ( matchedParam.hasOwnProperty('datasource') ) {
-// 								//trim space
-// 								parameter.value = matchedParam.datasource.replace(/\s+/g, '');
-// 								parameter.source = 'Pools';
-// 							}
-// 						}
-// 					}
-// 				}
+				parameter.defaultValue =	parsedValue;
+				if (resPropertie.hasOwnProperty('metadata')) {
+					var metadata = resPropertie.metadata;
+					var sncMetadata = (metadata.hasOwnProperty('SNC::Parameter::Metadata')) ? metadata['SNC::Parameter::Metadata'] : '';
+					if (!gs.nil(sncMetadata))
+					{
+						parameter.regex =  (sncMetadata.hasOwnProperty('allowedPattern')) ? sncMetadata.allowedPattern : '';
+						parameter.error_text =  (sncMetadata.hasOwnProperty('ConstraintDescription')) ? sncMetadata.ConstraintDescription : '';
+						if (sncMetadata.hasOwnProperty('datasource')) {
+							parameter.value = sncMetadata.datasource.replace(/\s+/g, '');
+							parameter.source = 'Pools';
+						}
+					}
+				}
 
 				parameter.mandatory = false;
-				parameter.order = order;
-				order++;
+				parameter.order = i;
+				i++;
 			}
 		}
+			for(var configKey in configinfo){
+				var processedParamValue = {};
+				processedParamValue['type'] = 'String';	
+				processedParamValue['source'] = 'Text';
+				processedParamValue['mandatory'] = 'false';
+				processedParamValue['order'] = ++i;
+				processedParamValue['defaultValue'] = configinfo[configKey];	
+				processedParams[configKey] = 	processedParamValue;
+		}
 
-// 			var tagParameter = {};
-// 			processedParams['CustomTags'] = tagParameter;
-// 			tagParameter.type = 'String';
-// 			tagParameter.source = 'Text';
-// 			tagParameter.mandatory = false;
-// 			tagParameter.order = order;
-		
-		gs.info(JSON.stringify(processedParams));
+		processedParams['Script'] = {"type":"String", "source":"Text", "mandatory":false, "order": ++i, "defaultvalue":"$(CloudScript.scripts.DeployGDMTemplate)"};
+		// 		processedParams['ScriptParameters'] = {"type":"String", "source":"Text", "mandatory":false, "order": ++i, "defaultvalue":this.getScriptParameterMappingForProvision(name, template, configinfo)};
+
+		// 			var tagParameter = {};
+		// 			processedParams['CustomTags'] = tagParameter;
+		// 			tagParameter.type = 'String';
+		// 			tagParameter.source = 'Text';
+		// 			tagParameter.mandatory = false;
+		// 			tagParameter.order = order;
+			
 		return processedParams;
 	},
-	
+
 	getType: function(type, noEcho) {
 		if ((noEcho && typeof noEcho.toLowerCase === "function" && noEcho.toLowerCase() == "true") || noEcho == true)
 			return "Password";
-		
+
 		switch (type){
-			// There are other types that need to be handled
+				// There are other types that need to be handled
 			case 'Number':
 				return 'Integer';
 			default:
@@ -99,20 +94,20 @@ GoogleDeploymentManagerTemplateUtil.prototype = Object.extendsObject(sn_cmp.CMPT
 	extractTemplateDescription : function (template, templateObj) {
 		return templateObj.Description || '';
 	},
-	
+
 	getOutputAttribute : function(name, template, templateObj) {
 		var outputs = templateObj.Outputs;
 		var outputAttributes = {};
 		var prefix = '${Host.Stack Orchestration Interface.CreateStack.Output.resp.outputs.';
-        if (outputs) {
+		if (outputs) {
 			Object.keys(outputs).forEach(function(val) {
 				outputAttributes[val] = prefix + val + '}';
 			});
 			return Object.keys(outputAttributes).length > 0 ? global.JSON.stringify(outputAttributes) : '';
 		}
-		 return '';
+		return '';
 	},
-	
+
 	validateTemplate: function(templateObj, template) {
 		var errorMessage = "";
 		//return object should have "isValid" and "errorMessage"
@@ -121,20 +116,37 @@ GoogleDeploymentManagerTemplateUtil.prototype = Object.extendsObject(sn_cmp.CMPT
 		result.errorMessage = "No Error";
 		return result;
 	},
+	getScriptParameterMappingForProvision: function(name, template, configinfo) {
+		var templateObject = JSON.parse(template);
+		var ScriptParametersMapping = '{"Directory":"'+configinfo.Directory+'",'+
+			'"CloudAccount":"${parameter.CloudAccount}","Location":"${parameter.Location}", "TemplateParameters":"';
+		var i = 0;
+		//{"Directory":"/home/cmpdev/trail2","StackName":"${parameter.StackName}","CloudAccount":"${parameter.CloudAccount}",
+		//"Location":"${parameter.Location}","TemplateParameters":"ami=${parameter.AWS_VM_ami}~instance_type=m1.small"}
+		var clarifiedName = name.replace(" ", "_");
+		for( i = 0; i < templateObject.parameters.length; i ++ ) {
+			ScriptParametersMapping += ''+templateObject.parameters[i].name+'=${parameter.'+clarifiedName+'_'+templateObject.parameters[i].name+'}';
+			if( i < (templateObject.parameters.length-1))
+				ScriptParametersMapping += "~";
+		}
+		ScriptParametersMapping += '"}';
 
-    type: 'GoogleDeploymentManagerTemplateUtil'
+		return ScriptParametersMapping;
+	},
+
+	type: 'GoogleDeploymentManagerTemplateUtil'
 });]]></script>
         <sys_class_name>sys_script_include</sys_class_name>
         <sys_created_by>jayant.kaushal</sys_created_by>
         <sys_created_on>2018-10-06 04:19:00</sys_created_on>
         <sys_id>fc5ee4e8db8da300b930d790cf9619a5</sys_id>
-        <sys_mod_count>23</sys_mod_count>
+        <sys_mod_count>51</sys_mod_count>
         <sys_name>GoogleDeploymentManagerTemplateUtil</sys_name>
         <sys_package display_value="Google Cloud Management" source="sn_cmp_gcp">40ff1aee0b2023003246ad4363673ac5</sys_package>
         <sys_policy>read</sys_policy>
         <sys_scope display_value="Google Cloud Management">40ff1aee0b2023003246ad4363673ac5</sys_scope>
         <sys_update_name>sys_script_include_fc5ee4e8db8da300b930d790cf9619a5</sys_update_name>
         <sys_updated_by>jayant.kaushal</sys_updated_by>
-        <sys_updated_on>2018-10-06 11:26:39</sys_updated_on>
+        <sys_updated_on>2018-10-16 17:34:47</sys_updated_on>
     </sys_script_include>
 </record_update>

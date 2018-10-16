@@ -9,6 +9,7 @@
         <host/>
         <ismandatory>false</ismandatory>
         <name>ForceDelete</name>
+        <op_param/>
         <operation display_value="ConnectAndDestroyServerArray">f426873adb2c6300b7829ee6db9619d3</operation>
         <order>1000</order>
         <read_only>false</read_only>

@@ -9,6 +9,7 @@
         <host/>
         <ismandatory>false</ismandatory>
         <name>ReturnStatus</name>
+        <op_param/>
         <operation display_value="Deprovision">b16d07fedb2c6300b7829ee6db96193e</operation>
         <order/>
         <read_only>false</read_only>

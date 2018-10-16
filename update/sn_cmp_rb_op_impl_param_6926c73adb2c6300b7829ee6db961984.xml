@@ -9,6 +9,7 @@
         <host/>
         <ismandatory>false</ismandatory>
         <name>CheckNetworkContainers</name>
+        <op_param/>
         <operation display_value="ListNetworkInterfaces">2926c73adb2c6300b7829ee6db961962</operation>
         <order/>
         <read_only>false</read_only>
