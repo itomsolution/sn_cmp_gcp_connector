@@ -9,7 +9,6 @@
         <host/>
         <ismandatory>true</ismandatory>
         <name>ResourceGroupName</name>
-        <op_param/>
         <operation display_value="Provision">e387d22cdb41e300b930d790cf96192c</operation>
         <order>80</order>
         <read_only>false</read_only>

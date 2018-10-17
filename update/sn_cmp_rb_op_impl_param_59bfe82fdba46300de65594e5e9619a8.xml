@@ -9,7 +9,6 @@
         <host/>
         <ismandatory>false</ismandatory>
         <name>AdditionalParameters</name>
-        <op_param/>
         <operation display_value="ConnectAndStopVirtualMachine">e389f75e0be622009e620bcb15673a5a</operation>
         <order>1000</order>
         <read_only>false</read_only>

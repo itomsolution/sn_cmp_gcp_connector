@@ -9,7 +9,6 @@
         <host/>
         <ismandatory>false</ismandatory>
         <name>EnableMonitoring</name>
-        <op_param/>
         <operation display_value="ConnectAndDestroyVirtualMachine">3f16473adb2c6300b7829ee6db961939</operation>
         <order/>
         <read_only>false</read_only>

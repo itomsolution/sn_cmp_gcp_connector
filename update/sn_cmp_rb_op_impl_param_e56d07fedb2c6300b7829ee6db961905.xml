@@ -9,7 +9,6 @@
         <host/>
         <ismandatory>false</ismandatory>
         <name>Device</name>
-        <op_param/>
         <operation display_value="Storage Volume Attach Virtual Server">256d07fedb2c6300b7829ee6db961903</operation>
         <order>100</order>
         <read_only>false</read_only>

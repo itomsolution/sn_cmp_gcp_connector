@@ -9,7 +9,6 @@
         <host/>
         <ismandatory>false</ismandatory>
         <name>CloudAccount</name>
-        <op_param/>
         <operation display_value="DeleteStorageAccount">4b6d47fedb2c6300b7829ee6db9619e2</operation>
         <order/>
         <read_only>false</read_only>

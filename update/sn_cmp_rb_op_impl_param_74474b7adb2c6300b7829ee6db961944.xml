@@ -9,7 +9,6 @@
         <host/>
         <ismandatory>false</ismandatory>
         <name>FirewallIP</name>
-        <op_param/>
         <operation display_value="Query Firewall Instance">b0474b7adb2c6300b7829ee6db961942</operation>
         <order/>
         <read_only>false</read_only>

@@ -9,7 +9,6 @@
         <host/>
         <ismandatory>false</ismandatory>
         <name>TenantName</name>
-        <op_param/>
         <operation display_value="Deprovision">09a783badb2c6300b7829ee6db961951</operation>
         <order/>
         <read_only>false</read_only>

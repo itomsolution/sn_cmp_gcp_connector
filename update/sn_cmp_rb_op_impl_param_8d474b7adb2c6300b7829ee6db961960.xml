@@ -9,7 +9,6 @@
         <host/>
         <ismandatory>false</ismandatory>
         <name>Password</name>
-        <op_param/>
         <operation display_value="Start Monitoring">8d474b7adb2c6300b7829ee6db96194f</operation>
         <order/>
         <read_only>false</read_only>

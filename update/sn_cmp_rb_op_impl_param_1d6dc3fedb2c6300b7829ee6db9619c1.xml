@@ -9,7 +9,6 @@
         <host/>
         <ismandatory>false</ismandatory>
         <name>ExportPolicy</name>
-        <op_param/>
         <operation display_value="CreateExportRule">916dc3fedb2c6300b7829ee6db9619ac</operation>
         <order/>
         <read_only>false</read_only>

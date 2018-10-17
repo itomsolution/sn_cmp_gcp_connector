@@ -9,7 +9,6 @@
         <host/>
         <ismandatory>false</ismandatory>
         <name>Location</name>
-        <op_param/>
         <operation display_value="Provision">d8470b7adb2c6300b7829ee6db9619a6</operation>
         <order/>
         <read_only>false</read_only>

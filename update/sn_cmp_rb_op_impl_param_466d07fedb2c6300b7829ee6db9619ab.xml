@@ -9,7 +9,6 @@
         <host/>
         <ismandatory>false</ismandatory>
         <name>Location</name>
-        <op_param/>
         <operation display_value="DeleteExportRule">4e6d07fedb2c6300b7829ee6db96199f</operation>
         <order/>
         <read_only>false</read_only>

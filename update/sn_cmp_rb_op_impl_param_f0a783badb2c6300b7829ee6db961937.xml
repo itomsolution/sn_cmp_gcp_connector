@@ -9,7 +9,6 @@
         <host/>
         <ismandatory>false</ismandatory>
         <name>Network</name>
-        <op_param/>
         <operation display_value="CreateSecurityGroup">74a783badb2c6300b7829ee6db961930</operation>
         <order/>
         <read_only>false</read_only>

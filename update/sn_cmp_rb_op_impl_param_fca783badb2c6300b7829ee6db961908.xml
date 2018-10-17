@@ -9,7 +9,6 @@
         <host/>
         <ismandatory>false</ismandatory>
         <name>EPGName</name>
-        <op_param/>
         <operation display_value="DeleteSubnet">a4a743badb2c6300b7829ee6db9619d3</operation>
         <order/>
         <read_only>false</read_only>

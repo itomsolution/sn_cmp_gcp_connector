@@ -9,7 +9,6 @@
         <host/>
         <ismandatory>false</ismandatory>
         <name>ExportPolicy</name>
-        <op_param/>
         <operation display_value="DeleteExportPolicy">cf6d47fedb2c6300b7829ee6db9619f4</operation>
         <order/>
         <read_only>false</read_only>

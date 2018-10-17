@@ -9,7 +9,6 @@
         <host/>
         <ismandatory>false</ismandatory>
         <name>CheckLoadBalancers</name>
-        <op_param/>
         <operation display_value="ListNetworkContainers">0c26473adb2c6300b7829ee6db961996</operation>
         <order/>
         <read_only>false</read_only>

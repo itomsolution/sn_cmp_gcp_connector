@@ -9,7 +9,6 @@
         <host/>
         <ismandatory>false</ismandatory>
         <name>CheckNodes</name>
-        <op_param/>
         <operation display_value="ListIPAddresses">d026473adb2c6300b7829ee6db9619e9</operation>
         <order/>
         <read_only>false</read_only>

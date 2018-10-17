@@ -9,7 +9,6 @@
         <host/>
         <ismandatory>false</ismandatory>
         <name>NetworkID</name>
-        <op_param/>
         <operation display_value="CreateNetworkInterface">7d26c73adb2c6300b7829ee6db9619e3</operation>
         <order>1000</order>
         <read_only>false</read_only>

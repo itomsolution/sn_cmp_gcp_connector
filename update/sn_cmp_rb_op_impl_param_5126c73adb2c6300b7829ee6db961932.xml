@@ -9,7 +9,6 @@
         <host/>
         <ismandatory>false</ismandatory>
         <name>AvailabilityZone</name>
-        <op_param/>
         <operation display_value="ConnectAndCreateVirtualServerArray">8126873adb2c6300b7829ee6db9619e8</operation>
         <order/>
         <read_only>false</read_only>

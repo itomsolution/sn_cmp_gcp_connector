@@ -9,7 +9,6 @@
         <host/>
         <ismandatory>false</ismandatory>
         <name>NetworkID</name>
-        <op_param/>
         <operation display_value="Delete Mirrored Network">e9774f7adb2c6300b7829ee6db961934</operation>
         <order/>
         <read_only>false</read_only>

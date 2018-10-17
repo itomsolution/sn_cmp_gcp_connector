@@ -9,7 +9,6 @@
         <host/>
         <ismandatory>false</ismandatory>
         <name>CheckNodes</name>
-        <op_param/>
         <operation display_value="ListRouteTables">5616c33adb2c6300b7829ee6db9619a7</operation>
         <order/>
         <read_only>false</read_only>

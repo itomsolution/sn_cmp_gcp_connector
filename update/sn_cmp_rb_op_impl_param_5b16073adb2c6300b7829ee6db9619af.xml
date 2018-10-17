@@ -9,7 +9,6 @@
         <host/>
         <ismandatory>false</ismandatory>
         <name>Region</name>
-        <op_param/>
         <operation display_value="ListImages">9716073adb2c6300b7829ee6db9619ad</operation>
         <order/>
         <read_only>false</read_only>

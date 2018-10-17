@@ -9,7 +9,6 @@
         <host/>
         <ismandatory>false</ismandatory>
         <name>FirewallID</name>
-        <op_param/>
         <operation display_value="L3 Firewall Attach Subnet">f8474b7adb2c6300b7829ee6db961946</operation>
         <order/>
         <read_only>false</read_only>

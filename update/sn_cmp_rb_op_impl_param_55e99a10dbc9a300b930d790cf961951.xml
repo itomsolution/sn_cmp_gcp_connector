@@ -9,7 +9,6 @@
         <host/>
         <ismandatory>false</ismandatory>
         <name>StackId</name>
-        <op_param/>
         <operation display_value="Delete Stack">91e99a10dbc9a300b930d790cf96194f</operation>
         <order>1000</order>
         <read_only>false</read_only>

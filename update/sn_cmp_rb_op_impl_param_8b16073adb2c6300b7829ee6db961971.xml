@@ -9,7 +9,6 @@
         <host/>
         <ismandatory>false</ismandatory>
         <name>Tags</name>
-        <op_param/>
         <operation display_value="CreateNetworkContainer">0f16073adb2c6300b7829ee6db96196a</operation>
         <order/>
         <read_only>false</read_only>

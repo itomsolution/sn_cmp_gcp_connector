@@ -9,7 +9,6 @@
         <host/>
         <ismandatory>false</ismandatory>
         <name>VolumeId</name>
-        <op_param/>
         <operation display_value="Storage Volume Detach Virtual Server">996dc3fedb2c6300b7829ee6db9619cf</operation>
         <order/>
         <read_only>false</read_only>

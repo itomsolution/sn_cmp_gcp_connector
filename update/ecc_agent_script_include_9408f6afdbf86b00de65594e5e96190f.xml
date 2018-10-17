@@ -23,7 +23,7 @@ GoogleDeploymentManager.prototype = Object.extendsObject(CloudAPIBase, {
 	createStack: function(stackName, template, templateParameters, tags, additionalApiParams) {
 		var requestParameters = {};
 		var project = parameters.get('Project');
-		var formattedTemplate = template.replaceAll('\\n','\n');
+
 		var target = {};
 		requestParameters.name=stackName;
 		var content = {};
@@ -33,7 +33,7 @@ GoogleDeploymentManager.prototype = Object.extendsObject(CloudAPIBase, {
 
 		var gcpEndpoint = "https://www.googleapis.com/deploymentmanager/v2/projects/"+project+"/global/deployments";
 		var apiInvoker = new GoogleAPIInvoker(gcpEndpoint, this.scope, this.clientEmail, this.privateKey);
-		var responseObj = new JSON().decode(apiInvoker.invokePost(template));
+		var responseObj = new JSON().decode(apiInvoker.invokePost(new JSON().encode(requestParameters)));
 		var gcpRetrEndpoint =responseObj.targetLink;
 		var output = this._waitForDeployment(gcpRetrEndpoint);
 		var resources = this._getDeploymentResources(stackName,project);
@@ -138,7 +138,7 @@ GoogleDeploymentManager.prototype = Object.extendsObject(CloudAPIBase, {
         <sys_domain>global</sys_domain>
         <sys_domain_path>/</sys_domain_path>
         <sys_id>9408f6afdbf86b00de65594e5e96190f</sys_id>
-        <sys_mod_count>48</sys_mod_count>
+        <sys_mod_count>47</sys_mod_count>
         <sys_name>GoogleDeploymentManager</sys_name>
         <sys_overrides/>
         <sys_package display_value="Google Cloud Management" source="sn_cmp_gcp">40ff1aee0b2023003246ad4363673ac5</sys_package>
@@ -146,6 +146,6 @@ GoogleDeploymentManager.prototype = Object.extendsObject(CloudAPIBase, {
         <sys_scope display_value="Google Cloud Management">40ff1aee0b2023003246ad4363673ac5</sys_scope>
         <sys_update_name>ecc_agent_script_include_9408f6afdbf86b00de65594e5e96190f</sys_update_name>
         <sys_updated_by>jayant.kaushal</sys_updated_by>
-        <sys_updated_on>2018-10-06 15:21:56</sys_updated_on>
+        <sys_updated_on>2018-10-04 12:55:44</sys_updated_on>
     </ecc_agent_script_include>
 </record_update>

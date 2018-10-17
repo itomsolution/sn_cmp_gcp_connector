@@ -9,7 +9,6 @@
         <host/>
         <ismandatory>true</ismandatory>
         <name>ScheduleTimeZone</name>
-        <op_param/>
         <operation display_value="ModifySchedule">6897162cdb41e300b930d790cf961912</operation>
         <order>77</order>
         <read_only>false</read_only>

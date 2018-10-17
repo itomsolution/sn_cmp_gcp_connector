@@ -9,7 +9,6 @@
         <host/>
         <ismandatory>false</ismandatory>
         <name>LDCName</name>
-        <op_param/>
         <operation display_value="ListAllNetworks">d616c33adb2c6300b7829ee6db9619b7</operation>
         <order/>
         <read_only>false</read_only>

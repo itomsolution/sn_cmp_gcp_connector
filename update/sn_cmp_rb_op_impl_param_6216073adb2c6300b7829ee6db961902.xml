@@ -9,7 +9,6 @@
         <host/>
         <ismandatory>false</ismandatory>
         <name>RebootType</name>
-        <op_param/>
         <operation display_value="Reboot">e216c33adb2c6300b7829ee6db9619fb</operation>
         <order/>
         <read_only>false</read_only>

@@ -9,7 +9,6 @@
         <host/>
         <ismandatory>false</ismandatory>
         <name>ServerID</name>
-        <op_param/>
         <operation display_value="ConnectAndDestroyVirtualServerArray">4f16073adb2c6300b7829ee6db961991</operation>
         <order/>
         <read_only>false</read_only>

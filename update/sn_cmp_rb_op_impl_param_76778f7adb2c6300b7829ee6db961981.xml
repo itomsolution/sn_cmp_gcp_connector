@@ -9,7 +9,6 @@
         <host/>
         <ismandatory>false</ismandatory>
         <name>LoadBalancerProfile</name>
-        <op_param/>
         <operation display_value="Enable SSL">3e778f7adb2c6300b7829ee6db96197c</operation>
         <order/>
         <read_only>false</read_only>

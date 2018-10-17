@@ -9,7 +9,6 @@
         <host/>
         <ismandatory>false</ismandatory>
         <name>StorageServer</name>
-        <op_param/>
         <operation display_value="NAS Storage Attach Virtual Server">636d87fedb2c6300b7829ee6db961970</operation>
         <order/>
         <read_only>false</read_only>

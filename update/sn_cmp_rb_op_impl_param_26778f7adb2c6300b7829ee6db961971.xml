@@ -9,7 +9,6 @@
         <host/>
         <ismandatory>false</ismandatory>
         <name>LoadBalancerName</name>
-        <op_param/>
         <operation display_value="Register Instances With Load Balancer">ee778f7adb2c6300b7829ee6db96195d</operation>
         <order/>
         <read_only>false</read_only>

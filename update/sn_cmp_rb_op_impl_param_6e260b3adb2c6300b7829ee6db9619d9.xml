@@ -9,7 +9,6 @@
         <host/>
         <ismandatory>false</ismandatory>
         <name>SecurityGroupType</name>
-        <op_param/>
         <operation display_value="ConnectAndCreateServerArray">1e260b3adb2c6300b7829ee6db961973</operation>
         <order>1000</order>
         <read_only>false</read_only>

@@ -9,7 +9,6 @@
         <host/>
         <ismandatory>false</ismandatory>
         <name>StorageType</name>
-        <op_param/>
         <operation display_value="Resize">b26d47fedb2c6300b7829ee6db9619b9</operation>
         <order/>
         <read_only>false</read_only>

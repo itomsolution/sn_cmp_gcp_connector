@@ -9,7 +9,6 @@
         <host/>
         <ismandatory>false</ismandatory>
         <name>ParameterURL</name>
-        <op_param/>
         <operation display_value="GetCloudTemplate">1de99a10dbc9a300b930d790cf96193c</operation>
         <order>1000</order>
         <read_only>false</read_only>

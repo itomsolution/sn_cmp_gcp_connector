@@ -9,7 +9,6 @@
         <host/>
         <ismandatory>false</ismandatory>
         <name>AvailabilityZone</name>
-        <op_param/>
         <operation display_value="ConnectAndCreateVolume">5126c73adb2c6300b7829ee6db961950</operation>
         <order>1000</order>
         <read_only>false</read_only>
